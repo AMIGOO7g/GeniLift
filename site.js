@@ -14,7 +14,7 @@
   /* ---------- Первый экран: дверь открывается, камера въезжает в свет ---------- */
   /* масштаб, при котором проём двери закрывает весь экран — «мы вошли» */
   const fillScale = door => {
-    const ow = door.offsetWidth * .6445, oh = door.offsetHeight * .7832;
+    const ow = door.offsetWidth * .6513, oh = door.offsetHeight * .7835;
     const off = Math.abs(door.offsetHeight * .055);
     return Math.max(innerWidth / ow, (innerHeight + off * 2) / oh) * 1.22;   // с запасом: рама уходит за края целиком
   };
@@ -50,6 +50,11 @@
 
   /* ---------- Шахта: лифт едет между этажами и останавливается у дверей ---------- */
   const shaft = document.getElementById('shaft');
+  /* неизменная высота экрана: адресная строка Safari не сдвигает расчёты */
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed;left:0;top:0;width:1px;height:100vh;height:100svh;visibility:hidden;pointer-events:none';
+  document.body.appendChild(probe);
+  let VH = probe.offsetHeight || innerHeight;
   if (shaft) {
     const wall = shaft.querySelector('.sh-wall');
     const rails = [...shaft.querySelectorAll('.sh-rail')];
@@ -60,6 +65,7 @@
     let tW = 0, tRail = 0, tRope = 0;
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
     const layout = () => {
+      VH = probe.offsetHeight || innerHeight;
       tW = tileH(wall, 3);                         // wall.webp 1024×3072
       wall.style.height = innerHeight + tW + 'px';
       tRail = rails[0] ? tileH(rails[0], 3072 / 180) : 1;
@@ -73,14 +79,14 @@
         s.pad = parseFloat(cs.paddingTop) || 0;
         s.start = s.el.getBoundingClientRect().top + scrollY + s.pad - s.stick;   // дверь встала по центру
         s.len = s.el.offsetHeight - s.pad - s.dh;                                 // сколько она стоит
-        s.E = innerHeight * .95;                                                  // путь открытия и входа
+        s.E = VH * .95;                                                  // путь открытия и входа
         const wrap = s.el.querySelector('.stage-body .wrap');
         const wb = wrap ? wrap.getBoundingClientRect().bottom + scrollY : s.start + s.len;
-        s.dEx = (wb - innerHeight * .35) - s.start;                               // текст ушёл — выходим
-        s.X = innerHeight * .9;                                                   // выход: назад, двери закрываются
-        s.dEx = Math.min(s.dEx, s.len - s.X - innerHeight * .12);                 // успеть закрыть до отъезда
-        const ow = s.door.offsetWidth * .6445, oh = s.dh * .7832, oc = s.stick + s.dh * .551;
-        s.S = Math.max(innerWidth / ow, 2 * Math.max(oc, innerHeight - oc) / oh) * 1.12;
+        s.dEx = (wb - VH * .35) - s.start;                               // текст ушёл — выходим
+        s.X = VH * .9;                                                   // выход: назад, двери закрываются
+        s.dEx = Math.min(s.dEx, s.len - s.X - VH * .12);                 // успеть закрыть до отъезда
+        const ow = s.door.offsetWidth * .6513, oh = s.dh * .7835, oc = s.stick + s.dh * .555;
+        s.S = Math.max(s.el.offsetWidth / ow, 2 * Math.max(oc, VH - oc) / oh) * 1.12;
       });
       /* Передний план: балки и кабели по всему пути лифта (картинки уже размыты) */
       if (fg && !reduce && innerWidth > 820) {
@@ -106,7 +112,7 @@
         const d = s - st.start;
         travel -= clamp(d, 0, st.len);
         const sm = v => v * v * (3 - 2 * v);
-        const open = clamp(d / (st.E * .32));                      // створки расходятся
+        const open = clamp((d - VH * .05) / (st.E * .3));                      // створки расходятся
         const e = sm(clamp((d - st.E * .25) / (st.E * .75)));      // входим в кабину
         const x = clamp((d - st.dEx) / st.X);                      // выход
         const back = sm(clamp(x / .6));                            // камера отъезжает назад
@@ -116,7 +122,7 @@
         st.door.style.setProperty('--s', (1 + depth * (st.S - 1)).toFixed(3));
         st.door.style.setProperty('--k', depth.toFixed(3));
         st.door.style.setProperty('--f', '1');
-        st.el.style.setProperty('--t', (1 - clamp(d / (st.E * .2))).toFixed(3));
+        
       });
       /* сглаживание: слои мягко догоняют прокрутку, без рывков */
       if (cur === null || reduce) cur = travel; else cur += (travel - cur) * .16;
