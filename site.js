@@ -5,7 +5,7 @@
   const hero = document.querySelector('.hero');
 
   /* ---------- Появления: разрядка сжимается, блоки раскрываются как двери ---------- */
-  const targets = [...document.querySelectorAll('[data-track],[data-doors],[data-fade]')];
+  const targets = [...document.querySelectorAll('[data-track],[data-doors],[data-fade],[data-reveal]')];
   const io = new IntersectionObserver(es => es.forEach(en => {
     if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
   }), { rootMargin: '0px 0px -12% 0px' });
@@ -137,6 +137,75 @@
     addEventListener('scroll', onScroll, { passive: true });
     let lastW = innerWidth;
     addEventListener('resize', () => { if (innerWidth === lastW) return; lastW = innerWidth; layout(); frame(); });
+    addEventListener('load', () => { layout(); frame(); });
+    layout(); frame();
+  }
+
+  /* ---------- Лифт: один, по центру тёмного экрана; этажи сменяются ---------- */
+  const lift = document.getElementById('lift');
+  if (lift) {
+    const door = document.getElementById('liftDoor');
+    const num = document.getElementById('liftNum'), nm = document.getElementById('liftName');
+    const fls = [...document.querySelectorAll('section.fl')].map(el => ({ el, gap: el.querySelector('.lift-gap'), n: el.dataset.floor, name: el.dataset.short }));
+    const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+    const sm = v => v * v * (3 - 2 * v);
+    const fbgEl = document.getElementById('floorBg');
+    const layout = () => {
+      VH = probe.offsetHeight || innerHeight;
+      fls.forEach((f, i) => {
+        const top = f.gap.getBoundingClientRect().top + scrollY, h = f.gap.offsetHeight;
+        f.a = i === 0 ? 0 : top - VH * .3;          // предыдущий раздел почти ушёл
+        f.b = top + h - VH * .7;                      // текущий раздел поднимается снизу
+      });
+    };
+    let ticking = false, shown = '';
+    const frame = () => {
+      ticking = false;
+      const s = scrollY;
+      let vis = 0, open = 0, bp = 0, bo = 0, hold = 0, f0 = null, prev = null;
+      fls.forEach((f, i) => {
+        if (s < f.a || s > f.b) return;
+        const t = clamp((s - f.a) / (f.b - f.a));
+        f0 = f; prev = fls[i - 1];
+        if ((i === 0 || t > .55) && fbgEl) fbgEl.style.setProperty('--fbg', f.el.dataset.bg);   // двери открылись — свет этажа
+        if (i === 0) {                                   // первый этаж: двери закрыты → открываются → уходим в раздел
+          vis = 1 - sm(clamp((t - .82) / .18));
+          open = sm(clamp((t - .1) / .45));
+          prev = null;
+        } else {                                         // закрываем прошлый этаж → едем → открываем новый
+          vis = sm(clamp(t / .12)) * (1 - sm(clamp((t - .84) / .16)));
+          const close = sm(clamp((t - .12) / .2));
+          const reopen = sm(clamp((t - .54) / .26));
+          open = t < .5 ? 1 - close : reopen;
+          const u = clamp((t - .3) / .18);               // лифт едет: свет этажа проходит по щели
+          bp = sm(u);                                     // разгон и торможение
+          bo = Math.min(1, u / .12, (1 - u) / .12);
+          hold = clamp((t - .46) / .04) * (1 - clamp((t - .56) / .06));  // встал — шов ровно светится
+          if (t >= .32) prev = null;                      // двери закрыты — номер уже новый
+        }
+      });
+      const show = prev || f0;
+      if (show && show.n !== shown) { shown = show.n; num.textContent = show.n; nm.textContent = show.name; }
+      lift.style.setProperty('--v', vis.toFixed(3));
+      lift.style.setProperty('--hint', (1 - clamp(s / (VH * .06))).toFixed(3));
+      door.style.setProperty('--o', open.toFixed(3));
+      door.style.setProperty('--bp', bp.toFixed(3));
+      door.style.setProperty('--bo', Math.max(0, bo).toFixed(3));
+      door.style.setProperty('--wo', Math.max(0, bo).toFixed(3));
+      door.style.setProperty('--hold', hold.toFixed(3));
+    };
+    /* цвет этажа: фон перетекает в цвет раздела, который сейчас на экране */
+    const fbg = document.getElementById('floorBg');
+    if (fbg) {
+      const bio = new IntersectionObserver(es => es.forEach(en => {
+        if (en.isIntersecting) fbg.style.setProperty('--fbg', en.target.closest('.fl').dataset.bg);
+      }), { rootMargin: '-40% 0px -40% 0px' });
+      fls.forEach(f => bio.observe(f.el.querySelector('.fl-body')));
+    }
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+    addEventListener('scroll', onScroll, { passive: true });
+    let lw = innerWidth;
+    addEventListener('resize', () => { if (innerWidth === lw) return; lw = innerWidth; layout(); frame(); });
     addEventListener('load', () => { layout(); frame(); });
     layout(); frame();
   }
