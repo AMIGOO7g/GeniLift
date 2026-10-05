@@ -5,7 +5,9 @@
   const hero = document.querySelector('.hero');
 
   /* ---------- Появления: разрядка сжимается, блоки раскрываются как двери ---------- */
-  const targets = [...document.querySelectorAll('[data-track],[data-doors],[data-fade],[data-reveal]')];
+  const targets = [...document.querySelectorAll('[data-track],[data-doors],[data-fade],[data-reveal]')].filter(el => !el.closest('.fl-body'));
+  /* этажи главной: элементы проявляются по очереди, когда лифт погас */
+  document.querySelectorAll('.fl-body').forEach(b => b.querySelectorAll('[data-fade],[data-reveal]').forEach((el, i) => el.style.setProperty('--d', Math.min(i * .14, .9) + 's')));
   const io = new IntersectionObserver(es => es.forEach(en => {
     if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
   }), { rootMargin: '0px 0px -12% 0px' });
@@ -150,12 +152,14 @@
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
     const sm = v => v * v * (3 - 2 * v);
     const fbgEl = document.getElementById('floorBg');
+    let hdrH = 76;
     const layout = () => {
       VH = probe.offsetHeight || innerHeight;
+      const hd = document.querySelector('.hdr'); hdrH = hd ? hd.offsetHeight : 76;
       fls.forEach((f, i) => {
         const top = f.gap.getBoundingClientRect().top + scrollY, h = f.gap.offsetHeight;
         f.a = i === 0 ? 0 : top - VH * .3;          // предыдущий раздел почти ушёл
-        f.b = top + h - VH * .7;                      // текущий раздел поднимается снизу
+        f.b = top + h - hdrH;                         // этаж уже стоит под шапкой — лифт погас
       });
     };
     let ticking = false, shown = '';
@@ -164,6 +168,7 @@
       const s = scrollY;
       let vis = 0, open = 0, bp = 0, bo = 0, hold = 0, f0 = null, prev = null;
       fls.forEach((f, i) => {
+        if (s >= f.b - 4) f.el.querySelector('.fl-body').classList.add('go');
         if (s < f.a || s > f.b) return;
         const t = clamp((s - f.a) / (f.b - f.a));
         f0 = f; prev = fls[i - 1];
@@ -185,7 +190,7 @@
         }
       });
       const show = prev || f0;
-      if (show && show.n !== shown) { shown = show.n; num.textContent = show.n; nm.textContent = show.name; }
+      if (show && show.n !== shown) { shown = show.n; num.textContent = '0' + show.n; nm.textContent = show.el.dataset.name; }
       lift.style.setProperty('--v', vis.toFixed(3));
       lift.style.setProperty('--hint', (1 - clamp(s / (VH * .06))).toFixed(3));
       door.style.setProperty('--o', open.toFixed(3));

@@ -1205,3 +1205,139 @@ body.pg[data-tone=light]{--brass:#9A7536;--cream:#1D1A16;--mustard:#7A5810;--tex
 .pg .e404{color:var(--text)}
 @supports not (background:color-mix(in srgb,red 50%,blue)){.pg .frame,.pg .cats,.pg .card,.pg .panel,.pg .banner{background:rgba(0,0,0,.2)}.pg .hdr{background:rgba(0,0,0,.6)}}
 @media (max-width:640px){.psign .mx-n{font-size:88px}.title-shop .chips{display:flex}}
+
+/* ===== v35: сдержанность. Лифт поверх этажа, тихое проявление, одинаковый ритм ===== */
+.lift{z-index:3}
+/* единое тихое проявление на всём сайте */
+.js [data-fade],.js [data-reveal],.js [data-doors],.js [data-track]{opacity:0;transform:translateY(8px);clip-path:none;transition:opacity 1.1s ease var(--d,0s),transform 1.1s ease var(--d,0s)}
+.js [data-track]{letter-spacing:var(--ls,.03em)}
+.js [data-fade].in,.js [data-reveal].in,.js [data-doors].in,.js [data-track].in{opacity:1;transform:none;clip-path:none}
+.js .fl-body.go [data-fade],.js .fl-body.go [data-reveal]{opacity:1;transform:none}
+.ln>span{transform:none!important;transition:none!important}
+/* наведение — тонко, без прыжков */
+.tile:hover,.cat:hover,.cat2:hover,.prod2:hover,.pc3:hover,.dir:hover,.boxes4 li:hover,.tab4:hover,.guar3 li:hover,.acts4 a:hover,.acts4 button:hover,.pg .card:hover,.feats4 li:hover .ic,.gline li:hover .ic,.tile:hover .ic,.cat:hover .ic{transform:none}
+.pg .card:hover img,.cat2:hover img,.prod2:hover img,.pc3:hover img,.dir:hover img,.hero2-img:hover img{transform:none}
+.td-l,.td-r{transition:transform 1s cubic-bezier(.4,0,.2,1)}
+.tdoor:hover .td-l{transform:translateX(-6%)}
+.tdoor:hover .td-r{transform:translateX(6%)}
+.tdoor .td-in span{font-size:13px}
+.dirb-col a:hover{padding-left:0;color:var(--mustard)}
+.rc-row:hover{padding-left:0}
+.arr{transition:transform .5s ease}
+/* факты строкой: цифра крупно, подпись мелко */
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));width:min(860px,100%);margin:6px 0 46px;border-top:1px solid rgba(201,161,90,.4);border-bottom:1px solid rgba(201,161,90,.4)}
+.facts div{display:flex;flex-direction:column;align-items:center;padding:22px 10px}
+.facts div+div{border-left:1px solid rgba(201,161,90,.4)}
+.facts dd{order:1;margin:0;font:700 clamp(36px,3.6vw,52px)/1 var(--head);color:var(--cream)}
+.facts dt{order:2;margin-top:8px;font:500 12px var(--fut);text-transform:uppercase;letter-spacing:.18em;color:rgba(243,233,214,.62)}
+.fl[data-tone=light] .facts dt{color:#6A6056}
+.facts-l dd{font-size:clamp(48px,5vw,76px)}
+/* контакты: одна строка связи */
+.msgline{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 0;margin:0 0 40px}
+.msgline a{font:500 20px var(--head);letter-spacing:.05em;color:var(--cream);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .4s,color .4s}
+.msgline a:hover{border-bottom-color:var(--brass);color:var(--mustard)}
+.msgline .sep{font-size:8px;color:var(--brass);margin:0 16px}
+/* иерархия: подзаголовок крупнее и короче */
+.mx-sub{font-size:18px;max-width:480px}
+.fl-hero .mx-sub{font-size:19px}
+@media (max-width:760px){
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .facts div:nth-child(3){border-left:0}
+  .facts div:nth-child(n+3){border-top:1px solid rgba(201,161,90,.4)}
+  .msgline a{font-size:17px}
+  .msgline .sep{margin:0 10px}
+}
+@media (prefers-reduced-motion:reduce){.js [data-fade],.js [data-reveal]{opacity:1;transform:none;transition:none}}
+@media (max-width:640px){.ps-t{font-size:clamp(30px,9vw,48px);overflow-wrap:anywhere;hyphens:auto}}
+
+/* ===== v36: симметричная шапка, лифт в латунной раме, отделка этажей ===== */
+/* шапка: меню слева и справа, логотип по центру */
+.hdr2{border-bottom:1px solid rgba(201,161,90,.55)}
+.hdr2 .hdr2-in{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:0;height:100%;position:relative}
+.hn{display:flex;gap:clamp(24px,3vw,56px);height:100%;align-items:center}
+.hn-l{justify-content:flex-end;padding-right:clamp(26px,3vw,48px)}
+.hn-r{justify-content:flex-start;padding-left:clamp(26px,3vw,48px)}
+.hn a{position:relative;font:500 13px var(--fut);text-transform:uppercase;letter-spacing:.24em;color:#C9A15A;text-decoration:none;transition:color .4s}
+.hn a:hover,.hn a.on{color:#F3E9D6}
+.hn a.on::after{content:"";position:absolute;left:0;right:.24em;bottom:-8px;height:1px;background:#C9A15A}
+.hdr2 .hdr-logo{display:flex;align-items:center;padding:0 clamp(20px,2vw,32px);height:42px;border-left:1px solid rgba(201,161,90,.55);border-right:1px solid rgba(201,161,90,.55)}
+.hdr2 .hdr-logo .logo-svg{height:48px;width:auto}
+.hdr2 .hdr-tools{position:absolute;right:40px;top:50%;transform:translateY(-50%);gap:14px}
+.hdr2 .hdr-cart span{display:none}
+.hdr2 .hdr-floor,.hdr2 .hdr-phone,.hdr2 .hdr-sep{display:none}
+@media (max-width:1100px){
+  .hn{display:none}
+  .hdr2 .hdr2-in{grid-template-columns:1fr}
+  .hdr2 .hdr-logo{justify-self:center;border:0}
+  .hdr2 .hdr-tools{right:16px}
+}
+.hdr2 .hdr-menu{position:absolute;left:16px;top:50%;transform:translateY(-50%)}
+/* лифт в латунной раме с табличкой-индикатором */
+.lift{--dh:min(calc(100vh - var(--hdr) - var(--bar) - 170px),740px,128vw)}
+@supports (height:100svh){.lift{--dh:min(calc(100svh - var(--hdr) - var(--bar) - 170px),740px,128vw)}}
+.lframe{position:relative;display:flex;flex-direction:column;align-items:center;padding:10px 12px 12px;border:1px solid #C9A15A;outline:1px solid rgba(201,161,90,.6);outline-offset:4px;background-color:#141210;
+  background-image:linear-gradient(#C9A15A,#C9A15A),linear-gradient(#C9A15A,#C9A15A),linear-gradient(#C9A15A,#C9A15A),linear-gradient(#C9A15A,#C9A15A);background-size:9px 9px;background-repeat:no-repeat;background-position:3px 3px,calc(100% - 3px) 3px,3px calc(100% - 3px),calc(100% - 3px) calc(100% - 3px)}
+.lplq{padding:2px 0 10px}
+.lplq-in{position:relative;display:inline-flex;align-items:baseline;gap:12px;padding:8px 34px;border:1px solid #C9A15A;outline:1px solid rgba(201,161,90,.5);outline-offset:3px;font:600 clamp(16px,1.6vw,22px) var(--head);text-transform:uppercase;letter-spacing:.14em;color:#E8C98A;white-space:nowrap}
+.lplq-in::before,.lplq-in::after{content:"";position:absolute;top:50%;width:7px;height:7px;margin-top:-3.5px;background:#C9A15A;transform:rotate(45deg)}
+.lplq-in::before{left:12px}.lplq-in::after{right:12px}
+.lplq-in i{font-style:normal;color:#C9A15A}
+.lift .door{-webkit-mask-image:none;mask-image:none}
+.lift .door-num{display:none}
+.intro-logo{top:calc(var(--hdr) + (100vh - var(--hdr) - var(--bar)) / 2 + 28px)}
+@supports (height:100svh){.intro-logo{top:calc(var(--hdr) + (100svh - var(--hdr) - var(--bar)) / 2 + 28px)}}
+.hint{bottom:6px}
+/* уголки-квадратики на рамках */
+.dirb,.receipt,.form-plaque,.gtable{background-image:linear-gradient(var(--brass),var(--brass)),linear-gradient(var(--brass),var(--brass)),linear-gradient(var(--brass),var(--brass)),linear-gradient(var(--brass),var(--brass));background-size:8px 8px;background-repeat:no-repeat;background-position:4px 4px,calc(100% - 4px) 4px,4px calc(100% - 4px),calc(100% - 4px) calc(100% - 4px)}
+/* отточия — точками */
+.dirb-col a i,.rc-row2 i,.sos-row i{border:0!important;height:3px;transform:translateY(-3px)!important;background:radial-gradient(circle,var(--brass) 1.1px,transparent 1.6px) 0 50%/8px 3px repeat-x;opacity:.9}
+/* заголовки колонок указателя — слева, крупнее */
+.dirb-h{text-align:left!important;font:600 18px var(--head)!important;letter-spacing:.14em!important;color:var(--cream)!important;margin-bottom:10px!important}
+.dirb-col a{font-size:15px;letter-spacing:.12em}
+/* квитанция с шапкой таблицы */
+.rc-head{display:flex;gap:10px;padding:0 0 12px;margin-bottom:6px;border-bottom:1px solid #2a1a10;font:600 13px var(--head);text-transform:uppercase;letter-spacing:.16em;color:#2a1a10}
+.rc-head span:first-child{flex:1}
+.rc-head span:nth-child(2){width:84px;text-align:right}
+.rc-head span:nth-child(3){width:150px;text-align:right}
+.rc-row2{display:flex;align-items:baseline;gap:10px;padding:13px 0;text-decoration:none;color:#2a1a10;transition:color .4s}
+.rc-row2 .rc-n{font:500 16px var(--head);text-transform:uppercase;letter-spacing:.06em}
+.rc-row2 i:first-of-type{flex:1;--brass:#8A6516}
+.rc-row2 .rc-t{width:66px;text-align:right;font:400 14px var(--fut);color:#5a4a40}
+.rc-row2 i:last-of-type{width:16px;flex:none;--brass:#8A6516}
+.rc-row2 em{width:130px;text-align:right;font:500 16px var(--head);font-style:normal;color:#1E4A3F;white-space:nowrap}
+.rc-row2:hover{color:#1E4A3F}
+.receipt{--brass:#9A7536;background-color:#F3E9D6}
+/* аварийная табличка — кремовая с красной рамкой */
+.sos-cream{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:30px 22px;background:#F3E9D6;border:2px solid #9E2B25;outline:1px solid #9E2B25;outline-offset:-8px;text-align:center}
+.sc-big{font:700 clamp(54px,5.6vw,80px)/1 var(--head);color:#9E2B25}
+.sc-k{font:700 20px var(--head);text-transform:uppercase;letter-spacing:.08em;color:#9E2B25}
+.sc-s{font:400 13px var(--fut);color:#5a4a40;max-width:200px}
+.sc-btn{margin-top:6px;padding:12px 26px;background:#E2B23A;color:#2a1a10;font:600 12px var(--fut);text-transform:uppercase;letter-spacing:.2em;text-decoration:none;transition:background .4s}
+.sc-btn:hover{background:#9E2B25;color:#F3E9D6}
+/* гарантии — таблицей в две колонки */
+.gtable{width:min(860px,100%);margin:0 0 40px;padding:16px 34px;border:2px solid var(--brass);background-color:#E3D9C6;text-align:left}
+.gtable div{display:grid;grid-template-columns:220px minmax(0,1fr);align-items:center;padding:16px 0;border-bottom:1px solid rgba(154,117,54,.35)}
+.gtable div:last-child{border-bottom:0}
+.gtable b{font:600 15px var(--head);text-transform:uppercase;letter-spacing:.1em;color:#1D1A16}
+.gtable span{padding-left:24px;border-left:1px solid rgba(154,117,54,.6);font:400 15px var(--fut);color:#4E463D}
+/* текстовая ссылка под кнопкой */
+.tlink{margin-top:14px;padding:4px 0;border:0;border-bottom:1px solid var(--brass);background:none;color:var(--cream);font:500 12px var(--fut);text-transform:uppercase;letter-spacing:.2em;cursor:pointer;transition:color .4s}
+.tlink:hover{color:var(--mustard)}
+/* компактнее по высоте */
+.fl-body{padding-bottom:9vh}
+.mx-sign{margin-bottom:30px}
+.fl .next{margin-top:60px}
+.and-search{margin-bottom:34px}
+.dirb{margin-bottom:40px}
+.svc2{margin-bottom:34px}
+@media (max-width:760px){
+  .gtable{padding:10px 18px}
+  .gtable div{grid-template-columns:minmax(0,1fr);gap:6px}
+  .gtable span{padding-left:0;border-left:0}
+  .rc-head span:nth-child(2),.rc-row2 .rc-t,.rc-row2 i:last-of-type{display:none}
+  .rc-head span:nth-child(3){width:auto}
+  .rc-row2 em{width:auto}
+  .lplq-in{padding:7px 28px;font-size:15px}
+}
+.lift{padding-bottom:40px}
+.fl[data-tone=light] .abtn-fill{background:#1D1A16;border-color:#1D1A16;color:#ECE5D6}.fl[data-tone=light] .abtn-fill:hover{background:#9A7536;border-color:#9A7536}
