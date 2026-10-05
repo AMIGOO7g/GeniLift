@@ -1341,3 +1341,60 @@ body.pg[data-tone=light]{--brass:#9A7536;--cream:#1D1A16;--mustard:#7A5810;--tex
 }
 .lift{padding-bottom:40px}
 .fl[data-tone=light] .abtn-fill{background:#1D1A16;border-color:#1D1A16;color:#ECE5D6}.fl[data-tone=light] .abtn-fill:hover{background:#9A7536;border-color:#9A7536}
+
+/* ===== v37: мужской характер — тяжёлый геометрический шрифт, одна толстая рамка, два цвета на этаже ===== */
+.mx-t{font:700 clamp(28px,4vw,58px)/1.08 var(--fut)!important;letter-spacing:.16em!important;margin-right:-.16em;text-transform:uppercase}
+.fl-hero .mx-t{font-size:clamp(28px,3.8vw,54px)!important}
+.mx-n{font-family:var(--fut)!important;font-weight:600!important;-webkit-text-stroke-width:2px!important}
+.mx-plaque{padding:18px 40px;border:3px solid var(--brass)!important;outline:0!important;background:var(--fb,var(--fl))!important}
+.mx-plaque::before,.mx-plaque::after{display:none!important}
+.bigline{display:block;margin:0 0 10px;font:700 clamp(18px,2.2vw,28px)/1.2 var(--fut);text-transform:uppercase;letter-spacing:.14em;color:var(--cream)}
+/* полоса вывески — второй цвет этажа во всю ширину, снизу толстая латунная черта */
+.fl .mx-sign{position:relative}
+.fl .mx-sign::before{content:"";position:absolute;z-index:-1;top:-14vh;bottom:-34px;left:50%;width:100vw;margin-left:-50vw;background:var(--fb,transparent);border-bottom:3px solid var(--brass)}
+.fl .mx-sign{margin-bottom:64px}
+/* рамки: одна толстая, без уголков и ромбов */
+.dirb,.receipt,.form-plaque,.gtable{border:3px solid var(--brass)!important;outline:0!important;box-shadow:none!important;background-image:none!important}
+.dirb{padding:0}
+.dirb-col{border:0!important}
+.dirb-col+.dirb-col{border-left:2px solid rgba(201,161,90,.45)!important}
+.receipt{border-color:#9A7536!important}
+.sos-cream{border:3px solid #9E2B25;outline:0}
+.lframe{border:3px solid #C9A15A;outline:0;background-image:none}
+.lplq-in{border:2px solid #C9A15A;outline:0;font:600 clamp(14px,1.4vw,18px) var(--fut);letter-spacing:.24em;padding:8px 22px}
+.lplq-in::before,.lplq-in::after{display:none}
+.lplq-in b{font-weight:700}
+.facts{border-top-width:2px;border-bottom-width:2px}
+.abtn{border-width:3px}
+.next{font-family:var(--fut)}
+/* меню: план здания */
+.lm-panel{width:min(1000px,94vw)!important;max-height:92vh;overflow:auto;border:3px solid #C9A15A!important;outline:0!important}
+.lm-panel::before{display:none}
+.lm-body{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:0}
+.plan{position:relative;margin:16px;border:2px solid rgba(201,161,90,.5);background:#E9DFCB}
+.plan img{display:block;width:100%;height:auto}
+.pl-f{position:absolute;left:3%;right:3%;top:var(--t);height:var(--h);display:flex;align-items:center;justify-content:center;text-decoration:none;outline:2px solid transparent;outline-offset:-2px;transition:outline-color .4s,background .4s}
+.pl-f span{display:inline-flex;align-items:baseline;gap:10px;padding:7px 14px;background:rgba(20,18,16,.84);border:2px solid #C9A15A;font:600 12px var(--fut);text-transform:uppercase;letter-spacing:.16em;color:#F3E9D6;transition:background .4s,color .4s}
+.pl-f b{color:#E2B23A}
+.pl-f:hover,.pl-f:focus-visible{outline-color:#E2B23A;background:rgba(226,178,58,.12)}
+.pl-f:hover span{background:#E2B23A;color:#2a1a10}
+.pl-f:hover b{color:#2a1a10}
+.pl-f.here span::after{content:"Вы здесь";margin-left:10px;padding-left:10px;border-left:1px solid rgba(201,161,90,.6);color:#E2B23A;font-weight:500;letter-spacing:.1em}
+.lm-side{display:flex;flex-direction:column;border-left:2px solid rgba(201,161,90,.35)}
+.lm-side .lm-keys{padding:14px 24px}
+.lm-side .sos-menu{margin:0 24px}
+.lm-side .lm-foot{margin-top:auto}
+@media (max-width:760px){
+  .lm-body{grid-template-columns:minmax(0,1fr)}
+  .lm-side{border-left:0;border-top:2px solid rgba(201,161,90,.35)}
+  .lm-side .lm-keys{display:none}
+  .plan{margin:12px}
+  .pl-f span{font-size:10px;padding:5px 10px;letter-spacing:.12em}
+}
+@media (max-width:640px){.mx-t{letter-spacing:.1em!important;margin-right:-.1em}.mx-plaque{padding:14px 18px}}
+.plan{justify-self:center;width:fit-content}
+.plan img{width:auto;max-width:100%;max-height:calc(88vh - 96px)}
+@media (max-width:760px){.plan img{max-height:none;width:100%}.plan{width:auto}}
+.ps-t{font:700 clamp(32px,4.4vw,64px)/1.1 var(--fut)!important;letter-spacing:.14em!important;text-transform:uppercase}
+.title-prod .ps-t{letter-spacing:.08em!important}
+.psign .mx-n{-webkit-text-stroke-width:2px}

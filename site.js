@@ -1,5 +1,6 @@
 /* GeniLift — сайт: заставка, шахта с параллаксом, двери этажей, появления, заявка, каталог */
 (() => {
+  if (!/\/$|\.html$/.test(location.pathname)) { location.replace(location.pathname + '/' + location.search + location.hash); return; }
   const root = document.documentElement;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const hero = document.querySelector('.hero');
@@ -148,6 +149,8 @@
   if (lift) {
     const door = document.getElementById('liftDoor');
     const num = document.getElementById('liftNum'), nm = document.getElementById('liftName');
+    const cab = document.getElementById('liftCab');
+    [2, 3, 4, 5].forEach(n => { const im = new Image(); im.src = 'assets/shaft/cab-' + n + '.webp'; });
     const fls = [...document.querySelectorAll('section.fl')].map(el => ({ el, gap: el.querySelector('.lift-gap'), n: el.dataset.floor, name: el.dataset.short }));
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
     const sm = v => v * v * (3 - 2 * v);
@@ -190,8 +193,15 @@
         }
       });
       const show = prev || f0;
-      if (show && show.n !== shown) { shown = show.n; num.textContent = '0' + show.n; nm.textContent = show.el.dataset.name; }
+      if (show && show.n !== shown) { shown = show.n; num.textContent = '0' + show.n; nm.textContent = show.el.dataset.name; if (cab) cab.src = 'assets/shaft/cab-' + show.n + '.webp'; window.__glFloor = +show.n; }
       lift.style.setProperty('--v', vis.toFixed(3));
+      lift.style.visibility = vis < .01 ? 'hidden' : 'visible';
+      /* пауза: этаж стоит на месте, пока читаем, потом уходит */
+      fls.forEach(f => {
+        const hold = VH * .28, b = f.el.querySelector('.fl-body');
+        const y = s <= f.b ? 0 : Math.min(s - f.b, hold);
+        b.style.transform = y ? `translate3d(0,${y.toFixed(1)}px,0)` : '';
+      });
       lift.style.setProperty('--hint', (1 - clamp(s / (VH * .06))).toFixed(3));
       door.style.setProperty('--o', open.toFixed(3));
       door.style.setProperty('--bp', bp.toFixed(3));
@@ -259,7 +269,7 @@
     const url = new URL(a.href, location.href);
     if (url.pathname === location.pathname && url.hash) return;   // якорь на этой же странице
     e.preventDefault();
-    const key = a.closest('.lm-keys');
+    const key = a.closest('.lm-keys') || a.closest('.plan');
     if (key) { a.classList.add('lit'); setTimeout(() => go(a.href), 260); } else go(a.href);
   });
   addEventListener('pageshow', e => { if (e.persisted) pd.classList.remove('shut'); });
@@ -269,11 +279,17 @@
   const lmFloor = document.getElementById('lmFloor');
   const menuBtn = document.querySelector('[data-menu-open]');
   const here = location.pathname.replace(/index\.html$/, '');
+  lm.querySelectorAll('.pl-f').forEach(a => {
+    const p = new URL(a.href, location.href).pathname.replace(/index\.html$/, '');
+    if (p === here) a.classList.add('here');
+  });
   lm.querySelectorAll('.lm-keys a').forEach(a => {
     const p = new URL(a.href, location.href).pathname.replace(/index\.html$/, '');
     if (p === here) a.setAttribute('aria-current', 'page');
   });
-  const openMenu = () => { lmFloor.textContent = floorNow; lm.classList.add('open'); lm.setAttribute('aria-hidden', 'false'); menuBtn.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; setTimeout(() => lm.querySelector('.lm-keys a').focus(), 60); };
+  const openMenu = () => {
+    const fl = window.__glFloor || floorNow; lmFloor.textContent = fl;
+    if (window.__glFloor) { const ps = [...lm.querySelectorAll('.pl-f')].reverse(); ps.forEach((a, i) => a.classList.toggle('here', i + 1 === fl)); } lm.classList.add('open'); lm.setAttribute('aria-hidden', 'false'); menuBtn.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; setTimeout(() => lm.querySelector('.lm-keys a').focus(), 60); };
   const closeMenu = () => { lm.classList.remove('open'); lm.setAttribute('aria-hidden', 'true'); menuBtn.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; menuBtn.focus(); };
   menuBtn.addEventListener('click', openMenu);
   lm.addEventListener('click', e => { if (e.target === lm || e.target.closest('[data-menu-close]')) closeMenu(); if (e.target.closest('[data-cart-open]')) closeMenu(); });
