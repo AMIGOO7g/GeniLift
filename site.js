@@ -37,7 +37,7 @@
       await wait(250); add('s1');
       await wait(450); add('s2');
       await wait(1250); add('s3');
-      await wait(1000); if (skipped) return;
+      await wait(2700); if (skipped) return;
       const a = document.getElementById('introLogo'), f = a.getBoundingClientRect();
       const t = document.querySelector('#hdrLogo .logo-svg').getBoundingClientRect();
       a.style.transform = `translate(${t.left - f.left}px, ${t.top - f.top}px) scale(${t.height / f.height})`;
