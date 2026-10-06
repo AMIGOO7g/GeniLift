@@ -161,7 +161,7 @@
       const hd = document.querySelector('.hdr'); hdrH = hd ? hd.offsetHeight : 76;
       fls.forEach((f, i) => {
         const top = f.gap.getBoundingClientRect().top + scrollY, h = f.gap.offsetHeight;
-        f.a = i === 0 ? 0 : top - VH * .3;          // предыдущий раздел почти ушёл
+        f.a = i === 0 ? 0 : top - VH * .12;         // предыдущий этаж ушёл целиком
         f.b = top + h - hdrH;                         // этаж уже стоит под шапкой — лифт погас
       });
     };
@@ -194,20 +194,16 @@
       });
       const show = prev || f0;
       if (show && show.n !== shown) { shown = show.n; num.textContent = '0' + show.n; nm.textContent = show.el.dataset.name; if (cab) cab.src = 'assets/shaft/cab-' + show.n + '.webp'; window.__glFloor = +show.n; }
-      lift.style.setProperty('--v', vis.toFixed(3));
-      lift.style.visibility = vis < .01 ? 'hidden' : 'visible';
-      /* пауза: этаж стоит на месте, пока читаем, потом уходит */
-      fls.forEach(f => {
-        const hold = VH * .28, b = f.el.querySelector('.fl-body');
-        const y = s <= f.b ? 0 : Math.min(s - f.b, hold);
-        b.style.transform = y ? `translate3d(0,${y.toFixed(1)}px,0)` : '';
-      });
-      lift.style.setProperty('--hint', (1 - clamp(s / (VH * .06))).toFixed(3));
-      door.style.setProperty('--o', open.toFixed(3));
-      door.style.setProperty('--bp', bp.toFixed(3));
-      door.style.setProperty('--bo', Math.max(0, bo).toFixed(3));
-      door.style.setProperty('--wo', Math.max(0, bo).toFixed(3));
-      door.style.setProperty('--hold', hold.toFixed(3));
+      const set = (el, k, v) => { if (el['_' + k] !== v) { el['_' + k] = v; el.style.setProperty(k, v); } };
+      set(lift, '--v', vis.toFixed(2));
+      const vv = vis < .01 ? 'hidden' : 'visible'; if (lift._vis !== vv) { lift._vis = vv; lift.style.visibility = vv; }
+
+      set(lift, '--hint', (1 - clamp(s / (VH * .06))).toFixed(2));
+      set(door, '--o', open.toFixed(3));
+      set(door, '--bp', bp.toFixed(3));
+      set(door, '--bo', Math.max(0, bo).toFixed(2));
+      set(door, '--wo', Math.max(0, bo).toFixed(2));
+      set(door, '--hold', hold.toFixed(2));
     };
     /* цвет этажа: фон перетекает в цвет раздела, который сейчас на экране */
     const fbg = document.getElementById('floorBg');
@@ -378,6 +374,43 @@
     st.textContent = 'Демо: отправка заработает после подключения сервера.';
   });
   render();
+
+  /* ---------- Страница корзины и оформление ---------- */
+  const cpLines = document.getElementById('cpLines');
+  if (cpLines) {
+    const cpEmpty = document.getElementById('cpEmpty'), cpSum = document.getElementById('cpSum');
+    const plural = n => n % 10 === 1 && n % 100 !== 11 ? 'позиция' : [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100) ? 'позиции' : 'позиций';
+    const draw = () => {
+      cpLines.innerHTML = cart.map((i, k) => `<div class="cp-line"><a href="../zapchasti/${esc(i.s)}/"><b>${esc(i.a)}</b><span>${esc(i.b)} · ${esc(i.n)}</span></a>
+        <div class="qty"><button type="button" data-q="${k}" data-d="-1" aria-label="Меньше">−</button><output>${i.q}</output><button type="button" data-q="${k}" data-d="1" aria-label="Больше">+</button></div>
+        <em>по запросу</em><button class="rm" type="button" data-rm="${k}" aria-label="Убрать">×</button></div>`).join('');
+      const total = cart.reduce((n, i) => n + i.q, 0);
+      cpEmpty.hidden = cart.length > 0;
+      cpSum.textContent = cart.length ? `${cart.length} ${plural(cart.length)}, ${total} шт. Цена и срок — после проверки совместимости.` : '';
+    };
+    draw();
+    document.addEventListener('click', e => { if (e.target.closest('[data-q],[data-rm]')) setTimeout(draw, 0); });
+    const f = document.getElementById('checkout');
+    const comp = f.querySelector('.cp-company');
+    f.querySelectorAll('input[name=who]').forEach(r => r.addEventListener('change', () => { comp.hidden = f.who.value !== 'company'; }));
+    const addr = f.querySelector('.cp-addr');
+    f.querySelectorAll('input[name=ship]').forEach(r => r.addEventListener('change', () => { addr.hidden = f.ship.value === 'self'; }));
+    const fs = f.querySelector('.cp-file span');
+    f.photo.addEventListener('change', () => { fs.textContent = f.photo.files[0] ? f.photo.files[0].name : 'Прикрепить фото шильдика'; });
+    f.addEventListener('submit', e => {
+      e.preventDefault();
+      const st = f.querySelector('.cp-status');
+      if (!f.phone.value.trim()) { st.textContent = 'Укажите телефон — по нему перезвоним.'; f.phone.focus(); return; }
+      if (!cart.length && !f.photo.files[0] && !f.msg.value.trim()) { st.textContent = 'Добавьте деталь из лавки, фото или опишите задачу.'; return; }
+      if (!f.agree.checked) { st.textContent = 'Отметьте согласие на обработку данных.'; return; }
+      const num = 'GL-' + String(Date.now()).slice(-5);
+      const done = document.getElementById('cpDone');
+      done.querySelector('.cp-num').textContent = `Заказ ${num} принят (демо: отправка заработает после подключения сервера)`;
+      f.hidden = true; done.hidden = false;
+      cart = []; save(cart); render(); draw();
+      done.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
 
   /* Каталог: поиск, марки, разделы */
   const grid = document.getElementById('grid');
