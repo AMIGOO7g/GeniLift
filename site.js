@@ -149,18 +149,13 @@
   if (lift) {
     const sceneL = lift.querySelector('.lscene');
     const door = document.getElementById('liftDoor');
-    /* правая половина сцены — копия левой, без id */
-    const sceneR = sceneL.cloneNode(true);
-    sceneR.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
-    sceneL.classList.add('lscene-l'); sceneR.classList.add('lscene-r');
-    lift.appendChild(sceneR);
-    const doorR = sceneR.querySelector('.door');
-    const doors = [door, doorR];
-    const nums = [document.getElementById('liftNum'), sceneR.querySelector('.lplq-n')];
-    const names = [document.getElementById('liftName'), sceneR.querySelector('.lplq-name')];
-    const cabs = [document.getElementById('liftCab'), sceneR.querySelector('.door-cab')];
-    /* слой с титром этажа — под половинами сцены */
-    const back = document.createElement('div'); back.className = 'lback'; lift.insertBefore(back, sceneL);
+    sceneL.classList.add('lscene-l');
+    const doors = [door];
+    const nums = [document.getElementById('liftNum')];
+    const names = [document.getElementById('liftName')];
+    const cabs = [document.getElementById('liftCab')];
+    /* титр этажа — «соседняя комната» справа от лифта; камера едет вбок */
+    const back = document.createElement('div'); back.className = 'lback'; lift.appendChild(back);
     const fls = [...document.querySelectorAll('section.fl')].map(el => ({ el, gap: el.querySelector('.lift-gap'), n: el.dataset.floor, name: el.dataset.short }));
     [2, 3, 4, 5].forEach(n => { const im = new Image(); im.src = 'assets/shaft/cab-' + n + '.webp'; });
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -171,7 +166,7 @@
       VH = probe.offsetHeight || innerHeight;
       const hd = document.querySelector('.hdr'); hdrH = hd ? hd.offsetHeight : 76;
       const bar = innerWidth <= 820 ? 56 : 0;
-      const dh = Math.round(Math.min(VH - hdrH - bar - (innerWidth <= 820 ? 150 : 220), 720, innerWidth * 1.25));
+      const dh = Math.round(Math.min(VH - hdrH - bar - (innerWidth <= 820 ? 170 : 240), 720, innerWidth * 1.25));
       lift.style.setProperty('--dh', dh + 'px');
       fls.forEach((f, i) => {
         const top = f.gap.getBoundingClientRect().top + scrollY, h = f.gap.offsetHeight;
@@ -182,8 +177,10 @@
     let ticking = false, shown = '', backFor = '';
     const setBack = f => {
       if (backFor === f.n) return; backFor = f.n;
-      const sign = f.el.querySelector('.mx-sign'); if (!sign) return;
-      const c = sign.cloneNode(true); c.classList.add('in');
+      const tc = f.el.querySelector('.tc'); if (!tc) return;
+      const c = tc.cloneNode(true);
+      c.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
+      c.querySelectorAll('.mx-sign').forEach(e => e.classList.add('in'));
       const wrap = document.createElement('div');
       wrap.className = f.el.className + ' lback-fl'; wrap.setAttribute('style', f.el.getAttribute('style') || '');
       wrap.dataset.tone = f.el.dataset.tone || '';
@@ -202,7 +199,7 @@
         f0 = f; prev = fls[i - 1]; vis = 1;
         if (i === 0) {
           open = sm(clamp((t - .06) / .34));
-          split = sm(clamp((t - .52) / .48));
+          split = sm(clamp((t - .5) / .5));
           prev = null;
         } else {
           vis = sm(clamp(t / .08));
@@ -213,7 +210,7 @@
           bp = sm(u); bo = Math.min(1, u / .12, (1 - u) / .12);
           hold = clamp((t - .36) / .03) * (1 - clamp((t - .44) / .05));
           if (t >= .24) prev = null;
-          split = sm(clamp((t - .66) / .34));
+          split = sm(clamp((t - .64) / .36));
         }
       });
       const show = prev || f0;
@@ -333,6 +330,62 @@
       st.textContent = 'Демо: отправка заработает после подключения сервера.';
     });
   });
+})();
+
+/* ---------- Шахта вместо полосы прокрутки: этажи и кабинка ---------- */
+(() => {
+  const home = document.body.classList.contains('home');
+  let marks = [];
+  if (home) {
+    marks = [...document.querySelectorAll('section.fl')].map(s => ({ el: s.querySelector('.fl-body'), n: s.dataset.floor.padStart(2, '0'), name: s.dataset.name }));
+  } else {
+    const ps = document.querySelector('.psign');
+    if (ps) marks.push({ el: ps, n: '↑', name: 'Начало' });
+    document.querySelectorAll('main .sec-t, main .sect, main .faq2, main .prod2, main .grid, main .phone-plq').forEach(el => {
+      if (el.closest('.sect') && !el.classList.contains('sect')) return;
+      const t = el.querySelector && el.querySelector('.sec-t');
+      marks.push({ el, n: String(marks.length).padStart(2, '0'), name: t ? t.textContent : '' });
+    });
+  }
+  const bar = document.createElement('nav');
+  bar.className = 'shaftbar'; bar.setAttribute('aria-label', home ? 'Этажи' : 'Разделы страницы');
+  bar.innerHTML = '<span class="sb-line"></span><span class="sb-cab" role="slider" tabindex="-1" aria-label="Положение на странице"></span>';
+  document.body.appendChild(bar);
+  const cab = bar.querySelector('.sb-cab');
+  const ticks = marks.map(m => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'sb-tick';
+    b.innerHTML = `<b>${m.n}</b><span>${m.name || ''}</span>`;
+    b.addEventListener('click', () => { const y = m.el.getBoundingClientRect().top + scrollY - (document.querySelector('.hdr')?.offsetHeight || 76); scrollTo({ top: y, behavior: 'smooth' }); });
+    bar.appendChild(b); return b;
+  });
+  let H = 1, T = 1, hideT;
+  const place = () => {
+    H = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+    T = bar.clientHeight;
+    marks.forEach((m, i) => {
+      const y = Math.min(1, Math.max(0, (m.el.getBoundingClientRect().top + scrollY - 80) / H));
+      ticks[i].style.top = (y * T) + 'px';
+    });
+  };
+  const upd = () => {
+    const p = Math.min(1, Math.max(0, scrollY / H));
+    cab.style.transform = `translate3d(-50%, ${(p * (T - 30)).toFixed(1)}px, 0)`;
+    let cur = -1; marks.forEach((m, i) => { if (m.el.getBoundingClientRect().top < innerHeight * .5) cur = i; });
+    ticks.forEach((t, i) => t.classList.toggle('on', i === cur));
+    bar.classList.add('show'); clearTimeout(hideT); hideT = setTimeout(() => bar.classList.remove('show'), 1600);
+  };
+  let tk = false;
+  addEventListener('scroll', () => { if (!tk) { tk = true; requestAnimationFrame(() => { tk = false; upd(); }); } }, { passive: true });
+  addEventListener('resize', () => { place(); upd(); });
+  addEventListener('load', () => { place(); upd(); });
+  /* кабинку можно тянуть, как обычный ползунок */
+  let drag = false;
+  const toScroll = e => { const r = bar.getBoundingClientRect(); const p = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height)); scrollTo(0, p * H); };
+  cab.addEventListener('pointerdown', e => { drag = true; cab.setPointerCapture(e.pointerId); e.preventDefault(); });
+  cab.addEventListener('pointermove', e => { if (drag) toScroll(e); });
+  cab.addEventListener('pointerup', () => { drag = false; });
+  bar.querySelector('.sb-line').addEventListener('click', toScroll);
+  place(); upd();
 })();
 /* ---------- Заявка, каталог, вкладки ---------- */
 (() => {
