@@ -1522,3 +1522,95 @@ html,body{overflow-x:hidden}
   .cp-line em{display:none}
 }
 .cp-company[hidden],.cp-addr[hidden],.cartp [hidden]{display:none!important}
+
+/* ===== v41 ===== */
+/* шапка всегда на месте: clip не ломает «прилипание» шапки, в отличие от hidden */
+html,body{overflow-x:clip!important}
+/* лифт закрывает весь экран, включая область под шапкой — следующий этаж не просвечивает */
+.lift{top:0!important;padding-top:var(--hdr)}
+.pagedoors i{transition-duration:.6s!important}
+/* этаж начинается с титра на весь экран: цифра-слой, заголовок, черта, строка — и пустота вокруг */
+.fl .mx-sign{min-height:calc(100vh - var(--hdr));justify-content:center;margin-bottom:0!important;padding:0 0 4vh!important}
+@supports (height:100svh){.fl .mx-sign{min-height:calc(100svh - var(--hdr) - var(--bar))}}
+.fl .mx-sign::before{top:-4vh!important;bottom:0!important;border-bottom:3px solid var(--brass)}
+.fl-body{padding-top:0!important}
+.flbody{display:flex;flex-direction:column;align-items:center;width:100%;padding-top:70px}
+.fl-body{scroll-snap-align:start;scroll-margin-top:var(--hdr)}
+/* крупная цифра оживает один раз: медленно проявляется и чуть приближается */
+.mx-n{opacity:0!important;transform:translate(-50%,-54%) scale(.95)!important;transition:opacity 2.6s ease .2s,transform 3s cubic-bezier(.2,.6,.2,1) .2s!important}
+.fl-body.go .mx-n,.psign.in .mx-n{opacity:.08!important;transform:translate(-50%,-54%) scale(1)!important}
+.fl[data-tone=light] .fl-body.go .mx-n,.pg[data-tone=light] .psign.in .mx-n{opacity:.09!important}
+/* заставка: подпись под логотипом */
+.intro-tag{position:absolute;left:0;right:0;top:calc(var(--hdr) + (100vh - var(--hdr) - var(--bar)) / 2 + 160px);margin:0;text-align:center;font:700 clamp(14px,1.6vw,20px) var(--fut);text-transform:uppercase;letter-spacing:.28em;color:#E8C98A;opacity:0;transition:opacity .8s ease}
+.s3 .intro-tag{opacity:1}
+.s4 .intro-tag{opacity:0;transition-duration:.4s}
+/* сервис: 24/7 отдельной строкой */
+.bigline-sos{color:#F08E82!important;font-size:clamp(22px,2.8vw,36px)!important}
+/* о компании на этаже */
+.about-lead{max-width:720px;margin:0 auto 40px;text-align:center;font:500 clamp(17px,1.5vw,21px)/1.65 var(--fut);color:#3A332B}
+.pg .about-lead{color:var(--text)}
+.sub-h2{margin:60px 0 18px;font:900 20px var(--fut);text-transform:uppercase;letter-spacing:.16em;color:var(--hc)}
+.fl .wrows{width:min(1000px,100%)}
+.about-text{display:flex;flex-direction:column;align-items:center}
+.about-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;width:min(1000px,100%);margin:0 0 50px;border-top:3px solid var(--brass);border-bottom:3px solid var(--brass)}
+.about-cols div{padding:26px 24px;text-align:center}
+.about-cols div+div{border-left:2px solid var(--line)}
+.about-cols b{display:block;margin-bottom:10px;font:900 15px var(--fut);text-transform:uppercase;letter-spacing:.16em;color:var(--hc)}
+.about-cols span{font:400 15px/1.6 var(--fut);color:var(--muted)}
+.pg .doc{border:3px solid var(--brass)!important}
+.pg .doc::before{display:none}
+/* лавка на главной: марки ровной сеткой, разделы по центру, без кнопки «войти» */
+.bgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.bgrid a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 6px;border:2px solid rgba(201,161,90,.35);text-decoration:none;transition:border-color .4s,color .4s}
+.bgrid a span{font:700 15px var(--fut);letter-spacing:.12em;text-transform:uppercase;color:var(--cream)}
+.bgrid a em{font-style:normal;font-size:12px;color:var(--brass)}
+.bgrid a:hover{border-color:var(--mustard)}
+.bgrid a:hover span{color:var(--mustard)}
+.bgrid a:last-child:nth-child(odd){grid-column:1/-1}
+.clist2{display:flex;flex-direction:column;align-items:center}
+.clist2 a{width:100%;padding:12px 0;text-align:center;border-bottom:1px solid rgba(201,161,90,.3);text-decoration:none;font:600 15px var(--fut);text-transform:uppercase;letter-spacing:.12em;color:var(--cream);transition:color .4s}
+.clist2 a:last-child{border-bottom:0}
+.clist2 a:hover{color:var(--mustard)}
+.shopdir .dirb-h{text-align:center!important}
+.shop-links{display:flex;align-items:center;justify-content:center;gap:14px;margin:26px 0 0}
+.shop-links a,.shop-links button{padding:4px 0;border:0;border-bottom:2px solid var(--mustard);background:none;color:var(--mustard);font:700 14px var(--fut);text-transform:uppercase;letter-spacing:.18em;text-decoration:none;cursor:pointer}
+.shop-links .sep{font-size:8px;color:var(--brass)}
+/* каталог: разделы сверху одной строкой; верх бордо, список деталей на оливковом */
+body.pg-shop{--fl:#3E4127}
+.pg-shop .title-shop{position:relative;padding-bottom:34px;margin-bottom:40px}
+.pg-shop .title-shop::before{content:"";position:absolute;z-index:-1;left:0;right:0;top:-200px;bottom:0;background:#5E1C24;box-shadow:0 0 0 100vmax #5E1C24;clip-path:inset(0 -100vmax);border-bottom:3px solid var(--brass)}
+.pg-shop .page{isolation:isolate}
+.pg .shop{display:block!important}
+.pg .cats{position:static!important;width:100%;margin:0 0 26px;background:none!important;border:0!important;border-bottom:2px solid var(--line-2)!important}
+.pg .cats ol{display:flex!important;flex-wrap:wrap;justify-content:center;gap:0;padding:0}
+.pg .cats li+li button::after{display:none}
+.pg .cats button{display:block!important;padding:14px 18px!important;font:600 13px var(--fut)!important;text-transform:uppercase;letter-spacing:.12em}
+.pg .cats button i,.pg .cats button em{display:none}
+.pg .cats button[aria-pressed=true]::before{left:18px;right:18px;top:auto;bottom:-2px;width:auto;height:3px}
+.pg .meta{justify-content:center;gap:20px}
+/* меню: крупные жёлтые цифры, всё по центральной оси */
+.lm-keys{justify-items:center}
+.lm-keys a{flex-direction:column;gap:2px!important;width:100%;padding:12px 0!important;text-align:center;justify-content:center;font:700 15px var(--fut)!important;letter-spacing:.16em!important}
+.lm-keys a i{width:auto!important;height:auto!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;font:900 30px/1 var(--fut)!important;color:#E2B23A!important}
+.lm-keys a:hover i,.lm-keys a.lit i{color:#F6EBD5!important}
+.lm-keys a[aria-current] i{color:#F6EBD5!important}
+.lm-keys .lm-sub{font:500 12px var(--fut)!important;color:rgba(243,233,214,.7)}
+.lm-head{justify-content:center;position:relative}
+.lm-head .ico{position:absolute;right:12px}
+.lm-screen{flex-direction:column;gap:6px!important;text-align:center}
+.lm-screen b{border:0!important;outline:0!important;width:auto!important;height:auto!important;font:900 34px/1 var(--fut)!important;color:#E2B23A!important}
+.sos-menu{justify-content:center}
+.lm-foot{align-items:center;text-align:center}
+@media (max-width:760px){
+  .about-cols{grid-template-columns:minmax(0,1fr)}
+  .about-cols div+div{border-left:0;border-top:2px solid var(--line)}
+  .shopdir{grid-template-columns:minmax(0,1fr)!important}
+  .shopdir .dirb-col+.dirb-col{border-left:0!important;border-top:2px solid rgba(201,161,90,.45)!important}
+  .flbody{padding-top:50px}
+  .pg .cats ol{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto}
+}
+.clist2 a{justify-content:center!important;display:block!important}
+.pg-shop .title-prod,.pg-shop .psign{position:relative}
+.pg-shop .title-prod::before,.pg-shop .page>.wrap>.psign::before{content:"";position:absolute;z-index:-1;left:0;right:0;top:-200px;bottom:-30px;background:#5E1C24;box-shadow:0 0 0 100vmax #5E1C24;clip-path:inset(0 -100vmax);border-bottom:3px solid var(--brass)}
+.pg-shop .page>.wrap>.psign{margin-bottom:70px}
+.pg-shop .pfig{background:#2F3220}

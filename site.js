@@ -159,6 +159,9 @@
     const layout = () => {
       VH = probe.offsetHeight || innerHeight;
       const hd = document.querySelector('.hdr'); hdrH = hd ? hd.offsetHeight : 76;
+      const bar = innerWidth <= 820 ? 56 : 0;
+      const dh = Math.round(Math.min(VH - hdrH - bar - 170, 740, innerWidth * 1.28));
+      lift.style.setProperty('--dh', dh + 'px');
       fls.forEach((f, i) => {
         const top = f.gap.getBoundingClientRect().top + scrollY, h = f.gap.offsetHeight;
         f.a = i === 0 ? 0 : top - VH * .12;         // предыдущий этаж ушёл целиком
@@ -248,7 +251,9 @@
   const pd = document.getElementById('pagedoors');
   if (root.classList.contains('nav-in')) {
     pd.classList.add('shut');
-    requestAnimationFrame(() => requestAnimationFrame(() => { root.classList.remove('nav-in'); pd.classList.remove('shut'); }));
+    /* открываем двери, когда страница действительно готова к показу (шрифты), — иначе Safari «съедает» анимацию */
+    const openDoors = () => requestAnimationFrame(() => requestAnimationFrame(() => { root.classList.remove('nav-in'); pd.classList.remove('shut'); }));
+    Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 700))]).then(() => setTimeout(openDoors, 120));
     try { sessionStorage.removeItem('gl-nav'); } catch (e) {}
   }
   const go = href => {
@@ -284,7 +289,7 @@
     if (p === here) a.setAttribute('aria-current', 'page');
   });
   const openMenu = () => {
-    const fl = window.__glFloor || floorNow; lmFloor.textContent = fl;
+    const fl = window.__glFloor || floorNow; lmFloor.textContent = String(fl).padStart(2, '0');
     if (window.__glFloor) { const ps = [...lm.querySelectorAll('.pl-f')].reverse(); ps.forEach((a, i) => a.classList.toggle('here', i + 1 === fl)); } lm.classList.add('open'); lm.setAttribute('aria-hidden', 'false'); menuBtn.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; setTimeout(() => lm.querySelector('.lm-keys a').focus(), 60); };
   const closeMenu = () => { lm.classList.remove('open'); lm.setAttribute('aria-hidden', 'true'); menuBtn.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; menuBtn.focus(); };
   menuBtn.addEventListener('click', openMenu);
