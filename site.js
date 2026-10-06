@@ -144,14 +144,25 @@
     layout(); frame();
   }
 
-  /* ---------- Лифт: один, по центру тёмного экрана; этажи сменяются ---------- */
+  /* ---------- Лифт: двери открываются, затем вся сцена расходится по шву — за ней уже стоит этаж ---------- */
   const lift = document.getElementById('lift');
   if (lift) {
+    const sceneL = lift.querySelector('.lscene');
     const door = document.getElementById('liftDoor');
-    const num = document.getElementById('liftNum'), nm = document.getElementById('liftName');
-    const cab = document.getElementById('liftCab');
-    [2, 3, 4, 5].forEach(n => { const im = new Image(); im.src = 'assets/shaft/cab-' + n + '.webp'; });
+    /* правая половина сцены — копия левой, без id */
+    const sceneR = sceneL.cloneNode(true);
+    sceneR.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
+    sceneL.classList.add('lscene-l'); sceneR.classList.add('lscene-r');
+    lift.appendChild(sceneR);
+    const doorR = sceneR.querySelector('.door');
+    const doors = [door, doorR];
+    const nums = [document.getElementById('liftNum'), sceneR.querySelector('.lplq-n')];
+    const names = [document.getElementById('liftName'), sceneR.querySelector('.lplq-name')];
+    const cabs = [document.getElementById('liftCab'), sceneR.querySelector('.door-cab')];
+    /* слой с титром этажа — под половинами сцены */
+    const back = document.createElement('div'); back.className = 'lback'; lift.insertBefore(back, sceneL);
     const fls = [...document.querySelectorAll('section.fl')].map(el => ({ el, gap: el.querySelector('.lift-gap'), n: el.dataset.floor, name: el.dataset.short }));
+    [2, 3, 4, 5].forEach(n => { const im = new Image(); im.src = 'assets/shaft/cab-' + n + '.webp'; });
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
     const sm = v => v * v * (3 - 2 * v);
     const fbgEl = document.getElementById('floorBg');
@@ -160,55 +171,67 @@
       VH = probe.offsetHeight || innerHeight;
       const hd = document.querySelector('.hdr'); hdrH = hd ? hd.offsetHeight : 76;
       const bar = innerWidth <= 820 ? 56 : 0;
-      const dh = Math.round(Math.min(VH - hdrH - bar - 170, 740, innerWidth * 1.28));
+      const dh = Math.round(Math.min(VH - hdrH - bar - (innerWidth <= 820 ? 150 : 220), 720, innerWidth * 1.25));
       lift.style.setProperty('--dh', dh + 'px');
       fls.forEach((f, i) => {
         const top = f.gap.getBoundingClientRect().top + scrollY, h = f.gap.offsetHeight;
-        f.a = i === 0 ? 0 : top - VH * .12;         // предыдущий этаж ушёл целиком
-        f.b = top + h - hdrH;                         // этаж уже стоит под шапкой — лифт погас
+        f.a = i === 0 ? 0 : top - VH * .12;
+        f.b = top + h - hdrH;                         // этаж встал под шапкой — сцена ушла
       });
     };
-    let ticking = false, shown = '';
+    let ticking = false, shown = '', backFor = '';
+    const setBack = f => {
+      if (backFor === f.n) return; backFor = f.n;
+      const sign = f.el.querySelector('.mx-sign'); if (!sign) return;
+      const c = sign.cloneNode(true); c.classList.add('in');
+      const wrap = document.createElement('div');
+      wrap.className = f.el.className + ' lback-fl'; wrap.setAttribute('style', f.el.getAttribute('style') || '');
+      wrap.dataset.tone = f.el.dataset.tone || '';
+      const body = document.createElement('div'); body.className = 'wrap fl-body go'; body.appendChild(c); wrap.appendChild(body);
+      back.replaceChildren(wrap);
+    };
+    const set = (el, k, v) => { if (el && el['_' + k] !== v) { el['_' + k] = v; el.style.setProperty(k, v); } };
     const frame = () => {
       ticking = false;
       const s = scrollY;
-      let vis = 0, open = 0, bp = 0, bo = 0, hold = 0, f0 = null, prev = null;
+      let vis = 0, open = 0, bp = 0, bo = 0, hold = 0, split = 0, f0 = null, prev = null;
       fls.forEach((f, i) => {
         if (s >= f.b - 4) f.el.querySelector('.fl-body').classList.add('go');
-        if (s < f.a || s > f.b) return;
+        if (s < f.a || s >= f.b) return;
         const t = clamp((s - f.a) / (f.b - f.a));
-        f0 = f; prev = fls[i - 1];
-        if ((i === 0 || t > .55) && fbgEl) fbgEl.style.setProperty('--fbg', f.el.dataset.bg);   // двери открылись — свет этажа
-        if (i === 0) {                                   // первый этаж: двери закрыты → открываются → уходим в раздел
-          vis = 1 - sm(clamp((t - .82) / .18));
-          open = sm(clamp((t - .1) / .45));
+        f0 = f; prev = fls[i - 1]; vis = 1;
+        if (i === 0) {
+          open = sm(clamp((t - .06) / .34));
+          split = sm(clamp((t - .52) / .48));
           prev = null;
-        } else {                                         // закрываем прошлый этаж → едем → открываем новый
-          vis = sm(clamp(t / .12)) * (1 - sm(clamp((t - .84) / .16)));
-          const close = sm(clamp((t - .12) / .2));
-          const reopen = sm(clamp((t - .54) / .26));
-          open = t < .5 ? 1 - close : reopen;
-          const u = clamp((t - .3) / .18);               // лифт едет: свет этажа проходит по щели
-          bp = sm(u);                                     // разгон и торможение
-          bo = Math.min(1, u / .12, (1 - u) / .12);
-          hold = clamp((t - .46) / .04) * (1 - clamp((t - .56) / .06));  // встал — шов ровно светится
-          if (t >= .32) prev = null;                      // двери закрыты — номер уже новый
+        } else {
+          vis = sm(clamp(t / .08));
+          const close = sm(clamp((t - .08) / .16));
+          const reopen = sm(clamp((t - .42) / .18));
+          open = t < .36 ? 1 - close : reopen;
+          const u = clamp((t - .24) / .14);
+          bp = sm(u); bo = Math.min(1, u / .12, (1 - u) / .12);
+          hold = clamp((t - .36) / .03) * (1 - clamp((t - .44) / .05));
+          if (t >= .24) prev = null;
+          split = sm(clamp((t - .66) / .34));
         }
       });
       const show = prev || f0;
-      if (show && show.n !== shown) { shown = show.n; num.textContent = '0' + show.n; nm.textContent = show.el.dataset.name; if (cab) cab.src = 'assets/shaft/cab-' + show.n + '.webp'; window.__glFloor = +show.n; }
-      const set = (el, k, v) => { if (el['_' + k] !== v) { el['_' + k] = v; el.style.setProperty(k, v); } };
+      if (show && show.n !== shown) {
+        shown = show.n; window.__glFloor = +show.n;
+        nums.forEach(e => e && (e.textContent = '0' + show.n));
+        names.forEach(e => e && (e.textContent = show.el.dataset.name));
+        cabs.forEach(e => e && (e.src = 'assets/shaft/cab-' + show.n + '.webp'));
+      }
+      if (f0 && !prev) setBack(f0);
+      if (f0 && (split > 0) && fbgEl) fbgEl.style.setProperty('--fbg', f0.el.dataset.bg);
       set(lift, '--v', vis.toFixed(2));
       const vv = vis < .01 ? 'hidden' : 'visible'; if (lift._vis !== vv) { lift._vis = vv; lift.style.visibility = vv; }
-
+      set(lift, '--split', split.toFixed(4));
+      lift.classList.toggle('backon', split > 0);
       set(lift, '--hint', (1 - clamp(s / (VH * .06))).toFixed(2));
-      set(door, '--o', open.toFixed(3));
-      set(door, '--bp', bp.toFixed(3));
-      set(door, '--bo', Math.max(0, bo).toFixed(2));
-      set(door, '--wo', Math.max(0, bo).toFixed(2));
-      set(door, '--hold', hold.toFixed(2));
+      doors.forEach(d => { set(d, '--o', open.toFixed(3)); set(d, '--bp', bp.toFixed(3)); set(d, '--bo', Math.max(0, bo).toFixed(2)); set(d, '--wo', Math.max(0, bo).toFixed(2)); set(d, '--hold', hold.toFixed(2)); });
     };
-    /* цвет этажа: фон перетекает в цвет раздела, который сейчас на экране */
     const fbg = document.getElementById('floorBg');
     if (fbg) {
       const bio = new IntersectionObserver(es => es.forEach(en => {
@@ -285,11 +308,13 @@
     if (p === here) a.classList.add('here');
   });
   lm.querySelectorAll('.lm-keys a').forEach(a => {
+    if (new URL(a.href, location.href).pathname === here && here !== new URL(document.querySelector('.hdr-logo').href, location.href).pathname) a.classList.add('here');
     const p = new URL(a.href, location.href).pathname.replace(/index\.html$/, '');
     if (p === here) a.setAttribute('aria-current', 'page');
   });
   const openMenu = () => {
     const fl = window.__glFloor || floorNow; lmFloor.textContent = String(fl).padStart(2, '0');
+    if (window.__glFloor) lm.querySelectorAll('.lm-keys a').forEach((a, i) => a.classList.toggle('here', i + 1 === fl));
     if (window.__glFloor) { const ps = [...lm.querySelectorAll('.pl-f')].reverse(); ps.forEach((a, i) => a.classList.toggle('here', i + 1 === fl)); } lm.classList.add('open'); lm.setAttribute('aria-hidden', 'false'); menuBtn.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; setTimeout(() => lm.querySelector('.lm-keys a').focus(), 60); };
   const closeMenu = () => { lm.classList.remove('open'); lm.setAttribute('aria-hidden', 'true'); menuBtn.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; menuBtn.focus(); };
   menuBtn.addEventListener('click', openMenu);

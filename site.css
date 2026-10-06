@@ -1913,3 +1913,143 @@ html{scroll-snap-type:none!important}
 .lframe{order:2}
 .stamp b{font-size:13px;letter-spacing:.04em}
 .stamp{width:118px;height:118px;margin-top:-59px}
+
+/* ===== v44: плоский Андерсон. Цвет и типографика, линии и круги; без материалов ===== */
+/* ---------- лифт: сцена расходится по шву, за ней этаж ---------- */
+.lift{background:none!important;padding-top:0!important;display:block!important;opacity:var(--v,1)}
+.lscene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:var(--hdr);padding-bottom:var(--bar);background:radial-gradient(ellipse 60% 55% at 50% 55%,#2a1f16 0%,#120e0b 55%,#070605 100%);will-change:transform}
+.lscene-l{clip-path:inset(0 50% 0 0);transform:translate3d(calc(var(--split,0) * -56vw),0,0)}
+.lscene-r{clip-path:inset(0 0 0 50%);transform:translate3d(calc(var(--split,0) * 56vw),0,0)}
+.lscene-r .hint{visibility:hidden}
+.lback{position:absolute;inset:0;visibility:hidden}
+.lift.backon .lback{visibility:visible}
+.lback-fl{position:absolute;inset:0;background:var(--fb)}
+.lback .fl-body{position:absolute;left:0;right:0;top:var(--hdr);margin:0 auto;padding:0!important}
+.lback .mx-sign{opacity:1!important}
+.lback .mx-n{opacity:.08!important;transform:translate(-50%,-50%) scale(1)!important}
+.lframe{order:2}.hint{order:3;margin-top:14px}
+/* ---------- титр: на весь экран, без удержания; толстая рамка с отступом ---------- */
+.tc{height:calc(100vh - var(--hdr))!important}
+@supports (height:100svh){.tc{height:calc(100svh - var(--hdr) - var(--bar))!important}}
+.fl .mx-sign{position:relative!important;top:auto!important}
+.fl .mx-sign::after{inset:16px!important;border:5px solid var(--hc)!important;opacity:.85!important}
+.pg .page>.wrap>.psign{padding:56px 28px 64px!important;margin:30px auto 60px!important}
+.pg .page>.wrap>.psign::after{left:0!important;right:0!important;top:0!important;bottom:0!important;border:5px solid var(--hc)!important;opacity:.85!important}
+.fl-short .fl-body{padding-bottom:0!important}
+.mx-sub,.pg .mx-sub{letter-spacing:.01em!important}
+/* ---------- металл → плоско: двойная линия цветом заголовка, без фактуры и винтов ---------- */
+.metal,.metal-red{background:none!important;border:4px double var(--hc)!important;box-shadow:none!important;text-shadow:none!important;color:var(--cream)!important;padding:10px!important}
+.metal::before{display:none!important}
+.scr{display:none!important}
+.mt-in{border:0!important;box-shadow:none!important;padding:22px 30px!important}
+.mt-row span{color:var(--cream)}
+.mt-row b,.mt-index .mi-n{color:var(--hc)}
+.mt-row i,.mt-index .mt-row::before{background:radial-gradient(circle,var(--hc) 1px,transparent 1.5px) 0 50%/8px 3px repeat-x!important;opacity:.7}
+.mt-h{color:var(--hc)}
+.mp-n{color:var(--hc)}
+.mp-tx b{color:var(--cream)}
+.mp-tx p{font-family:var(--fut)!important;color:rgba(246,235,213,.75)}
+.mp-bot{border-top-color:rgba(246,235,213,.25)!important}
+.mp-bot div+div{border-left-color:rgba(246,235,213,.25)!important}
+.mp-bot span{font-family:var(--fut)!important;color:rgba(246,235,213,.6)}
+.mp-bot b{color:var(--hc)}
+.mp-top::before{background:rgba(246,235,213,.25)!important}
+.svcplate:hover{background:rgba(255,255,255,.03)!important}
+/* аварийный вызов — плоская красная полоса, 24/7 в круге */
+.emerg{background:#8E2620!important;border:0!important;color:#F6EBD5!important}
+.emerg .mt-in{border:2px solid rgba(246,235,213,.5)!important}
+.em-big{display:grid;place-items:center;width:120px;height:120px;border-radius:50%;border:4px double #F6EBD5;font-size:32px!important}
+.em-t{font-family:var(--fut)!important}
+.em-p{border:2px solid #F6EBD5!important;color:#F6EBD5}
+/* ---------- бумага → плоские блоки: без фактуры, штампов и машинописи ---------- */
+.paper{background:none!important;box-shadow:none!important;font-family:var(--fut)!important;color:var(--cream)!important;border:4px double var(--hc)}
+.paper::before{display:none!important}
+.stamp,.dc-no{display:none!important}
+.dossier .doc-card:last-child::after{display:none}
+.doc-card{min-height:0!important;padding:34px 36px!important;text-align:center!important}
+.doc-card h3{margin:0 0 10px!important;font:900 clamp(18px,1.6vw,22px)/1.25 var(--fut)!important;text-transform:uppercase;letter-spacing:.08em}
+.doc-card .dc-f{order:-1;margin:0 0 12px!important;padding:0!important;border:0!important;font:700 12px var(--fut)!important;letter-spacing:.24em;text-transform:uppercase}
+.doc-card .dc-d{margin:0!important;font:400 15px/1.5 var(--fut)!important}
+.doc-card{display:flex;flex-direction:column;align-items:center}
+/* разные цвета карточек — не одна «мебель» */
+.dossier .doc-card:nth-child(4n+1){background:#F3E9D6!important;color:#2a1a10!important;border-color:#A3271F}
+.dossier .doc-card:nth-child(4n+2){background:#A3271F!important;color:#F6EBD5!important;border-color:#F6EBD5}
+.dossier .doc-card:nth-child(4n+3){background:#D9AE45!important;color:#2a1a10!important;border-color:#7A2733}
+.dossier .doc-card:nth-child(4n+4){background:#2F4A3E!important;color:#F6EBD5!important;border-color:#D9AE45}
+.dossier .doc-card:nth-child(4n+1) .dc-f{color:#A3271F}
+.dossier .doc-card:nth-child(4n+2) .dc-f{color:#F3D9A0}
+.dossier .doc-card:nth-child(4n+3) .dc-f{color:#7A2733}
+.dossier .doc-card:nth-child(4n+4) .dc-f{color:#D9AE45}
+.order{padding:34px 40px!important}
+.or-head{border-bottom:2px solid var(--hc)!important}
+.or-head b{color:var(--hc)}
+.or-head span,.or-no span{color:rgba(246,235,213,.65)}
+.or-no b{font-family:var(--fut)!important;color:var(--hc)!important}
+.or-h{border-bottom-color:rgba(246,235,213,.25)!important;color:var(--hc);font-family:var(--fut)}
+.checks{padding-right:0!important}
+.checks li{font-family:var(--fut);font-size:15px}
+.checks li::before,.checks li::after{border-color:var(--hc)!important}
+.cert{text-align:center;align-items:center;padding:28px 22px!important;min-height:0!important}
+.cert b{font-family:var(--fut)!important;font-weight:700!important;color:var(--hc)}
+.note2 blockquote{font-family:var(--fut)!important;font-style:italic}
+.ppl li{border-bottom-color:rgba(246,235,213,.2)!important}
+.pp-h{font-family:var(--fut)!important;color:var(--hc);border-bottom-color:var(--hc)!important}
+.pg[data-tone=light] .paper,.fl[data-tone=light] .paper{color:#2a1a10!important}
+/* ---------- круги с двойным ободком ---------- */
+.rings{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;width:min(980px,100%);margin:10px auto 50px}
+.ring-i{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+.ring{display:flex;flex-direction:column;align-items:center;justify-content:center;width:150px;height:150px;border-radius:50%;border:5px double var(--hc)}
+.ring b{font:900 34px/1 var(--fut);color:var(--hc)}
+.ring i{margin-top:6px;font:700 11px var(--fut);font-style:normal;text-transform:uppercase;letter-spacing:.18em;color:var(--text)}
+.ring-i p{margin:0;max-width:200px;font:500 15px/1.45 var(--fut);color:var(--muted)}
+.fl[data-tone=light] .ring i,.pg[data-tone=light] .ring i{color:#2a1a10}
+.fl[data-tone=light] .ring-i p,.pg[data-tone=light] .ring-i p{color:#4E463D}
+.sline b{display:grid;place-items:center;width:96px;height:96px;border-radius:50%;border:5px double var(--hc);font-size:34px!important}
+.sline li+li::before{top:48px!important;right:calc(50% + 56px)!important;width:calc(100% - 112px)!important}
+.sline p{font-family:var(--fut)!important}
+.faq2 p,.faq2 summary em{font-family:var(--fut)!important}
+/* ---------- разделы длинных страниц — спокойным фоном ---------- */
+.pg-about .dossier,.fl .dossier,.pg-about .notes,.pg-srv .faq2{position:relative;isolation:isolate}
+.pg-about .dossier::before,.fl .dossier::before,.pg-about .notes::before,.pg-srv .faq2::before{content:"";position:absolute;z-index:-1;inset:-50px 0;background:var(--sb);box-shadow:0 0 0 100vmax var(--sb);clip-path:inset(0 -100vmax)}
+.pg-about .dossier,.fl .dossier{--sb:#E8DFCB}
+.pg-about .notes{--sb:#D2C6AC}
+.pg-srv .faq2{--sb:#25231D}
+.pg-about .dossier,.fl .dossier{margin-top:80px;margin-bottom:90px}
+/* ---------- каталог: строгие рамки без заливки ---------- */
+.pg .card.tag,.tag{background:none!important;box-shadow:none!important;border:2px solid rgba(217,174,69,.75)!important;color:#F6EBD5!important;padding:20px 18px 18px!important}
+.tag::before{display:none!important}
+.tag-eye{display:none!important}
+.tag-img{background:#2B2D1C!important;margin-top:0!important}
+.tag-pn{font:900 19px var(--fut)!important;letter-spacing:.06em;color:#F6EBD5!important}
+.tag-pn::before{content:""!important}
+.tag-brand{color:#D9AE45}
+.tag-name{font:400 13px var(--fut)!important;border-bottom-color:rgba(246,235,213,.2)!important;color:rgba(246,235,213,.75)}
+.tag-btn{background:none!important;border:2px solid #D9AE45!important;color:#D9AE45!important}
+.tag-btn:hover,.tag-btn.in{background:#D9AE45!important;color:#2a1a10!important}
+.pg .card.tag:hover{border-color:#F6EBD5!important}
+.tag-big{border:4px double rgba(217,174,69,.8)!important}
+.pspec{border-color:rgba(217,174,69,.8)!important}
+/* ---------- меню: текущий этаж ---------- */
+.lm-keys a.here{color:#E2B23A!important}
+.lm-keys a.here i{color:#F6EBD5!important}
+.lm-keys a.here::after{content:"Вы здесь";font:600 10px var(--fut);letter-spacing:.24em;color:rgba(243,233,214,.7)}
+/* ---------- лавка на телефоне: всё видно сразу, сеткой ---------- */
+@media (max-width:760px){
+  .title-shop .chips{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));width:100%!important;border:2px solid var(--brass)}
+  .title-shop .chips li{border:0}
+  .title-shop .chips button{width:100%;border-right:0!important;border-bottom:1px solid var(--line)!important}
+  .title-shop .chips li:last-child:nth-child(odd){grid-column:1/-1}
+  .pg .cats ol{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible!important}
+  .pg .cats button{width:100%;padding:12px 6px!important;font-size:12px!important;text-align:center}
+  .rings{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ring{width:120px;height:120px}
+  .ring b{font-size:26px}
+  .em-big{width:96px;height:96px;font-size:26px!important}
+  .fl .mx-sign::after{inset:10px!important;border-width:4px!important}
+  .sline b{width:76px;height:76px;font-size:26px!important}
+}
+.mx-head{width:100%;max-width:100%}.mx-t,.ps-t{max-width:100%;overflow-wrap:normal}
+.pg .psign{position:relative;padding:56px 28px 64px!important}
+.pg .psign::after{content:"";position:absolute;left:0;right:0;top:0;bottom:0;border:5px solid var(--hc);opacity:.85;pointer-events:none}
+.title-shop .psign,.title-prod .psign{margin-bottom:34px!important}
+.pg[data-tone=light] .hdr{background:#A3271F!important}
