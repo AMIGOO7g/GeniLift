@@ -201,41 +201,62 @@
       anim(stage, 'translate3d(0,100%,0)', T.slide); await wait(T.slide);
       show(false); reset(); busy = false;
     };
-    /* жесты: у лифта — колесо/свайп/клавиши; на этаже — упёрлись в край этажа */
+    /* жесты. У края этажа прокрутка сначала ОСТАНАВЛИВАЕТСЯ: внизу полоска «листайте дальше».
+       Поездка начинается, только если продолжить листать (намерение), — случайно уехать нельзя */
+    const hint = document.createElement('div'); hint.className = 'ride-hint'; hint.innerHTML = '<span></span><i></i>'; document.body.appendChild(hint);
+    const hintTxt = hint.querySelector('span'), hintBar = hint.querySelector('i');
+    let acc = 0, accDir = 0, accT;
+    const NEED = 450; let arrived = 0, arrivedDir = 0;
+    const showHint = (d, p) => {
+      const nxt = d > 0 ? secs[cur] : secs[cur - 2];
+      hintTxt.textContent = d > 0 ? (nxt ? 'Листайте дальше — этаж «' + nxt.el.dataset.name + '»' : '') : (cur > 1 ? 'Листайте вверх — этаж «' + secs[cur - 2].el.dataset.name + '»' : 'Листайте вверх — к лифту');
+      hint.classList.toggle('up', d < 0); hint.classList.add('on'); hintBar.style.transform = 'scaleX(' + Math.min(1, p).toFixed(3) + ')';
+    };
+    const hideHint = () => { hint.classList.remove('on'); acc = 0; accDir = 0; hintBar.style.transform = 'scaleX(0)'; };
+    const push = (d, amount) => {
+      const now = performance.now();
+      if (arrivedDir !== d || now - arrived > 2500) { arrivedDir = d; arrived = now; }
+      if (now - arrived < 500) { showHint(d, 0); clearTimeout(accT); accT = setTimeout(hideHint, 1400); return; }   // только упёрлись — ждём, не едем
+      arrived = now - 501;
+      if (accDir !== d) { acc = 0; accDir = d; }
+      acc += amount; showHint(d, acc / NEED);
+      clearTimeout(accT); accT = setTimeout(hideHint, 1400);
+      if (acc >= NEED) { hideHint(); if (d > 0) down(); else up(); }
+    };
+    const atEnd = () => cur >= 1 && cur < secs.length && scrollY >= endY(cur - 1) - 2;
+    const atStart = () => cur >= 1 && scrollY <= startY(cur - 1) + 2;
     const block = e => { if (busy || stage.classList.contains('on')) e.preventDefault(); };
     addEventListener('touchmove', block, { passive: false });
-    const intent = d => { if (root.classList.contains('intro-on')) return; if (d > 0) down(); else up(); };
     addEventListener('wheel', e => {
       if (busy) { e.preventDefault(); return; }
-      if (stage.classList.contains('on')) { e.preventDefault(); if (Math.abs(e.deltaY) > 4) intent(e.deltaY); return; }
-      const i = cur - 1; if (i < 0) return;
-      if (e.deltaY > 0 && scrollY >= endY(i) - 2) { e.preventDefault(); if (i < secs.length - 1) down(); }
-      else if (e.deltaY < 0 && scrollY <= startY(i) + 2) { e.preventDefault(); up(); }
+      if (root.classList.contains('intro-on')) return;
+      if (stage.classList.contains('on')) { e.preventDefault(); if (Math.abs(e.deltaY) > 4) { if (e.deltaY > 0) down(); else up(); } return; }
+      if (e.deltaY > 0 && atEnd()) { e.preventDefault(); push(1, Math.min(90, Math.abs(e.deltaY))); }
+      else if (e.deltaY < 0 && atStart()) { e.preventDefault(); push(-1, Math.min(90, Math.abs(e.deltaY))); }
+      else if (accDir) hideHint();
     }, { passive: false });
     let ty = null;
     addEventListener('touchstart', e => { ty = e.touches[0].clientY; }, { passive: true });
     addEventListener('touchend', e => {
       if (ty == null || busy) return; const dy = ty - e.changedTouches[0].clientY; ty = null;
       if (Math.abs(dy) < 40) return;
-      if (stage.classList.contains('on')) { intent(dy); return; }
-      const i = cur - 1; if (i < 0) return;
-      if (dy > 0 && scrollY >= endY(i) - 4 && i < secs.length - 1) down();
-      else if (dy < 0 && scrollY <= startY(i) + 4) up();
+      if (stage.classList.contains('on')) { if (dy > 0) down(); else up(); return; }
+      if (dy > 0 && atEnd()) push(1, NEED / 2 + 1);
+      else if (dy < 0 && atStart()) push(-1, NEED / 2 + 1);
     }, { passive: true });
     addEventListener('keydown', e => {
       const d = ['ArrowDown', 'PageDown', ' '].includes(e.key) ? 1 : ['ArrowUp', 'PageUp'].includes(e.key) ? -1 : 0;
       if (!d) return;
-      if (busy || stage.classList.contains('on')) { e.preventDefault(); if (!busy) intent(d); return; }
-      const i = cur - 1;
-      if (d > 0 && scrollY >= endY(i) - 2 && i < secs.length - 1) { e.preventDefault(); down(); }
-      else if (d < 0 && scrollY <= startY(i) + 2) { e.preventDefault(); up(); }
+      if (busy || stage.classList.contains('on')) { e.preventDefault(); if (!busy) { if (d > 0) down(); else up(); } return; }
+      if (d > 0 && atEnd()) { e.preventDefault(); push(1, NEED / 2 + 1); }
+      else if (d < 0 && atStart()) { e.preventDefault(); push(-1, NEED / 2 + 1); }
     });
-    /* прокрутка не должна «перелистывать» этаж мимо лифта (инерция, полоса прокрутки) */
+    /* инерция не перелистывает этаж: просто упираемся в край */
     addEventListener('scroll', () => {
       if (busy || stage.classList.contains('on') || cur < 1) return;
       const i = cur - 1;
-      if (scrollY > endY(i) + 8 && i < secs.length - 1) { scrollTo({ top: endY(i), behavior: 'instant' }); down(); }
-      else if (scrollY < startY(i) - 8) { scrollTo({ top: startY(i), behavior: 'instant' }); up(); }
+      if (scrollY > endY(i) + 2 && i < secs.length - 1) scrollTo({ top: endY(i), behavior: 'instant' });
+      else if (scrollY < startY(i) - 2) scrollTo({ top: startY(i), behavior: 'instant' });
     }, { passive: true });
     /* якоря и шахта: прыжок на этаж без поездки */
     window.__glRide = () => ({ cur, busy, end: endY(Math.max(cur - 1, 0)), y: scrollY });
@@ -590,4 +611,22 @@ document.querySelectorAll('[data-qa]').forEach(qa => {
   const ring = el => { el.classList.remove('go'); void el.getBoundingClientRect(); el.classList.add('go'); };
   const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { ring(en.target); io.unobserve(en.target); } }), { threshold: .6 });
   bells.forEach(b => { io.observe(b); (b.closest('a,button') || b).addEventListener('mouseenter', () => ring(b)); });
+})();
+
+/* ---------- Разовые «оживления»: рисунки, эмблемы — один раз при появлении ---------- */
+(() => {
+  const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('rv'); io.unobserve(en.target); } }), { threshold: .35 });
+  document.querySelectorAll('[data-reveal], .em').forEach(el => io.observe(el));
+  /* эмблемы: короткое движение и при наведении на карточку */
+  document.querySelectorAll('.em').forEach(em => {
+    const host = em.closest('a, button, .desk-c, .dn, .perks li') || em;
+    host.addEventListener('mouseenter', () => { em.classList.remove('rv'); void em.getBoundingClientRect(); em.classList.add('rv'); });
+  });
+  /* подсказки на разрезе шахты: касание на телефоне открывает, второе — закрывает */
+  document.querySelectorAll('.sf-pt').forEach(pt => pt.addEventListener('click', e => {
+    if (e.target.closest('a')) return;
+    const on = pt.classList.contains('open');
+    document.querySelectorAll('.sf-pt.open').forEach(x => x.classList.remove('open'));
+    if (!on) pt.classList.add('open');
+  }));
 })();
