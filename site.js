@@ -26,27 +26,19 @@
     reveal();
   };
 
-  /* ---------- Заставка: стрелка логотипа растёт из точки на шве двери ---------- */
+  /* ---------- Заставка: белый экран, логотип строго по центру, затем плавно растворяется в экран с лифтом ---------- */
   if (root.classList.contains('intro-on')) {
-    let skipped = false, done = false;
-    const steps = ['s1', 's2', 's3', 's4', 's5'];
-    const end = () => { if (done) return; done = true; root.classList.remove('intro-on', ...steps); openHero(skipped); };
+    let done = false;
+    const steps = ['s1', 's2', 's3', 's5'];
+    const end = () => { if (done) return; done = true; root.classList.add('s5'); setTimeout(() => { root.classList.remove('intro-on', ...steps); openHero(); }, 950); try { sessionStorage.setItem('gl-intro', '1'); } catch (e) {} };
     const wait = ms => new Promise(r => setTimeout(r, ms));
-    const add = c => { if (!skipped) root.classList.add(c); };
     (async () => {
-      await wait(250); add('s1');
-      await wait(450); add('s2');
-      await wait(1250); add('s3');
-      await wait(2700); if (skipped) return;
-      const a = document.getElementById('introLogo'), f = a.getBoundingClientRect();
-      const t = document.querySelector('#hdrLogo .logo-svg').getBoundingClientRect();
-      a.style.transform = `translate(${t.left - f.left}px, ${t.top - f.top}px) scale(${t.height / f.height})`;
-      add('s4');
-      await wait(900); add('s5');
-      await wait(300); end();
-      try { sessionStorage.setItem('gl-intro', '1'); } catch (e) {}
+      await wait(200); root.classList.add('s1');
+      await wait(500); root.classList.add('s2');
+      await wait(1100); root.classList.add('s3');
+      await wait(1900); end();
     })();
-    document.getElementById('intro').addEventListener('click', () => { skipped = true; end(); });
+    document.getElementById('intro').addEventListener('click', end);
   } else {
     requestAnimationFrame(reveal);
   }
@@ -144,127 +136,118 @@
     layout(); frame();
   }
 
-  /* ---------- Лифт — отдельная сцена поверх страницы. Вниз: лифт выезжает снизу, двери, камера вправо на этаж.
-     Вверх — зеркально. Всё проигрывается само (время, а не протяжка), прокрутка на это время заблокирована ---------- */
+  /* ---------- Лифт — сцена поверх страницы. Колёсико и палец двигают САМ лифт (страница стоит):
+     крутите медленно — двери идут медленно. Остановились — лифт докатывается к ближайшему положению.
+     Внутри раздела лифта нет; на краю этажа — кнопка «Следующий этаж» ---------- */
   const stage = document.getElementById('stage');
   const secs = [...document.querySelectorAll('section.fl')].map(el => ({ el, body: el.querySelector('.fl-body'), n: +el.dataset.floor }));
   if (stage && secs.length) {
     const stl = stage.querySelector('.st-lift'), copy = stage.querySelector('.st-copy');
     const cab = document.getElementById('stCab'), num = document.getElementById('stNum');
-    const wait = ms => new Promise(r => setTimeout(r, ms));
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const T = { slide: reduce ? 0 : 700, doors: reduce ? 0 : 950, pan: reduce ? 0 : 850 };
     const hdrH = () => (document.querySelector('.hdr') || {}).offsetHeight || 0;
     const topOf = el => el.getBoundingClientRect().top + scrollY;
     const startY = i => topOf(secs[i].body) - hdrH();
     const endY = i => Math.max(startY(i), topOf(secs[i].body) + secs[i].body.offsetHeight - innerHeight);
     [2, 3, 4, 5].forEach(n => { const im = new Image(); im.src = 'assets/shaft/sk-cab-' + n + '.webp'; });
-    let cur = 0, busy = false;                       // 0 — стоим у лифта первого этажа
-    const lock = on => root.classList.toggle('ride-lock', on);
-    const anim = (el, tf, ms) => { el.style.transition = ms ? `transform ${ms}ms cubic-bezier(.65,0,.35,1)` : 'none'; el.style.transform = tf; };
+    const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+    const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    let cur = 0;                       // 0 — стоим у закрытого лифта первого этажа
+    let ride = null;                   // { to, base, p, target, auto }
     const setLift = n => { cab.src = 'assets/shaft/sk-cab-' + n + '.webp'; num.textContent = '0' + n; window.__glFloor = n; };
     const setCopy = s => {
       copy.className = 'st-copy ' + s.el.className; copy.setAttribute('style', s.el.getAttribute('style') || ''); copy.dataset.tone = s.el.dataset.tone || '';
       const b = document.createElement('div'); b.className = 'wrap fl-body go'; b.appendChild(s.el.querySelector('.tc').cloneNode(true));
       copy.replaceChildren(b);
     };
-    const doors = open => stage.classList.toggle('open', open);
-    const show = on => { stage.classList.toggle('on', on); lock(on); };
-    const reset = () => { anim(stl, 'none', 0); anim(copy, 'translate3d(100vw,0,0)', 0); anim(stage, 'none', 0); };
-    reset(); setLift(1); show(true);
-    /* вниз: этаж i → этаж i+1 (cur 0 — от лифта первого этажа) */
-    const down = async () => {
-      if (busy || cur >= secs.length) return; busy = true;
-      const s = secs[cur];
-      if (cur > 0) {                                   // лифт выезжает снизу и закрывает прошлый этаж
-        reset(); doors(false); setLift(s.n); anim(stage, 'translate3d(0,100%,0)', 0); show(true);
-        stage.getBoundingClientRect(); anim(stage, 'none', T.slide); await wait(T.slide);
+    const lock = on => root.classList.toggle('ride-lock', on);
+    /* p: 0 — этаж «до» (лифт скрыт или закрыт), 1 — титр следующего этажа */
+    const draw = p => {
+      const show = ride.base > 0 ? clamp(p / .1) : 1;
+      const o = ease(clamp((p - .1) / .45)), pan = ease(clamp((p - .58) / .42));
+      stage.style.opacity = show; stage.style.visibility = show > 0 ? 'visible' : 'hidden';
+      stage.style.setProperty('--o', o.toFixed(4));
+      stl.style.transform = `translate3d(${(-pan * 100).toFixed(3)}vw,0,0)`;
+      copy.style.transform = `translate3d(${((1 - pan) * 100).toFixed(3)}vw,0,0)`;
+    };
+    const begin = (base, p) => {              // base — этаж «до» (0 — лифт первого этажа)
+      const s = secs[base];
+      setLift(s.n); setCopy(s); s.body.classList.add('go');
+      ride = { base, p, target: p, auto: false, last: performance.now() };
+      lock(true); draw(p);
+    };
+    const finish = () => {
+      const r = ride; ride = null;
+      if (r.p >= 1) {                         // приехали на этаж base+1
+        cur = r.base + 1; lock(false);
+        scrollTo({ top: startY(cur - 1), behavior: 'instant' });
+        requestAnimationFrame(() => { stage.style.visibility = 'hidden'; stage.style.opacity = 0; });
+      } else {                                // остались на этаже base
+        cur = r.base;
+        if (cur === 0) { scrollTo({ top: 0, behavior: 'instant' }); draw0(); return; }
+        lock(false); stage.style.visibility = 'hidden';
       }
-      s.body.classList.add('go'); setCopy(s);
-      doors(true); await wait(T.doors);
-      anim(stl, 'translate3d(-100vw,0,0)', T.pan); anim(copy, 'none', T.pan); await wait(T.pan);
-      lock(false); scrollTo({ top: startY(cur), behavior: 'instant' });
-      requestAnimationFrame(() => requestAnimationFrame(() => { show(false); reset(); doors(false); cur++; busy = false; }));
     };
-    /* вверх: этаж cur → этаж cur-1 (или к лифту первого этажа) */
-    const up = async () => {
-      if (busy || cur <= 0) return; busy = true;
-      const s = secs[cur - 1];
-      setLift(s.n); setCopy(s); doors(true);
-      anim(stl, 'translate3d(-100vw,0,0)', 0); anim(copy, 'none', 0); show(true);
-      stage.getBoundingClientRect();
-      anim(stl, 'none', T.pan); anim(copy, 'translate3d(100vw,0,0)', T.pan); await wait(T.pan);
-      doors(false); await wait(T.doors);
-      cur--;
-      if (cur === 0) { scrollTo({ top: 0, behavior: 'instant' }); busy = false; return; }   // остаёмся у лифта первого этажа
-      lock(false); scrollTo({ top: endY(cur - 1), behavior: 'instant' }); lock(true);
-      anim(stage, 'translate3d(0,100%,0)', T.slide); await wait(T.slide);
-      show(false); reset(); busy = false;
+    const draw0 = () => { ride = { base: 0, p: 0 }; draw(0); ride = null; stage.style.visibility = 'visible'; stage.style.opacity = 1; lock(true); setLift(1); };
+    const tick = () => {
+      if (ride) {
+        const now = performance.now();
+        if (!ride.auto && now - ride.last > 650) { ride.auto = true; ride.target = ride.p > .45 ? 1 : 0; }
+        ride.p += (ride.target - ride.p) * (ride.auto ? .085 : .16);
+        if (Math.abs(ride.target - ride.p) < .002) ride.p = ride.target;
+        draw(ride.p);
+        if (ride.auto && (ride.p === 0 || ride.p === 1)) finish();
+      }
+      requestAnimationFrame(tick);
     };
-    /* жесты. У края этажа прокрутка сначала ОСТАНАВЛИВАЕТСЯ: внизу полоска «листайте дальше».
-       Поездка начинается, только если продолжить листать (намерение), — случайно уехать нельзя */
-    const hint = document.createElement('div'); hint.className = 'ride-hint'; hint.innerHTML = '<span></span><i></i>'; document.body.appendChild(hint);
-    const hintTxt = hint.querySelector('span'), hintBar = hint.querySelector('i');
-    let acc = 0, accDir = 0, accT;
-    const NEED = 450; let arrived = 0, arrivedDir = 0;
-    const showHint = (d, p) => {
-      const nxt = d > 0 ? secs[cur] : secs[cur - 2];
-      hintTxt.textContent = d > 0 ? (nxt ? 'Листайте дальше — этаж «' + nxt.el.dataset.name + '»' : '') : (cur > 1 ? 'Листайте вверх — этаж «' + secs[cur - 2].el.dataset.name + '»' : 'Листайте вверх — к лифту');
-      hint.classList.toggle('up', d < 0); hint.classList.add('on'); hintBar.style.transform = 'scaleX(' + Math.min(1, p).toFixed(3) + ')';
-    };
-    const hideHint = () => { hint.classList.remove('on'); acc = 0; accDir = 0; hintBar.style.transform = 'scaleX(0)'; };
-    const push = (d, amount) => {
-      const now = performance.now();
-      if (arrivedDir !== d || now - arrived > 2500) { arrivedDir = d; arrived = now; }
-      if (now - arrived < 500) { showHint(d, 0); clearTimeout(accT); accT = setTimeout(hideHint, 1400); return; }   // только упёрлись — ждём, не едем
-      arrived = now - 501;
-      if (accDir !== d) { acc = 0; accDir = d; }
-      acc += amount; showHint(d, acc / NEED);
-      clearTimeout(accT); accT = setTimeout(hideHint, 1400);
-      if (acc >= NEED) { hideHint(); if (d > 0) down(); else up(); }
-    };
-    const atEnd = () => cur >= 1 && cur < secs.length && scrollY >= endY(cur - 1) - 2;
-    const atStart = () => cur >= 1 && scrollY <= startY(cur - 1) + 2;
-    const block = e => { if (busy || stage.classList.contains('on')) e.preventDefault(); };
-    addEventListener('touchmove', block, { passive: false });
+    requestAnimationFrame(tick);
+    const nudge = d => { ride.target = clamp(ride.target + d); ride.auto = false; ride.last = performance.now(); };
+    const atEnd = () => cur >= 1 && cur < secs.length && scrollY >= endY(cur - 1) - 3;
+    const atStart = () => cur >= 1 && scrollY <= startY(cur - 1) + 3;
+    const startDown = () => { if (cur < secs.length) begin(cur, 0); };
+    const startUp = () => { if (cur >= 1) { const b = cur - 1; if (b > 0) scrollTo({ top: endY(b - 1), behavior: 'instant' }); begin(b, 1); ride.dirUp = true; } };
+    const intro = () => root.classList.contains('intro-on');
+    draw0();
+    /* колёсико */
+    const K = 1600;                            // пикселей колёсика на всю поездку
     addEventListener('wheel', e => {
-      if (busy) { e.preventDefault(); return; }
-      if (root.classList.contains('intro-on')) return;
-      if (stage.classList.contains('on')) { e.preventDefault(); if (Math.abs(e.deltaY) > 4) { if (e.deltaY > 0) down(); else up(); } return; }
-      if (e.deltaY > 0 && atEnd()) { e.preventDefault(); push(1, Math.min(90, Math.abs(e.deltaY))); }
-      else if (e.deltaY < 0 && atStart()) { e.preventDefault(); push(-1, Math.min(90, Math.abs(e.deltaY))); }
-      else if (accDir) hideHint();
+      if (intro()) return;
+      if (ride) { e.preventDefault(); nudge(e.deltaY / K); return; }
+      if (cur === 0) { e.preventDefault(); if (e.deltaY > 0) { startDown(); nudge(e.deltaY / K); } return; }
+      if (e.deltaY > 0 && atEnd() && cur < secs.length) { e.preventDefault(); startDown(); nudge(e.deltaY / K); }
+      else if (e.deltaY < 0 && atStart()) { e.preventDefault(); startUp(); nudge(e.deltaY / K); }
     }, { passive: false });
-    let ty = null;
-    addEventListener('touchstart', e => { ty = e.touches[0].clientY; }, { passive: true });
-    addEventListener('touchend', e => {
-      if (ty == null || busy) return; const dy = ty - e.changedTouches[0].clientY; ty = null;
-      if (Math.abs(dy) < 40) return;
-      if (stage.classList.contains('on')) { if (dy > 0) down(); else up(); return; }
-      if (dy > 0 && atEnd()) push(1, NEED / 2 + 1);
-      else if (dy < 0 && atStart()) push(-1, NEED / 2 + 1);
-    }, { passive: true });
+    /* палец: тянете дальше края этажа — лифт идёт ровно настолько, насколько тянете */
+    let ty = null, tStart = null;
+    addEventListener('touchstart', e => { ty = e.touches[0].clientY; tStart = null; }, { passive: true });
+    addEventListener('touchmove', e => {
+      if (intro() || ty == null) return;
+      const y = e.touches[0].clientY, dy = ty - y;
+      if (ride) { e.preventDefault(); nudge(dy / (innerHeight * .8)); ty = y; return; }
+      if (cur === 0 && dy > 6) { e.preventDefault(); startDown(); nudge(dy / (innerHeight * .8)); ty = y; return; }
+      if (cur === 0) { e.preventDefault(); return; }
+      if (dy > 8 && atEnd() && cur < secs.length) { e.preventDefault(); startDown(); ty = y; }
+      else if (dy < -8 && atStart()) { e.preventDefault(); startUp(); ty = y; }
+    }, { passive: false });
+    addEventListener('touchend', () => { ty = null; if (ride) { ride.auto = true; ride.target = ride.p > (ride.dirUp ? .8 : .2) ? 1 : 0; } }, { passive: true });
     addEventListener('keydown', e => {
       const d = ['ArrowDown', 'PageDown', ' '].includes(e.key) ? 1 : ['ArrowUp', 'PageUp'].includes(e.key) ? -1 : 0;
-      if (!d) return;
-      if (busy || stage.classList.contains('on')) { e.preventDefault(); if (!busy) { if (d > 0) down(); else up(); } return; }
-      if (d > 0 && atEnd()) { e.preventDefault(); push(1, NEED / 2 + 1); }
-      else if (d < 0 && atStart()) { e.preventDefault(); push(-1, NEED / 2 + 1); }
+      if (!d || intro()) return;
+      if (ride) { e.preventDefault(); ride.auto = true; ride.target = d > 0 ? 1 : 0; return; }
+      if ((cur === 0 && d > 0) || (d > 0 && atEnd() && cur < secs.length)) { e.preventDefault(); startDown(); ride.auto = true; ride.target = 1; }
+      else if (d < 0 && atStart()) { e.preventDefault(); startUp(); ride.auto = true; ride.target = 0; }
     });
-    /* инерция не перелистывает этаж: просто упираемся в край */
-    addEventListener('scroll', () => {
-      if (busy || stage.classList.contains('on') || cur < 1) return;
-      const i = cur - 1;
-      if (scrollY > endY(i) + 2 && i < secs.length - 1) scrollTo({ top: endY(i), behavior: 'instant' });
-      else if (scrollY < startY(i) - 2) scrollTo({ top: startY(i), behavior: 'instant' });
-    }, { passive: true });
-    /* якоря и шахта: прыжок на этаж без поездки */
-    window.__glRide = () => ({ cur, busy, end: endY(Math.max(cur - 1, 0)), y: scrollY });
-    window.__glGoFloor = n => { if (busy) return; show(false); reset(); doors(false); cur = n; secs[n - 1].body.classList.add('go'); scrollTo({ top: startY(n - 1), behavior: 'instant' }); };
+    /* кнопка «Следующий этаж» в конце каждого этажа */
+    document.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click', () => {
+      if (ride) return;
+      const i = secs.findIndex(s => s.el.contains(b));
+      cur = i + 1; startDown(); ride.auto = true; ride.target = 1;
+    }));
+    window.__glRide = () => ({ cur, ride: ride && { base: ride.base, p: +ride.p.toFixed(3) } });
+    window.__glGoFloor = n => { ride = null; stage.style.visibility = 'hidden'; lock(false); cur = n; secs[n - 1].body.classList.add('go'); scrollTo({ top: startY(n - 1), behavior: 'instant' }); };
     addEventListener('hashchange', () => { const m = location.hash.match(/floor-(\d)/); if (m) window.__glGoFloor(+m[1]); });
     const fbg = document.getElementById('floorBg');
     if (fbg) {
-      const bio = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { const f = en.target.closest('.fl'); fbg.style.setProperty('--fbg', f.dataset.bg); if (!busy) window.__glFloor = +f.dataset.floor; } }), { rootMargin: '-40% 0px -40% 0px' });
+      const bio = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { const f = en.target.closest('.fl'); fbg.style.setProperty('--fbg', f.dataset.bg); if (!ride) window.__glFloor = +f.dataset.floor; } }), { rootMargin: '-40% 0px -40% 0px' });
       secs.forEach(s => bio.observe(s.body));
     }
   }
@@ -299,8 +282,13 @@
     Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 700))]).then(() => setTimeout(openNav, 80));
     try { sessionStorage.removeItem('gl-nav'); } catch (e) {}
   }
+  const base = new URL((document.querySelector('.hdr-logo') || {}).href || './', location.href).pathname;
+  const sect = u => { const p = new URL(u, location.href).pathname; return p.startsWith(base) ? p.slice(base.length).split('/')[0] : p; };
   const go = href => {
     if (reduce || !nl) { location.href = href; return; }
+    if (sect(href) === sect(location.href) && sect(href) !== '') {          // тот же раздел — без лифта, мягкое затемнение
+      root.classList.add('soft-out'); setTimeout(() => { location.href = href; }, 260); return;
+    }
     try { sessionStorage.setItem('gl-nav', '1'); } catch (e) {}
     nl.classList.remove('go'); nl.classList.add('on');
     setTimeout(() => nl.classList.add('shut'), 260);
@@ -630,3 +618,19 @@ document.querySelectorAll('[data-qa]').forEach(qa => {
     if (!on) pt.classList.add('open');
   }));
 })();
+
+/* ---------- Единая рамка титра: считаем, где начинается цветная полоса (под шапкой) ---------- */
+(() => {
+  const fit = () => {
+    const hb = (document.querySelector('.hdr') || {}).getBoundingClientRect ? document.querySelector('.hdr').getBoundingClientRect().bottom + scrollY : 0;
+    const vw = document.documentElement.clientWidth;
+    document.querySelectorAll('.ttl-band').forEach(el => { const r = el.getBoundingClientRect(); el.style.setProperty('--bt', Math.max(0, r.top + scrollY - hb) + 'px'); el.style.setProperty('--bl', r.left + 'px'); el.style.setProperty('--br', (vw - r.right) + 'px'); });
+  };
+  document.querySelectorAll('.pg .page>.wrap>.psign, .title-shop, .title-prod').forEach(el => el.classList.add('ttl-band'));
+  fit(); addEventListener('resize', fit); addEventListener('load', fit);
+})();
+/* ---------- Подсказки шахты: не исчезают, пока ведёте мышь к ним ---------- */
+document.querySelectorAll('.sf-pt').forEach(pt => {
+  let t; pt.addEventListener('mouseenter', () => { clearTimeout(t); pt.classList.add('hov'); });
+  pt.addEventListener('mouseleave', () => { t = setTimeout(() => pt.classList.remove('hov'), 380); });
+});

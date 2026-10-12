@@ -2753,3 +2753,82 @@ a.tag-btn{justify-content:center;padding:11px 10px!important}
 .ride-hint span::after{content:" ↓"}.ride-hint.up span::after{content:" ↑"}
 @media (prefers-reduced-motion:reduce){.shaftfig[data-reveal] img,.delfig img{clip-path:none!important}.shaftfig[data-reveal] .sf-lb,.shaftfig[data-reveal] .sf-pt{opacity:1}.shaftfig[data-reveal] .sf-ln{transform:none}.mf-zone{width:74%}.cf-door{display:none}.cf-cap,.delfig figcaption span{opacity:1}}
 .shaftfig.sf-compact{width:min(900px,100%)}
+
+/* ===== v54 ===== */
+/* заставка: белый лист, логотип по центру (стрелка — горчичная, буквы — тёмные), растворяется в экран с лифтом */
+html.intro-on .intro,.intro-on:not(.s4) .intro{background:#FBFAF6!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:26px;transition:opacity .9s ease!important}
+.intro-logo{position:static!important;transform:none!important;width:auto!important;height:min(34vh,260px)!important;margin:0!important;opacity:0;transition:opacity .8s ease!important}
+.intro-logo .logo-svg{height:100%;width:auto;display:block}
+.intro .lg-txt{fill:#1a1714!important}
+.intro-logo::after{display:none!important}
+.s1 .intro-logo{opacity:1}
+.intro-tag{position:static!important;margin:0!important;color:#1a1714!important;font:600 13px var(--fut)!important;letter-spacing:.42em!important;text-transform:uppercase;opacity:0!important;transform:translateY(6px);transition:opacity .7s,transform .7s!important;clip-path:none!important}
+.s3 .intro-tag{opacity:1!important;transform:none}
+.intro .skip{color:rgba(26,23,20,.4)!important}
+.s5 .intro{opacity:0!important;pointer-events:none}
+.intro-on .hdr{transform:none!important}
+/* мягкий переход внутри раздела и плавное появление страниц */
+html.soft-out body{opacity:0;transition:opacity .25s ease}
+body{animation:pgIn .45s ease both}
+@keyframes pgIn{from{opacity:0}to{opacity:1}}
+html.nav-in body,html.intro-on body{animation:none}
+/* сцена лифта: всё рисуется по положению «колёсика» */
+.stage{visibility:hidden;opacity:0;transform:none!important;transition:none!important}
+.stage .sk-l{transform:translate3d(calc(var(--o,0) * -100%),0,0)!important;transition:none!important}
+.stage .sk-r{transform:translate3d(calc(var(--o,0) * 100%),0,0)!important;transition:none!important}
+.st-lift,.st-copy{transition:none!important}
+.ride-hint{display:none!important}
+.nx-line{margin:70px auto 50px!important;padding:12px 22px;border:1px solid var(--hc)!important;background:none;cursor:pointer;color:var(--hc)}
+.nx-line:hover{background:rgba(255,255,255,.06)}
+@media (max-width:820px){.nx-line{margin-bottom:calc(var(--bar) + 30px)!important}}
+/* единая рамка титра на всех страницах: равный отступ от краёв цветной полосы */
+.pg .ttl-band{position:relative}
+.pg .psign::after,.title-shop .psign::after,.title-prod .psign::after,.pg-shop .title-shop::after,.pg-shop .title-prod::after{display:none!important}
+.pg .ttl-band::after{content:"";display:block!important;position:absolute;pointer-events:none;top:calc(var(--frx) - var(--bt,0px))!important;bottom:var(--frx)!important;left:calc(var(--frx) - (100vw - 100%) / 2)!important;right:calc(var(--frx) - (100vw - 100%) / 2)!important;border:3px solid var(--hc)!important;opacity:1!important}
+.pg .page>.wrap>.psign.ttl-band{margin-top:0!important;padding-top:calc(64px)!important;padding-bottom:calc(64px + var(--frx))!important}
+.pg-shop .title-shop.ttl-band,.pg-shop .title-prod.ttl-band{padding-bottom:calc(var(--frx) + 26px)!important}
+.prod2{margin-top:44px!important}
+/* эмблемы: двигается только рисунок внутри; круг и подпись стоят */
+.em,.em.rv{animation:none!important;transform:none!important}
+.em .pic{transform-box:fill-box;transform-origin:50% 50%}
+.em-shop .pic{transform-origin:50% 0}
+.em-shop.rv .pic{animation:emSwing 1s ease-in-out}
+.em-shopfull.rv .pic{animation:emSwing 1s ease-in-out}
+.em-service.rv .pic{animation:emTurn 1s cubic-bezier(.3,.7,.3,1)}
+.em-photo.rv .flash{animation:emFlash .6s ease-out}
+.em-escalator.rv .pic{animation:emLift 1s ease-in-out}
+.em.alarm.rv .sw2,.em.alarm.go .sw2{animation:emRing .9s ease-in-out}
+.arch:hover,.pg .card.tag:hover,.dn:hover,.desk-c:hover{transform:none!important;box-shadow:none!important}
+.pg .card.tag:hover,.dn:hover{border-color:#F6EBD5!important}
+/* подсказки шахты: мостик к карточке, карточка держится */
+.sf-tip::before{content:"";position:absolute;top:-10px;bottom:-10px;width:22px}
+.tip-r::before{left:-22px}.tip-l::before{right:-22px}
+.sf-pt.hov .sf-tip{opacity:1;visibility:visible;transform:translateY(-50%) scale(.8);pointer-events:auto;transition:opacity .25s,transform .25s}
+.sf-pt.hov{transform:scale(1.25);z-index:5}
+/* лавка на ПК: марки и разделы — каждые в одну строку */
+@media (min-width:1100px){
+  .title-shop .chips{flex-wrap:nowrap!important}
+  .title-shop .chips button{padding:3px 10px!important;font-size:11px!important;letter-spacing:.08em!important}
+  .catstrip ol{flex-wrap:nowrap!important}
+  .catstrip button{padding:3px 10px!important;font-size:11px!important;letter-spacing:.08em!important}
+}
+.sh-dlv{display:inline-block;margin:6px auto 0;font:700 11px var(--fut);text-transform:uppercase;letter-spacing:.18em;color:#E8B53A;text-decoration:none;border-bottom:1px solid currentColor}
+/* сервис: воздух перед кнопкой */
+.emband+.and-acts,.emband~.and-acts{margin-top:56px!important;margin-bottom:40px!important}
+/* о компании: каждый блок — свой фон, стык в стык */
+.sect{margin:0!important}
+.pg-about .sect-a{--sb:#F3E9D6}.pg-about .sect-c{--sb:#D4C8AE}.pg-about .sect-d{--sb:#C9D3BE}
+.pg-about .page>.wrap>.sect:last-of-type{--sb:#E6DCC6}
+.pg-about .about-text{margin-bottom:0!important;padding-bottom:60px}
+/* контакты: текст вопросов — тёмный */
+.pg-cnt .qa-q{color:#5a1208!important}
+.pg-cnt .qa-q span{color:#5a1208!important}
+.pg-cnt .qa-a p:last-child{color:#5a1208!important}
+.pg-cnt .qa-i.on .qa-q,.pg-cnt .qa-i.on .qa-q span{color:#F6D78A!important}
+/* карта: метка «мы здесь» тихо пульсирует */
+.mf-pin i{position:relative}
+.mf-pin i::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid #B22A1A;animation:pinPulse 2.4s ease-out infinite}
+@keyframes pinPulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(3.4);opacity:0}}
+html:not(.intro-on) .intro{display:none!important}
+.pg .ttl-band::after,.pg .page>.wrap>.psign.ttl-band::after{left:calc(var(--frx) - var(--bl,0px))!important;right:calc(var(--frx) - var(--br,0px))!important;top:calc(var(--frx) - var(--bt,0px))!important;bottom:var(--frx)!important;border:3px solid var(--hc)!important;display:block!important;content:""!important}
+.pg .page>.wrap>.psign.ttl-band{margin-bottom:0!important}
