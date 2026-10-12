@@ -157,7 +157,7 @@
     /* титр этажа — «соседняя комната» справа от лифта; камера едет вбок */
     const back = document.createElement('div'); back.className = 'lback'; lift.appendChild(back);
     const fls = [...document.querySelectorAll('section.fl')].map(el => ({ el, gap: el.querySelector('.lift-gap'), n: el.dataset.floor, name: el.dataset.short }));
-    [2, 3, 4, 5].forEach(n => { const im = new Image(); im.src = 'assets/shaft/cab-' + n + '.webp'; });
+    [2, 3, 4, 5].forEach(n => { const im = new Image(); im.src = 'assets/shaft/sk-cab-' + n + '.webp'; });
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
     const sm = v => v * v * (3 - 2 * v);
     const fbgEl = document.getElementById('floorBg');
@@ -170,14 +170,16 @@
       lift.style.setProperty('--dh', dh + 'px');
       fls.forEach((f, i) => {
         const top = f.gap.getBoundingClientRect().top + scrollY, h = f.gap.offsetHeight;
-        f.a = i === 0 ? 0 : top - VH * .12;
+        /* начало поездки — когда экран-выход прошлого этажа целиком на экране */
+        const px = i > 0 ? fls[i - 1].el.querySelector('.fl-exit') : null;
+        f.a = i === 0 ? 0 : px ? px.getBoundingClientRect().top + scrollY - hdrH : top - VH * .12;
         f.b = top + h - hdrH;                         // этаж встал под шапкой — сцена ушла
       });
     };
     let ticking = false, shown = '', backFor = '';
-    const setBack = f => {
-      if (backFor === f.n) return; backFor = f.n;
-      const tc = f.el.querySelector('.tc'); if (!tc) return;
+    const setBack = (f, kind = 'tc') => {
+      if (backFor === f.n + kind) return; backFor = f.n + kind;
+      const tc = f.el.querySelector(kind === 'exit' ? '.fl-exit' : '.tc') || f.el.querySelector('.tc'); if (!tc) return;
       const c = tc.cloneNode(true);
       c.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
       c.querySelectorAll('.mx-sign').forEach(e => e.classList.add('in'));
@@ -191,41 +193,56 @@
     const frame = () => {
       ticking = false;
       const s = scrollY;
-      let vis = 0, open = 0, bp = 0, bo = 0, hold = 0, split = 0, f0 = null, prev = null;
+      let vis = 0, open = 0, bp = 0, bo = 0, hold = 0, sx = 0, bx = 100, f0 = null, prev = null, backF = null, backK = 'tc';
       fls.forEach((f, i) => {
-        if (s >= f.b - 4) f.el.querySelector('.fl-body').classList.add('go');
+        /* настоящий этаж включаем заранее, чтобы при подмене копии не было моргания */
+        if (s >= f.a + (f.b - f.a) * .55) f.el.querySelector('.fl-body').classList.add('go');
         if (s < f.a || s >= f.b) return;
         const t = clamp((s - f.a) / (f.b - f.a));
         f0 = f; prev = fls[i - 1]; vis = 1;
+        let p;
         if (i === 0) {
           open = sm(clamp((t - .06) / .34));
-          split = sm(clamp((t - .5) / .5));
+          p = sm(clamp((t - .5) / .5));
           prev = null;
         } else {
-          vis = sm(clamp(t / .08));
-          const close = sm(clamp((t - .08) / .16));
-          const reopen = sm(clamp((t - .42) / .18));
-          open = t < .36 ? 1 - close : reopen;
-          const u = clamp((t - .24) / .14);
+          /* камера возвращается к лифту: лифт въезжает слева */
+          const e = sm(clamp(t / .12));
+          const close = sm(clamp((t - .12) / .14));
+          const reopen = sm(clamp((t - .44) / .18));
+          open = t < .38 ? 1 - close : reopen;
+          const u = clamp((t - .26) / .14);
           bp = sm(u); bo = Math.min(1, u / .12, (1 - u) / .12);
-          hold = clamp((t - .36) / .03) * (1 - clamp((t - .44) / .05));
-          if (t >= .24) prev = null;
-          split = sm(clamp((t - .64) / .36));
+          hold = clamp((t - .38) / .03) * (1 - clamp((t - .46) / .05));
+          if (t >= .26) prev = null;
+          p = sm(clamp((t - .66) / .34));
+          if (t < .12) {
+            sx = -(1 - e) * 100;
+            /* если прошлый этаж — неподвижный экран (лавка), он уезжает вправо вместе с камерой */
+            /* экран-выход прошлого этажа (или неподвижный титр лавки) уезжает вправо */
+            if (fls[i - 1]) { backF = fls[i - 1]; backK = fls[i - 1].el.querySelector('.fl-exit') ? 'exit' : 'tc'; bx = e * 100; }
+          }
         }
+        if (p > 0) { sx = -p * 100; bx = (1 - p) * 100; backF = f; backK = 'tc'; }
+      });
+      /* неподвижный этаж (лавка): после прибытия экран стоит, пока не приедет следующий лифт */
+      if (!f0) fls.forEach((f, i) => {
+        const nx = fls[i + 1];
+        if (f.el.classList.contains('fl-short') && s >= f.b && (!nx || s < nx.a)) { vis = 1; sx = -100; bx = 0; backF = f; }
       });
       const show = prev || f0;
       if (show && show.n !== shown) {
         shown = show.n; window.__glFloor = +show.n;
         nums.forEach(e => e && (e.textContent = '0' + show.n));
         names.forEach(e => e && (e.textContent = show.el.dataset.name));
-        cabs.forEach(e => e && (e.src = 'assets/shaft/cab-' + show.n + '.webp'));
+        cabs.forEach(e => e && (e.src = 'assets/shaft/sk-cab-' + show.n + '.webp'));
       }
-      if (f0 && !prev) setBack(f0);
-      if (f0 && (split > 0) && fbgEl) fbgEl.style.setProperty('--fbg', f0.el.dataset.bg);
+      if (backF) { setBack(backF, backK); if (fbgEl && bx < 50) fbgEl.style.setProperty('--fbg', backF.el.dataset.bg); }
       set(lift, '--v', vis.toFixed(2));
       const vv = vis < .01 ? 'hidden' : 'visible'; if (lift._vis !== vv) { lift._vis = vv; lift.style.visibility = vv; }
-      set(lift, '--split', split.toFixed(4));
-      lift.classList.toggle('backon', split > 0);
+      set(lift, '--sx', sx.toFixed(3) + 'vw');
+      set(lift, '--bx', bx.toFixed(3) + 'vw');
+      lift.classList.toggle('backon', !!backF && bx < 100);
       set(lift, '--hint', (1 - clamp(s / (VH * .06))).toFixed(2));
       doors.forEach(d => { set(d, '--o', open.toFixed(3)); set(d, '--bp', bp.toFixed(3)); set(d, '--bo', Math.max(0, bo).toFixed(2)); set(d, '--wo', Math.max(0, bo).toFixed(2)); set(d, '--hold', hold.toFixed(2)); });
     };
@@ -370,8 +387,13 @@
   const upd = () => {
     const p = Math.min(1, Math.max(0, scrollY / H));
     cab.style.transform = `translate3d(-50%, ${(p * (T - 30)).toFixed(1)}px, 0)`;
-    let cur = -1; marks.forEach((m, i) => { if (m.el.getBoundingClientRect().top < innerHeight * .5) cur = i; });
+    const cy = p * (T - 30) + 15;
+    let cur = -1; ticks.forEach((t, i) => { const ty = parseFloat(t.style.top) || 0; const passed = ty <= cy + 2; t.classList.toggle('lit', passed); if (passed) cur = i; });
     ticks.forEach((t, i) => t.classList.toggle('on', i === cur));
+    /* цвет шахты подстраивается под фон этажа или страницы */
+    let tone = document.body.dataset.tone || 'dark';
+    if (home) { const lv = document.getElementById('lift'); const fl = marks[Math.max(cur, 0)] && marks[Math.max(cur, 0)].el.closest('.fl'); tone = lv && lv.style.visibility === 'visible' ? 'dark' : (fl ? fl.dataset.tone : 'dark'); }
+    bar.dataset.tone = tone;
     bar.classList.add('show'); clearTimeout(hideT); hideT = setTimeout(() => bar.classList.remove('show'), 1600);
   };
   let tk = false;
@@ -405,9 +427,10 @@
       ? cart.map((i, k) => `<div class="line"><div><b>${esc(i.b)} ${esc(i.a)}</b><span>${esc(i.n)}</span></div>
           <div class="qty"><button type="button" data-q="${k}" data-d="-1" aria-label="Меньше">−</button><output>${i.q}</output><button type="button" data-q="${k}" data-d="1" aria-label="Больше">+</button></div>
           <button class="rm" type="button" data-rm="${k}" aria-label="Убрать">×</button></div>`).join('')
-      : '<p class="drawer-empty">Заявка пуста. Добавьте детали из лавки или просто опишите задачу и пришлите фото — подберём сами.</p>';
+      : `<div class="drawer-empty">${(document.getElementById('emEmpty') || {}).innerHTML || ''}<p>Заявка пуста. Добавьте детали из лавки или опишите задачу и пришлите фото — подберём сами.</p></div>`;
+    document.querySelectorAll('.cart-ico').forEach(ic => ic.classList.toggle('has', total > 0));
     document.querySelectorAll('[data-add]').forEach(b => {
-      const d = JSON.parse(b.dataset.add), inCart = cart.some(i => i.s === d.s);
+      const d = JSON.parse(b.dataset.add), inCart = cart.some(i => i.s === d.s && i.a === d.a);
       b.classList.toggle('in', inCart);
       const label = b.querySelector('span');
       if (label) label.textContent = inCart ? 'В заявке' : 'В заявку';
@@ -430,9 +453,26 @@
   document.addEventListener('click', e => {
     const add = e.target.closest('[data-add]');
     if (add) {
-      const d = JSON.parse(add.dataset.add), f = cart.find(i => i.s === d.s);
+      const d = JSON.parse(add.dataset.add), f = cart.find(i => i.s === d.s && i.a === d.a);
       if (f) f.q++; else cart.push({ ...d, q: 1 });
-      save(cart); render(); bump(); say(`${d.b} ${d.a} — в заявке`);
+      save(cart);
+      /* деталь летит в корзину в шапке; цифра щёлкает, когда долетела */
+      const tgt = [...document.querySelectorAll('.hdr-cart')].find(x => x.offsetParent);
+      const done = () => {
+        render(); bump(); say(`${d.b} ${d.a} — в заявке`);
+        document.querySelectorAll('[data-cart-count]').forEach(el => { el.classList.remove('flip'); void el.offsetWidth; el.classList.add('flip'); });
+        document.querySelectorAll('.cart-ico').forEach(ic => { ic.classList.remove('got'); void ic.getBoundingClientRect(); ic.classList.add('got'); });
+      };
+      if (tgt && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const a = add.getBoundingClientRect(), b = tgt.getBoundingClientRect();
+        const fl = document.createElement('div'); fl.className = 'fly';
+        fl.innerHTML = '<svg viewBox="0 0 44 30" width="44" height="30"><use href="#flyBoard"/></svg>';
+        document.body.appendChild(fl);
+        const x0 = a.left + a.width / 2 - 22, y0 = a.top - 30, x1 = b.left + b.width / 2 - 22, y1 = b.top;
+        const mx = (x0 + x1) / 2, my = Math.min(y0, y1) - 90;
+        fl.animate([{ transform: `translate(${x0}px,${y0}px)`, opacity: 1 }, { transform: `translate(${mx}px,${my}px) scale(.85) rotate(-8deg)`, opacity: 1, offset: .5 }, { transform: `translate(${x1}px,${y1}px) scale(.3)`, opacity: .25 }],
+          { duration: 600, easing: 'cubic-bezier(.45,0,.3,1)' }).onfinish = () => { fl.remove(); done(); };
+      } else done();
       return;
     }
     const q = e.target.closest('[data-q]');
@@ -506,12 +546,17 @@
     const st = { q: p0.get('q') || '', brand: (p0.get('brand') || '').toLowerCase(), cat: p0.get('cat') || '' };
     q.value = st.q;
     const plural = n => n % 10 === 1 && n % 100 !== 11 ? 'позиция' : [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100) ? 'позиции' : 'позиций';
+    const STEP = 36; let lim = STEP, lastKey = '';
+    const more = document.getElementById('more');
     const apply = () => {
       const nq = norm(st.q); let n = 0;
+      const key = nq + '|' + st.brand + '|' + st.cat; if (key !== lastKey) { lim = STEP; lastKey = key; }
       cards.forEach(c => {
         const ok = (!nq || c._n.includes(nq)) && (!st.brand || c.dataset.brand === st.brand) && (!st.cat || c.dataset.cat === st.cat);
-        c.hidden = !ok; if (ok) n++;
+        if (ok) n++;
+        c.hidden = !ok || n > lim;
       });
+      if (more) { more.hidden = n <= lim; more.textContent = `Показать ещё — ${Math.min(STEP, n - lim)} из ${n - lim}`; }
       found.textContent = `${n} ${plural(n)}`;
       empty.hidden = n > 0;
       reset.hidden = !(st.q || st.brand || st.cat);
@@ -525,6 +570,7 @@
     document.querySelectorAll('.chips button').forEach(b => b.addEventListener('click', () => { st.brand = st.brand === b.dataset.brand ? '' : b.dataset.brand; apply(); }));
     document.querySelectorAll('.cats button').forEach(b => b.addEventListener('click', () => { st.cat = st.cat === b.dataset.cat ? '' : b.dataset.cat; apply(); }));
     reset.addEventListener('click', () => { st.q = st.brand = st.cat = ''; q.value = ''; apply(); });
+    if (more) more.addEventListener('click', () => { lim += STEP; apply(); });
     if (location.hash === '#q') q.focus();
     addEventListener('hashchange', () => { if (location.hash === '#q') { q.focus(); q.scrollIntoView({ block: 'center' }); } });
     apply();
@@ -535,4 +581,24 @@
   tabs.forEach(t => t.addEventListener('click', () => {
     tabs.forEach(x => { const on = x === t; x.setAttribute('aria-selected', on); document.getElementById(x.getAttribute('aria-controls')).hidden = !on; });
   }));
+})();
+
+/* ---------- Вопросы: оглавление слева, ответ справа ---------- */
+document.querySelectorAll('[data-qa]').forEach(qa => {
+  qa.addEventListener('click', e => {
+    const b = e.target.closest('.qa-q'); if (!b) return;
+    qa.querySelectorAll('.qa-i').forEach(i => {
+      const on = i.contains(b);
+      i.classList.toggle('on', on);
+      i.querySelector('.qa-q').setAttribute('aria-expanded', on ? 'true' : 'false');
+    });
+  });
+});
+
+/* ---------- Эмблемы: колокол тревоги качается один раз ---------- */
+(() => {
+  const bells = document.querySelectorAll('.em.alarm');
+  const ring = el => { el.classList.remove('go'); void el.getBoundingClientRect(); el.classList.add('go'); };
+  const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { ring(en.target); io.unobserve(en.target); } }), { threshold: .6 });
+  bells.forEach(b => { io.observe(b); (b.closest('a,button') || b).addEventListener('mouseenter', () => ring(b)); });
 })();
