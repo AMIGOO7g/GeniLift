@@ -144,121 +144,70 @@
     layout(); frame();
   }
 
-  /* ---------- Лифт: двери открываются, затем вся сцена расходится по шву — за ней уже стоит этаж ---------- */
-  const lift = document.getElementById('lift');
-  if (lift) {
-    const sceneL = lift.querySelector('.lscene');
-    const door = document.getElementById('liftDoor');
-    sceneL.classList.add('lscene-l');
-    const doors = [door];
-    const nums = [document.getElementById('liftNum')];
-    const names = [document.getElementById('liftName')];
-    const cabs = [document.getElementById('liftCab')];
-    /* титр этажа — «соседняя комната» справа от лифта; камера едет вбок */
-    const back = document.createElement('div'); back.className = 'lback'; lift.appendChild(back);
-    const fls = [...document.querySelectorAll('section.fl')].map(el => ({ el, gap: el.querySelector('.lift-gap'), n: el.dataset.floor, name: el.dataset.short }));
-    [2, 3, 4, 5].forEach(n => { const im = new Image(); im.src = 'assets/shaft/sk-cab-' + n + '.webp'; });
-    const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
-    const sm = v => v * v * (3 - 2 * v);
-    const fbgEl = document.getElementById('floorBg');
-    let hdrH = 76;
-    const layout = () => {
-      VH = probe.offsetHeight || innerHeight;
-      const hd = document.querySelector('.hdr'); hdrH = hd ? hd.offsetHeight : 76;
-      const bar = innerWidth <= 820 ? 56 : 0;
-      const dh = Math.round(Math.min(VH - hdrH - bar - (innerWidth <= 820 ? 170 : 240), 720, innerWidth * 1.25));
-      lift.style.setProperty('--dh', dh + 'px');
-      fls.forEach((f, i) => {
-        const top = f.gap.getBoundingClientRect().top + scrollY, h = f.gap.offsetHeight;
-        /* начало поездки — когда экран-выход прошлого этажа целиком на экране */
-        const px = i > 0 ? fls[i - 1].el.querySelector('.fl-exit') : null;
-        f.a = i === 0 ? 0 : px ? px.getBoundingClientRect().top + scrollY - hdrH : top - VH * .12;
-        f.b = top + h - hdrH;                         // этаж встал под шапкой — сцена ушла
+  /* ---------- Поездка: доехали до лифта — двери открываются, камера едет вправо на этаж.
+     Переход проигрывается сам (время, а не протяжка прокруткой) — поэтому не дрожит ---------- */
+  const secs = [...document.querySelectorAll('section.fl')].map(el => ({ el, ls: el.querySelector('.liftsec'), body: el.querySelector('.fl-body'), n: +el.dataset.floor }));
+  if (secs.length) {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    const hdrH = () => (document.querySelector('.hdr') || {}).offsetHeight || 0;
+    const topOf = el => el.getBoundingClientRect().top + scrollY;
+    let busy = false, lastY = scrollY;
+    const block = e => { if (busy) e.preventDefault(); };
+    addEventListener('wheel', block, { passive: false });
+    addEventListener('touchmove', block, { passive: false });
+    addEventListener('keydown', e => { if (busy && ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Home', 'End'].includes(e.key)) e.preventDefault(); });
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ride = async s => {
+      if (busy) return; busy = true; root.classList.add('ride-lock'); s.done = true;
+      const top = topOf(s.ls) - hdrH();
+      if (Math.abs(scrollY - top) > 2) { scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' }); await wait(reduce ? 0 : Math.min(650, Math.abs(scrollY - top) + 200)); scrollTo({ top, behavior: 'instant' }); }
+      window.__glFloor = s.n;
+      s.body.classList.add('go');            /* настоящий титр проявляется заранее, под лифтом — подмена без вспышки */
+      s.ls.classList.add('open'); await wait(reduce ? 0 : 1050);
+      /* титр этажа — «соседняя комната» справа */
+      const copy = document.createElement('div');
+      copy.className = s.el.className + ' pan-copy'; copy.setAttribute('style', s.el.getAttribute('style') || ''); copy.dataset.tone = s.el.dataset.tone || '';
+      const b = document.createElement('div'); b.className = 'wrap fl-body go'; b.appendChild(s.el.querySelector('.tc').cloneNode(true)); copy.appendChild(b);
+      document.body.appendChild(copy); copy.getBoundingClientRect();
+      s.ls.classList.add('pan'); copy.classList.add('in');
+      await wait(reduce ? 0 : 900);
+      s.body.classList.add('go');
+      root.classList.remove('ride-lock');
+      scrollTo({ top: topOf(s.body) - hdrH(), behavior: 'instant' });
+      lastY = scrollY;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        copy.remove(); s.ls.classList.remove('open', 'pan');
+        busy = false; lastY = scrollY;
+      }));
+    };
+    const check = () => {
+      if (busy || root.classList.contains('intro-on')) { lastY = scrollY; return; }
+      const y = scrollY, down = y > lastY + 1; lastY = y;
+      const VHn = innerHeight, H = hdrH();
+      secs.forEach(s => {
+        const t = s.ls.getBoundingClientRect().top;
+        if (t > VHn * .8) s.done = false;                     // ушли выше — снова можно ехать
+        if (down && !s.done && t < VHn * .55 && t > -VHn * .4) ride(s);
       });
     };
-    let ticking = false, shown = '', backFor = '';
-    const setBack = (f, kind = 'tc') => {
-      if (backFor === f.n + kind) return; backFor = f.n + kind;
-      const tc = f.el.querySelector(kind === 'exit' ? '.fl-exit' : '.tc') || f.el.querySelector('.tc'); if (!tc) return;
-      const c = tc.cloneNode(true);
-      c.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
-      c.querySelectorAll('.mx-sign').forEach(e => e.classList.add('in'));
-      const wrap = document.createElement('div');
-      wrap.className = f.el.className + ' lback-fl'; wrap.setAttribute('style', f.el.getAttribute('style') || '');
-      wrap.dataset.tone = f.el.dataset.tone || '';
-      const body = document.createElement('div'); body.className = 'wrap fl-body go'; body.appendChild(c); wrap.appendChild(body);
-      back.replaceChildren(wrap);
+    addEventListener('scroll', () => requestAnimationFrame(check), { passive: true });
+    /* первый этаж: на самом верху страницы любая попытка листать вниз — поехали */
+    const kick = e => {
+      if (busy || root.classList.contains('intro-on') || scrollY > 4 || secs[0].done) return;
+      if ((e.type === 'wheel' && e.deltaY > 0) || e.type === 'touchmove' || (e.type === 'keydown' && ['ArrowDown', 'PageDown', ' '].includes(e.key))) { e.preventDefault(); ride(secs[0]); }
     };
-    const set = (el, k, v) => { if (el && el['_' + k] !== v) { el['_' + k] = v; el.style.setProperty(k, v); } };
-    const frame = () => {
-      ticking = false;
-      const s = scrollY;
-      let vis = 0, open = 0, bp = 0, bo = 0, hold = 0, sx = 0, bx = 100, f0 = null, prev = null, backF = null, backK = 'tc';
-      fls.forEach((f, i) => {
-        /* настоящий этаж включаем заранее, чтобы при подмене копии не было моргания */
-        if (s >= f.a + (f.b - f.a) * .55) f.el.querySelector('.fl-body').classList.add('go');
-        if (s < f.a || s >= f.b) return;
-        const t = clamp((s - f.a) / (f.b - f.a));
-        f0 = f; prev = fls[i - 1]; vis = 1;
-        let p;
-        if (i === 0) {
-          open = sm(clamp((t - .06) / .34));
-          p = sm(clamp((t - .5) / .5));
-          prev = null;
-        } else {
-          /* камера возвращается к лифту: лифт въезжает слева */
-          const e = sm(clamp(t / .12));
-          const close = sm(clamp((t - .12) / .14));
-          const reopen = sm(clamp((t - .44) / .18));
-          open = t < .38 ? 1 - close : reopen;
-          const u = clamp((t - .26) / .14);
-          bp = sm(u); bo = Math.min(1, u / .12, (1 - u) / .12);
-          hold = clamp((t - .38) / .03) * (1 - clamp((t - .46) / .05));
-          if (t >= .26) prev = null;
-          p = sm(clamp((t - .66) / .34));
-          if (t < .12) {
-            sx = -(1 - e) * 100;
-            /* если прошлый этаж — неподвижный экран (лавка), он уезжает вправо вместе с камерой */
-            /* экран-выход прошлого этажа (или неподвижный титр лавки) уезжает вправо */
-            if (fls[i - 1]) { backF = fls[i - 1]; backK = fls[i - 1].el.querySelector('.fl-exit') ? 'exit' : 'tc'; bx = e * 100; }
-          }
-        }
-        if (p > 0) { sx = -p * 100; bx = (1 - p) * 100; backF = f; backK = 'tc'; }
-      });
-      /* неподвижный этаж (лавка): после прибытия экран стоит, пока не приедет следующий лифт */
-      if (!f0) fls.forEach((f, i) => {
-        const nx = fls[i + 1];
-        if (f.el.classList.contains('fl-short') && s >= f.b && (!nx || s < nx.a)) { vis = 1; sx = -100; bx = 0; backF = f; }
-      });
-      const show = prev || f0;
-      if (show && show.n !== shown) {
-        shown = show.n; window.__glFloor = +show.n;
-        nums.forEach(e => e && (e.textContent = '0' + show.n));
-        names.forEach(e => e && (e.textContent = show.el.dataset.name));
-        cabs.forEach(e => e && (e.src = 'assets/shaft/sk-cab-' + show.n + '.webp'));
-      }
-      if (backF) { setBack(backF, backK); if (fbgEl && bx < 50) fbgEl.style.setProperty('--fbg', backF.el.dataset.bg); }
-      set(lift, '--v', vis.toFixed(2));
-      const vv = vis < .01 ? 'hidden' : 'visible'; if (lift._vis !== vv) { lift._vis = vv; lift.style.visibility = vv; }
-      set(lift, '--sx', sx.toFixed(3) + 'vw');
-      set(lift, '--bx', bx.toFixed(3) + 'vw');
-      lift.classList.toggle('backon', !!backF && bx < 100);
-      set(lift, '--hint', (1 - clamp(s / (VH * .06))).toFixed(2));
-      doors.forEach(d => { set(d, '--o', open.toFixed(3)); set(d, '--bp', bp.toFixed(3)); set(d, '--bo', Math.max(0, bo).toFixed(2)); set(d, '--wo', Math.max(0, bo).toFixed(2)); set(d, '--hold', hold.toFixed(2)); });
-    };
+    addEventListener('wheel', kick, { passive: false });
+    let ty = 0; addEventListener('touchstart', e => { ty = e.touches[0].clientY; }, { passive: true });
+    addEventListener('touchmove', e => { if (e.touches[0].clientY < ty - 12) kick(e); }, { passive: false });
+    addEventListener('keydown', kick);
+    /* если на этаж попали без поездки (якорь, меню) — титр всё равно проявится */
+    const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) en.target.classList.add('go'); }), { threshold: .25 });
+    secs.forEach(s => io.observe(s.body));
     const fbg = document.getElementById('floorBg');
     if (fbg) {
-      const bio = new IntersectionObserver(es => es.forEach(en => {
-        if (en.isIntersecting) fbg.style.setProperty('--fbg', en.target.closest('.fl').dataset.bg);
-      }), { rootMargin: '-40% 0px -40% 0px' });
-      fls.forEach(f => bio.observe(f.el.querySelector('.fl-body')));
+      const bio = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { const f = en.target.closest('.fl'); fbg.style.setProperty('--fbg', f.dataset.bg); window.__glFloor = +f.dataset.floor; } }), { rootMargin: '-40% 0px -40% 0px' });
+      secs.forEach(s => bio.observe(s.body));
     }
-    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
-    addEventListener('scroll', onScroll, { passive: true });
-    let lw = innerWidth;
-    addEventListener('resize', () => { if (innerWidth === lw) return; lw = innerWidth; layout(); frame(); });
-    addEventListener('load', () => { layout(); frame(); });
-    layout(); frame();
   }
 
   /* ---------- Табло этажа в шапке: цифра и стрелка направления ---------- */
@@ -392,7 +341,7 @@
     ticks.forEach((t, i) => t.classList.toggle('on', i === cur));
     /* цвет шахты подстраивается под фон этажа или страницы */
     let tone = document.body.dataset.tone || 'dark';
-    if (home) { const lv = document.getElementById('lift'); const fl = marks[Math.max(cur, 0)] && marks[Math.max(cur, 0)].el.closest('.fl'); tone = lv && lv.style.visibility === 'visible' ? 'dark' : (fl ? fl.dataset.tone : 'dark'); }
+    if (home) { const onLift = [...document.querySelectorAll('.liftsec')].some(l => { const r = l.getBoundingClientRect(); return r.top < innerHeight * .5 && r.bottom > innerHeight * .5; }); const fl = marks[Math.max(cur, 0)] && marks[Math.max(cur, 0)].el.closest('.fl'); tone = onLift ? 'light' : (fl ? fl.dataset.tone : 'dark'); }
     bar.dataset.tone = tone;
     bar.classList.add('show'); clearTimeout(hideT); hideT = setTimeout(() => bar.classList.remove('show'), 1600);
   };

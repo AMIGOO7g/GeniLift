@@ -2328,3 +2328,73 @@ a.tag-btn{text-decoration:none}
 .vt-btn{padding:8px 14px;border:2px solid #D9AE45;background:none;color:#D9AE45;font:700 11px Jost;text-transform:uppercase;letter-spacing:.14em;cursor:pointer}
 .vt-btn:hover,.vt-btn.in{background:#D9AE45;color:#2a1a10}
 .chips{flex-wrap:wrap}
+
+/* ===== v49 ===== */
+/* лифт — в потоке страницы, на «бумаге»; переходы проигрываются сами */
+.lift,.lift-gap,.fl-hold{display:none!important}
+.liftsec{position:relative;height:calc(100vh - var(--hdr));background:#F7F5F4;overflow:hidden}
+@supports (height:100svh){.liftsec{height:calc(100svh - var(--hdr) - var(--bar))}}
+.ls-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:transform .9s cubic-bezier(.65,0,.35,1)}
+.liftsec.pan .ls-in{transform:translate3d(-100vw,0,0)}
+.liftsec .sk-door{height:min(calc(100vh - var(--hdr) - 120px),760px)!important;width:auto!important;aspect-ratio:1122/1402}
+@supports (height:100svh){.liftsec .sk-door{height:min(calc(100svh - var(--hdr) - var(--bar) - 110px),760px,118vw)!important}}
+.liftsec .sk-ind{font-size:clamp(11px,1.9vh,20px)}
+.liftsec .sk-l,.liftsec .sk-r{transform:none;transition:transform 1s cubic-bezier(.65,0,.35,1)}
+.liftsec.open .sk-l{transform:translate3d(-100%,0,0)}
+.liftsec.open .sk-r{transform:translate3d(100%,0,0)}
+.liftsec .hint{position:static!important;transform:none!important;opacity:.55;color:#2a2520}
+.liftsec .hint svg{stroke:#2a2520}
+.pan-copy{position:fixed!important;left:0;right:0;top:var(--hdr);bottom:0;z-index:30;background:var(--fb);overflow:hidden;transform:translate3d(100vw,0,0);transition:transform .9s cubic-bezier(.65,0,.35,1);will-change:transform}
+.pan-copy.in{transform:none}
+.pan-copy .fl-body{margin:0 auto}
+.pan-copy .mx-sign{opacity:1!important}
+.pan-copy .mx-n{opacity:.08!important;transform:translate(-50%,-50%)!important}
+html.ride-lock,html.ride-lock body{overflow:hidden}
+.nx-line{display:flex;align-items:center;justify-content:center;gap:12px;margin:70px 0 50px;font:500 12px var(--fut);text-transform:uppercase;letter-spacing:.24em;color:var(--hc);opacity:.85}
+.nx-line b{font-weight:700;letter-spacing:.14em}
+.nx-line i{font-style:normal;animation:nx 2.4s ease-in-out infinite}
+.fl-exit{display:none!important}
+/* рамка титров — одно правило везде: тонкая линия, равный отступ со всех сторон */
+:root{--frx:32px}
+@media (max-width:760px){:root{--frx:12px}}
+.fl .mx-sign::after{top:var(--frx)!important;bottom:var(--frx)!important;left:calc(var(--frx) - (100vw - 100%) / 2)!important;right:calc(var(--frx) - (100vw - 100%) / 2)!important;border:3px solid var(--hc)!important;opacity:1!important;filter:none!important;box-shadow:none!important}
+.pg .page>.wrap>.psign,.pg .psign{margin-top:var(--frx)!important;padding:64px 28px calc(64px + var(--frx))!important}
+.pg .psign::after{top:0!important;bottom:var(--frx)!important;left:calc(var(--frx) - (100vw - 100%) / 2)!important;right:calc(var(--frx) - (100vw - 100%) / 2)!important;border:3px solid var(--hc)!important;opacity:1!important}
+.pg .page>.wrap>.psign::before{bottom:0!important}
+.title-shop .psign,.title-prod .psign{padding-bottom:64px!important}
+.title-shop .psign::after,.title-prod .psign::after{display:none!important}
+.pg-shop .title-shop,.pg-shop .title-prod{position:relative;padding-bottom:var(--frx)}
+.pg-shop .title-shop::after,.pg-shop .title-prod::after{content:"";position:absolute;top:var(--frx);bottom:var(--frx);left:calc(var(--frx) - (100vw - 100%) / 2);right:calc(var(--frx) - (100vw - 100%) / 2);border:3px solid var(--hc);pointer-events:none}
+.mx-floor{opacity:.65}
+/* шахта справа — тоньше, в поле за рамкой */
+.shaftbar{right:6px!important;width:20px!important}
+.sb-tick{width:8px!important;height:8px!important;border-radius:50%;background:var(--sb-ink,rgba(201,161,90,.6))!important}
+.sb-tick b{display:none!important}
+.sb-tick.lit,.sb-tick:hover{background:var(--sb-lit,#E2B23A)!important}
+.sb-tick span{right:20px!important}
+.sb-cab{width:12px!important;height:22px!important;border-width:3px!important}
+/* шапка — в цвет титульной зоны раздела */
+.pg[data-tone=light] .hdr{background:var(--fb)!important}
+.pg-about .hdr{background:#A3271F!important}
+.pg-srv .hdr{background:#1E4A3F!important}
+/* крупные цифры, цены, сроки и телефоны — без переносов */
+.facts dd,.pass4 dd,.srvfacts dd,.mp-price b,.mp-price em,.mp-bot b,.em-p,.em-big,.pp-n,.desk-ph,.sosw-p,.vt td,.ring b,.sline b,.price,.c-phone,.giant-phone,.tag-pn,.svc-m em,.cp-num,.mt-row b,.lm-phone{white-space:nowrap}
+.pass4 dd,.srvfacts dd{font-size:clamp(20px,3.6vw,40px)!important}
+@media (max-width:760px){.facts dd{font-size:clamp(26px,8vw,40px)!important}.pp-n{font-size:clamp(22px,7vw,34px)!important}.giant-phone{font-size:clamp(26px,8.4vw,44px)!important}}
+/* монтаж и сервис: карточки — что входит, цена крупно, действие */
+.svcplate .mt-in{gap:16px!important}
+.mp-list{margin:0;padding:0;list-style:none;display:grid;gap:7px;text-align:left}
+.mp-list li{position:relative;padding-left:26px;font:500 15px/1.4 var(--fut);color:var(--cream)}
+.mp-list li::before{content:"";position:absolute;left:2px;top:4px;width:7px;height:12px;border-right:3px solid var(--hc);border-bottom:3px solid var(--hc);transform:rotate(40deg)}
+.mp-price{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;padding-top:14px;border-top:1px solid rgba(246,235,213,.25);margin-top:auto}
+.mp-price span{width:100%;font:600 11px var(--fut);text-transform:uppercase;letter-spacing:.2em;opacity:.65}
+.mp-price b{font:900 clamp(22px,2.4vw,30px) var(--fut);color:var(--hc);letter-spacing:.02em}
+.mp-price em{font:500 14px var(--fut);font-style:normal;opacity:.75}
+.mp-go{align-self:flex-start;font:700 12px var(--fut);text-transform:uppercase;letter-spacing:.18em;color:var(--hc);border-bottom:2px solid var(--hc);padding-bottom:3px}
+.svcplate:hover .mp-go{opacity:.75}
+.mp-bot{display:none!important}
+.emsec{margin:90px auto 30px}
+.emsec .sec-t{margin-bottom:26px!important}
+.pg.pg-about .hdr{background:#A3271F!important}
+.pg.pg-srv .hdr{background:#1E4A3F!important}
+@media (max-width:760px){.pass4 dd,.srvfacts dd{font-size:clamp(17px,5vw,26px)!important;letter-spacing:0!important}}
