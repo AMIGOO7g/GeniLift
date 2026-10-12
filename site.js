@@ -144,68 +144,106 @@
     layout(); frame();
   }
 
-  /* ---------- Поездка: доехали до лифта — двери открываются, камера едет вправо на этаж.
-     Переход проигрывается сам (время, а не протяжка прокруткой) — поэтому не дрожит ---------- */
-  const secs = [...document.querySelectorAll('section.fl')].map(el => ({ el, ls: el.querySelector('.liftsec'), body: el.querySelector('.fl-body'), n: +el.dataset.floor }));
-  if (secs.length) {
+  /* ---------- Лифт — отдельная сцена поверх страницы. Вниз: лифт выезжает снизу, двери, камера вправо на этаж.
+     Вверх — зеркально. Всё проигрывается само (время, а не протяжка), прокрутка на это время заблокирована ---------- */
+  const stage = document.getElementById('stage');
+  const secs = [...document.querySelectorAll('section.fl')].map(el => ({ el, body: el.querySelector('.fl-body'), n: +el.dataset.floor }));
+  if (stage && secs.length) {
+    const stl = stage.querySelector('.st-lift'), copy = stage.querySelector('.st-copy');
+    const cab = document.getElementById('stCab'), num = document.getElementById('stNum');
     const wait = ms => new Promise(r => setTimeout(r, ms));
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const T = { slide: reduce ? 0 : 700, doors: reduce ? 0 : 950, pan: reduce ? 0 : 850 };
     const hdrH = () => (document.querySelector('.hdr') || {}).offsetHeight || 0;
     const topOf = el => el.getBoundingClientRect().top + scrollY;
-    let busy = false, lastY = scrollY;
-    const block = e => { if (busy) e.preventDefault(); };
-    addEventListener('wheel', block, { passive: false });
+    const startY = i => topOf(secs[i].body) - hdrH();
+    const endY = i => Math.max(startY(i), topOf(secs[i].body) + secs[i].body.offsetHeight - innerHeight);
+    [2, 3, 4, 5].forEach(n => { const im = new Image(); im.src = 'assets/shaft/sk-cab-' + n + '.webp'; });
+    let cur = 0, busy = false;                       // 0 — стоим у лифта первого этажа
+    const lock = on => root.classList.toggle('ride-lock', on);
+    const anim = (el, tf, ms) => { el.style.transition = ms ? `transform ${ms}ms cubic-bezier(.65,0,.35,1)` : 'none'; el.style.transform = tf; };
+    const setLift = n => { cab.src = 'assets/shaft/sk-cab-' + n + '.webp'; num.textContent = '0' + n; window.__glFloor = n; };
+    const setCopy = s => {
+      copy.className = 'st-copy ' + s.el.className; copy.setAttribute('style', s.el.getAttribute('style') || ''); copy.dataset.tone = s.el.dataset.tone || '';
+      const b = document.createElement('div'); b.className = 'wrap fl-body go'; b.appendChild(s.el.querySelector('.tc').cloneNode(true));
+      copy.replaceChildren(b);
+    };
+    const doors = open => stage.classList.toggle('open', open);
+    const show = on => { stage.classList.toggle('on', on); lock(on); };
+    const reset = () => { anim(stl, 'none', 0); anim(copy, 'translate3d(100vw,0,0)', 0); anim(stage, 'none', 0); };
+    reset(); setLift(1); show(true);
+    /* вниз: этаж i → этаж i+1 (cur 0 — от лифта первого этажа) */
+    const down = async () => {
+      if (busy || cur >= secs.length) return; busy = true;
+      const s = secs[cur];
+      if (cur > 0) {                                   // лифт выезжает снизу и закрывает прошлый этаж
+        reset(); doors(false); setLift(s.n); anim(stage, 'translate3d(0,100%,0)', 0); show(true);
+        stage.getBoundingClientRect(); anim(stage, 'none', T.slide); await wait(T.slide);
+      }
+      s.body.classList.add('go'); setCopy(s);
+      doors(true); await wait(T.doors);
+      anim(stl, 'translate3d(-100vw,0,0)', T.pan); anim(copy, 'none', T.pan); await wait(T.pan);
+      lock(false); scrollTo({ top: startY(cur), behavior: 'instant' });
+      requestAnimationFrame(() => requestAnimationFrame(() => { show(false); reset(); doors(false); cur++; busy = false; }));
+    };
+    /* вверх: этаж cur → этаж cur-1 (или к лифту первого этажа) */
+    const up = async () => {
+      if (busy || cur <= 0) return; busy = true;
+      const s = secs[cur - 1];
+      setLift(s.n); setCopy(s); doors(true);
+      anim(stl, 'translate3d(-100vw,0,0)', 0); anim(copy, 'none', 0); show(true);
+      stage.getBoundingClientRect();
+      anim(stl, 'none', T.pan); anim(copy, 'translate3d(100vw,0,0)', T.pan); await wait(T.pan);
+      doors(false); await wait(T.doors);
+      cur--;
+      if (cur === 0) { scrollTo({ top: 0, behavior: 'instant' }); busy = false; return; }   // остаёмся у лифта первого этажа
+      lock(false); scrollTo({ top: endY(cur - 1), behavior: 'instant' }); lock(true);
+      anim(stage, 'translate3d(0,100%,0)', T.slide); await wait(T.slide);
+      show(false); reset(); busy = false;
+    };
+    /* жесты: у лифта — колесо/свайп/клавиши; на этаже — упёрлись в край этажа */
+    const block = e => { if (busy || stage.classList.contains('on')) e.preventDefault(); };
     addEventListener('touchmove', block, { passive: false });
-    addEventListener('keydown', e => { if (busy && ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Home', 'End'].includes(e.key)) e.preventDefault(); });
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const ride = async s => {
-      if (busy) return; busy = true; root.classList.add('ride-lock'); s.done = true;
-      const top = topOf(s.ls) - hdrH();
-      if (Math.abs(scrollY - top) > 2) { scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' }); await wait(reduce ? 0 : Math.min(650, Math.abs(scrollY - top) + 200)); scrollTo({ top, behavior: 'instant' }); }
-      window.__glFloor = s.n;
-      s.body.classList.add('go');            /* настоящий титр проявляется заранее, под лифтом — подмена без вспышки */
-      s.ls.classList.add('open'); await wait(reduce ? 0 : 1050);
-      /* титр этажа — «соседняя комната» справа */
-      const copy = document.createElement('div');
-      copy.className = s.el.className + ' pan-copy'; copy.setAttribute('style', s.el.getAttribute('style') || ''); copy.dataset.tone = s.el.dataset.tone || '';
-      const b = document.createElement('div'); b.className = 'wrap fl-body go'; b.appendChild(s.el.querySelector('.tc').cloneNode(true)); copy.appendChild(b);
-      document.body.appendChild(copy); copy.getBoundingClientRect();
-      s.ls.classList.add('pan'); copy.classList.add('in');
-      await wait(reduce ? 0 : 900);
-      s.body.classList.add('go');
-      root.classList.remove('ride-lock');
-      scrollTo({ top: topOf(s.body) - hdrH(), behavior: 'instant' });
-      lastY = scrollY;
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        copy.remove(); s.ls.classList.remove('open', 'pan');
-        busy = false; lastY = scrollY;
-      }));
-    };
-    const check = () => {
-      if (busy || root.classList.contains('intro-on')) { lastY = scrollY; return; }
-      const y = scrollY, down = y > lastY + 1; lastY = y;
-      const VHn = innerHeight, H = hdrH();
-      secs.forEach(s => {
-        const t = s.ls.getBoundingClientRect().top;
-        if (t > VHn * .8) s.done = false;                     // ушли выше — снова можно ехать
-        if (down && !s.done && t < VHn * .55 && t > -VHn * .4) ride(s);
-      });
-    };
-    addEventListener('scroll', () => requestAnimationFrame(check), { passive: true });
-    /* первый этаж: на самом верху страницы любая попытка листать вниз — поехали */
-    const kick = e => {
-      if (busy || root.classList.contains('intro-on') || scrollY > 4 || secs[0].done) return;
-      if ((e.type === 'wheel' && e.deltaY > 0) || e.type === 'touchmove' || (e.type === 'keydown' && ['ArrowDown', 'PageDown', ' '].includes(e.key))) { e.preventDefault(); ride(secs[0]); }
-    };
-    addEventListener('wheel', kick, { passive: false });
-    let ty = 0; addEventListener('touchstart', e => { ty = e.touches[0].clientY; }, { passive: true });
-    addEventListener('touchmove', e => { if (e.touches[0].clientY < ty - 12) kick(e); }, { passive: false });
-    addEventListener('keydown', kick);
-    /* если на этаж попали без поездки (якорь, меню) — титр всё равно проявится */
-    const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) en.target.classList.add('go'); }), { threshold: .25 });
-    secs.forEach(s => io.observe(s.body));
+    const intent = d => { if (root.classList.contains('intro-on')) return; if (d > 0) down(); else up(); };
+    addEventListener('wheel', e => {
+      if (busy) { e.preventDefault(); return; }
+      if (stage.classList.contains('on')) { e.preventDefault(); if (Math.abs(e.deltaY) > 4) intent(e.deltaY); return; }
+      const i = cur - 1; if (i < 0) return;
+      if (e.deltaY > 0 && scrollY >= endY(i) - 2) { e.preventDefault(); if (i < secs.length - 1) down(); }
+      else if (e.deltaY < 0 && scrollY <= startY(i) + 2) { e.preventDefault(); up(); }
+    }, { passive: false });
+    let ty = null;
+    addEventListener('touchstart', e => { ty = e.touches[0].clientY; }, { passive: true });
+    addEventListener('touchend', e => {
+      if (ty == null || busy) return; const dy = ty - e.changedTouches[0].clientY; ty = null;
+      if (Math.abs(dy) < 40) return;
+      if (stage.classList.contains('on')) { intent(dy); return; }
+      const i = cur - 1; if (i < 0) return;
+      if (dy > 0 && scrollY >= endY(i) - 4 && i < secs.length - 1) down();
+      else if (dy < 0 && scrollY <= startY(i) + 4) up();
+    }, { passive: true });
+    addEventListener('keydown', e => {
+      const d = ['ArrowDown', 'PageDown', ' '].includes(e.key) ? 1 : ['ArrowUp', 'PageUp'].includes(e.key) ? -1 : 0;
+      if (!d) return;
+      if (busy || stage.classList.contains('on')) { e.preventDefault(); if (!busy) intent(d); return; }
+      const i = cur - 1;
+      if (d > 0 && scrollY >= endY(i) - 2 && i < secs.length - 1) { e.preventDefault(); down(); }
+      else if (d < 0 && scrollY <= startY(i) + 2) { e.preventDefault(); up(); }
+    });
+    /* прокрутка не должна «перелистывать» этаж мимо лифта (инерция, полоса прокрутки) */
+    addEventListener('scroll', () => {
+      if (busy || stage.classList.contains('on') || cur < 1) return;
+      const i = cur - 1;
+      if (scrollY > endY(i) + 8 && i < secs.length - 1) { scrollTo({ top: endY(i), behavior: 'instant' }); down(); }
+      else if (scrollY < startY(i) - 8) { scrollTo({ top: startY(i), behavior: 'instant' }); up(); }
+    }, { passive: true });
+    /* якоря и шахта: прыжок на этаж без поездки */
+    window.__glRide = () => ({ cur, busy, end: endY(Math.max(cur - 1, 0)), y: scrollY });
+    window.__glGoFloor = n => { if (busy) return; show(false); reset(); doors(false); cur = n; secs[n - 1].body.classList.add('go'); scrollTo({ top: startY(n - 1), behavior: 'instant' }); };
+    addEventListener('hashchange', () => { const m = location.hash.match(/floor-(\d)/); if (m) window.__glGoFloor(+m[1]); });
     const fbg = document.getElementById('floorBg');
     if (fbg) {
-      const bio = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { const f = en.target.closest('.fl'); fbg.style.setProperty('--fbg', f.dataset.bg); window.__glFloor = +f.dataset.floor; } }), { rootMargin: '-40% 0px -40% 0px' });
+      const bio = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { const f = en.target.closest('.fl'); fbg.style.setProperty('--fbg', f.dataset.bg); if (!busy) window.__glFloor = +f.dataset.floor; } }), { rootMargin: '-40% 0px -40% 0px' });
       secs.forEach(s => bio.observe(s.body));
     }
   }
@@ -233,20 +271,19 @@
     floors.forEach(f => fio.observe(f));
   }
 
-  /* ---------- Переход между страницами: двери смыкаются и расходятся ---------- */
-  const pd = document.getElementById('pagedoors');
+  /* ---------- Переход между страницами — лифтом: двери закрываются, новая страница открывается с того же лифта ---------- */
+  const nl = document.getElementById('navlift');
   if (root.classList.contains('nav-in')) {
-    pd.classList.add('shut');
-    /* открываем двери, когда страница действительно готова к показу (шрифты), — иначе Safari «съедает» анимацию */
-    const openDoors = () => requestAnimationFrame(() => requestAnimationFrame(() => { root.classList.remove('nav-in'); pd.classList.remove('shut'); }));
-    Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 700))]).then(() => setTimeout(openDoors, 120));
+    const openNav = () => { nl.classList.add('go'); setTimeout(() => root.classList.remove('nav-in'), reduce ? 0 : 950); };
+    Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 700))]).then(() => setTimeout(openNav, 80));
     try { sessionStorage.removeItem('gl-nav'); } catch (e) {}
   }
   const go = href => {
-    if (reduce) { location.href = href; return; }
+    if (reduce || !nl) { location.href = href; return; }
     try { sessionStorage.setItem('gl-nav', '1'); } catch (e) {}
-    pd.classList.add('shut');
-    setTimeout(() => { location.href = href; }, 430);
+    nl.classList.remove('go'); nl.classList.add('on');
+    setTimeout(() => nl.classList.add('shut'), 260);
+    setTimeout(() => { location.href = href; }, 1000);
   };
   document.addEventListener('click', e => {
     const a = e.target.closest('a[href]');
@@ -259,7 +296,7 @@
     const key = a.closest('.lm-keys') || a.closest('.plan');
     if (key) { a.classList.add('lit'); setTimeout(() => go(a.href), 260); } else go(a.href);
   });
-  addEventListener('pageshow', e => { if (e.persisted) pd.classList.remove('shut'); });
+  addEventListener('pageshow', e => { if (e.persisted && nl) nl.classList.remove('on', 'shut'); });
 
   /* ---------- Меню: лифтовая панель ---------- */
   const lm = document.getElementById('liftmenu');
@@ -321,7 +358,7 @@
   const ticks = marks.map(m => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'sb-tick';
     b.innerHTML = `<b>${m.n}</b><span>${m.name || ''}</span>`;
-    b.addEventListener('click', () => { const y = m.el.getBoundingClientRect().top + scrollY - (document.querySelector('.hdr')?.offsetHeight || 76); scrollTo({ top: y, behavior: 'smooth' }); });
+    b.addEventListener('click', () => { if (home && window.__glGoFloor) { window.__glGoFloor(parseInt(m.n, 10)); return; } const y = m.el.getBoundingClientRect().top + scrollY - (document.querySelector('.hdr')?.offsetHeight || 76); scrollTo({ top: y, behavior: 'smooth' }); });
     bar.appendChild(b); return b;
   });
   let H = 1, T = 1, hideT;
@@ -382,7 +419,7 @@
       const d = JSON.parse(b.dataset.add), inCart = cart.some(i => i.s === d.s && i.a === d.a);
       b.classList.toggle('in', inCart);
       const label = b.querySelector('span');
-      if (label) label.textContent = inCart ? 'В заявке' : 'В заявку';
+      if (label) label.textContent = inCart ? 'В запросе' : 'Добавить в запрос';
     });
   };
   const say = t => { toast.textContent = t; toast.classList.add('show'); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove('show'), 2200); };
@@ -487,7 +524,7 @@
   /* Каталог: поиск, марки, разделы */
   const grid = document.getElementById('grid');
   if (grid) {
-    const cards = [...grid.querySelectorAll('.card')];
+    const cards = [...grid.querySelectorAll(':scope > .card')];
     const norm = s => s.toLowerCase().replace(/[^a-z0-9а-яё]/gi, '');
     cards.forEach(c => c._n = norm(c.dataset.q));
     const q = document.getElementById('q'), found = document.getElementById('found'), empty = document.getElementById('empty'), reset = document.getElementById('reset');
@@ -505,6 +542,8 @@
         if (ok) n++;
         c.hidden = !ok || n > lim;
       });
+      const shelves = document.getElementById('shelves'), filt = !!(nq || st.brand || st.cat);
+      if (shelves) { shelves.hidden = filt; grid.hidden = !filt; }
       if (more) { more.hidden = n <= lim; more.textContent = `Показать ещё — ${Math.min(STEP, n - lim)} из ${n - lim}`; }
       found.textContent = `${n} ${plural(n)}`;
       empty.hidden = n > 0;
@@ -520,6 +559,7 @@
     document.querySelectorAll('.cats button').forEach(b => b.addEventListener('click', () => { st.cat = st.cat === b.dataset.cat ? '' : b.dataset.cat; apply(); }));
     reset.addEventListener('click', () => { st.q = st.brand = st.cat = ''; q.value = ''; apply(); });
     if (more) more.addEventListener('click', () => { lim += STEP; apply(); });
+    document.querySelectorAll('[data-shelf]').forEach(b => b.addEventListener('click', () => { st.cat = b.dataset.shelf; apply(); grid.scrollIntoView({ behavior: 'smooth', block: 'start' }); }));
     if (location.hash === '#q') q.focus();
     addEventListener('hashchange', () => { if (location.hash === '#q') { q.focus(); q.scrollIntoView({ block: 'center' }); } });
     apply();
