@@ -215,15 +215,25 @@
     const landingAt = y => secs.findIndex((s, i) => near(y, lsY(i)));
     const titleAt = y => secs.findIndex((s, i) => near(y, bodyY(i)));
     const K = 1500;
+    let snapping = false;
+    const snap = to => {                                         // короткий доезд 350 мс, ввод на это время заблокирован
+      if (snapping) return; snapping = true; lock(true);
+      const from = scrollY, t0 = performance.now(), D = 350;
+      const st = now => { const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3);
+        scrollTo({ top: from + (to - from) * e, behavior: 'instant' });
+        if (k < 1) requestAnimationFrame(st); else { snapping = false; lock(false); lastY = scrollY; } };
+      requestAnimationFrame(st);
+    };
     addEventListener('wheel', e => {
       if (intro()) return;
+      if (snapping) { e.preventDefault(); return; }
       if (ride) { e.preventDefault(); if (ride.p > .9 && e.deltaY > 0) { ride.auto = true; ride.target = 1; } else if (ride.p < .1 && e.deltaY < 0) { ride.auto = true; ride.target = 0; } else nudge(e.deltaY / K); return; }
       const y = scrollY;
       if (e.deltaY > 0) {
         const i = landingAt(y);
         if (i >= 0) { e.preventDefault(); begin(i, 0); nudge(e.deltaY / K); return; }
-        const j = secs.findIndex((s, k) => y < lsY(k) && y + e.deltaY >= lsY(k));          // лифт выезжает и встаёт на место
-        if (j >= 0) { e.preventDefault(); scrollTo({ top: lsY(j), behavior: 'smooth' }); }
+        const j = secs.findIndex((s, k) => y < lsY(k) && y + e.deltaY >= lsY(k) - innerHeight * .35);   // лифт выезжает и встаёт на место
+        if (j >= 0) { e.preventDefault(); snap(lsY(j)); }
       } else if (e.deltaY < 0) {
         const i = titleAt(y);
         if (i >= 0) { e.preventDefault(); begin(i, 1); nudge(e.deltaY / K); }
@@ -231,10 +241,12 @@
     }, { passive: false });
     /* инерция, полоса прокрутки, телефон: заехали на площадку — лифт встаёт и ведётся пальцем */
     addEventListener('scroll', () => {
-      if (ride || intro()) { lastY = scrollY; return; }
+      if (ride || intro() || snapping) { lastY = scrollY; return; }
       const y = scrollY, down = y > lastY; lastY = y;
       secs.forEach((s, i) => {
-        if (y > lsY(i) + 3 && y < bodyY(i) - 3) { if (down) begin(i, 0); else begin(i, 1); }
+        if (y > lsY(i) + 3 && y < bodyY(i) - 3) { if (down) begin(i, 0); else begin(i, 1); return; }
+        const top = s.ls.getBoundingClientRect().top - hdrH();
+        if (down && top > 3 && top < innerHeight * .6) snap(lsY(i));          // площадка показалась — доезжаем ровно
       });
     }, { passive: true });
     let ty = null;
@@ -345,7 +357,7 @@
     const key = a.closest('.lm-keys') || a.closest('.plan');
     if (key) { a.classList.add('lit'); setTimeout(() => go(a.href), 260); } else go(a.href);
   });
-  addEventListener('pageshow', e => { if (e.persisted && nl) nl.classList.remove('on', 'shut'); });
+  addEventListener('pageshow', e => { root.classList.remove('soft-out', 'nav-in'); if (nl) nl.classList.remove('on', 'shut', 'trav', 'named'); if (e.persisted) document.body.style.opacity = ''; });
 
   /* ---------- Меню: лифтовая панель ---------- */
   const lm = document.getElementById('liftmenu');
@@ -695,3 +707,16 @@ document.querySelectorAll('[data-tabs]').forEach(t => t.addEventListener('click'
   t.querySelectorAll('[data-pane]').forEach(p => { const on = p.dataset.pane === b.dataset.tab; p.classList.toggle('on', on); if (on) p.querySelectorAll('[data-reveal]').forEach(r => r.classList.add('rv')); });
   dispatchEvent(new Event('resize'));
 }));
+
+/* ---------- 3D и разрез в одной рамке ---------- */
+document.querySelectorAll('.viz').forEach(v => v.querySelector('.viz-sw').addEventListener('click', e => {
+  const b = e.target.closest('[data-viz]'); if (!b) return;
+  v.querySelectorAll('[data-viz]').forEach(x => x.classList.toggle('on', x === b));
+  v.querySelectorAll('[data-p]').forEach(p => { const on = p.dataset.p === b.dataset.viz; p.classList.toggle('on', on); if (on) p.querySelectorAll('[data-reveal]').forEach(r => r.classList.add('rv')); });
+  dispatchEvent(new Event('resize'));
+}));
+/* ---------- заголовки этажей главной — в одну строку на ПК ---------- */
+(() => { const fit = () => { if (innerWidth < 900) return; document.querySelectorAll('.home .fl .mx-t').forEach(t => {
+  t.style.fontSize = ''; t.style.whiteSpace = 'nowrap'; const box = (t.closest('.mx-sign') || t.parentElement).clientWidth * .9; let f = parseFloat(getComputedStyle(t).fontSize);
+  while (t.scrollWidth > box && f > 30) { f -= 2; t.style.fontSize = f + 'px'; } }); };
+  fit(); addEventListener('resize', fit); if (document.fonts) document.fonts.ready.then(fit); })();

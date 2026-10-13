@@ -69,11 +69,11 @@ new THREE.GLTFLoader().load(RR+'assets/model/genilift_elevator.glb',g=>{
     el.addEventListener('click',e=>{e.stopPropagation(); pick(k);});
     pts.push({k,p,el,moves:k==='car'?'car':k==='counterweight'?'cw':null,base:p.clone()});
   });
-  const HI=(host.dataset.hi||'').split(',').filter(Boolean); if(HI.length){ pts.forEach(p=>p.el.classList.toggle('dim',!HI.includes(p.k))); Object.entries(parts).forEach(([k,ls])=>{ if(HI.includes(k)) ls.forEach(l=>l.material.color.setHex(0x8E2620)); }); }
+  const HI=(host.dataset.hi||'').split(',').filter(Boolean); if(HI.length){ pts.forEach(p=>p.el.classList.toggle('dim',!HI.includes(p.k)));  }
   resize(); loop();
 });
 const card=host.querySelector('.l3d-card'); let picked=null;
-function paint(){ const H2=(host.dataset.hi||'').split(','); Object.entries(parts).forEach(([kk,ls])=>ls.forEach(l=>l.material.color.setHex(kk===picked?HI:(H2.includes(kk)?0x8E2620:INK)))); Object.entries(hulls).forEach(([kk,hs])=>hs.forEach(h=>h.material.color.setHex(kk===picked?HI:INK))); }
+function paint(){ const H2=(host.dataset.hi||'').split(','); Object.entries(parts).forEach(([kk,ls])=>ls.forEach(l=>l.material.color.setHex(kk===picked?HI:INK))); Object.entries(hulls).forEach(([kk,hs])=>hs.forEach(h=>h.material.color.setHex(kk===picked?HI:INK))); }
 function pick(k){ picked=k; paint(); pts.forEach(p=>p.el.classList.toggle('on',p.k===k)); card.querySelector('b').textContent=INFO[k][0]; card.querySelector('i').textContent=INFO[k][1]; card.querySelector('a').href=RR+'zapchasti/?cat='+(SHOP[k]||''); card.classList.add('on'); ctl.autoRotate=false; }
 cv.addEventListener('click',()=>{ picked=null; paint(); card.classList.remove('on'); pts.forEach(p=>p.el.classList.remove('on')); });
 /* виды */

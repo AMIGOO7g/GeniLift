@@ -3056,3 +3056,104 @@ html.intro-on:not(.wm-in) .hdr-logo{opacity:0}
 @media (min-width:1100px){.catstrip li{margin:0!important;padding:0!important}.catstrip button{padding:3px 7px!important;font-size:10px!important;letter-spacing:.04em!important;min-width:0!important}}
 @media (min-width:1100px){html body.pg nav.catstrip ol li button{padding:4px 9px!important;font-size:10.5px!important;letter-spacing:.06em!important}
 html body.pg nav.catstrip ol li button i,html body.pg nav.catstrip ol li button small,html body.pg nav.catstrip ol li button span:first-child{display:none!important}}
+
+/* ===== v58 ===== */
+/* единые отступы: блок 96 px сверху и снизу, заголовок → содержимое 40 px */
+:root{--blk:96px;--hgap:40px}
+@media (max-width:760px){:root{--blk:64px;--hgap:28px}}
+.sect,.chap,.dipband,.dl-band,.esc-intro,.cta2,.contacts-band{padding-top:var(--blk)!important;padding-bottom:var(--blk)!important}
+.sec-t,.ch-t,.h2.sec-gap{margin-bottom:var(--hgap)!important}
+.about-text{padding:var(--blk) 0 0!important}
+.about-cols{margin:var(--hgap) auto var(--blk)!important;padding-top:0!important}
+.h2.sec-gap{margin-top:var(--blk)!important}
+.qa{margin-bottom:var(--blk)!important}
+/* круглые кнопки — яркие сразу, при наведении наоборот */
+.rbtn,.and-acts .abtn-fill,.cta .btn-fill{background:#1E4A3F!important;color:#F3E9D6!important}
+.rbtn:hover,.and-acts .abtn-fill:hover,.cta .btn-fill:hover{background:#F3E9D6!important;color:#1E4A3F!important}
+.pg-cnt main form .btn-fill[type=submit]{background:#C8361F!important;color:#F6D78A!important}
+.pg-cnt main form .btn-fill[type=submit]:hover{background:#E9B23B!important;color:#5a1208!important}
+.pg-shop .rbtn,.pg-shop .cta2 .rbtn{background:#D9AE45!important;color:#2a1a10!important;border-color:#D9AE45!important;box-shadow:0 0 0 5px var(--fl,#3E4127),0 0 0 7px #D9AE45!important}
+.pg-shop .rbtn:hover{background:transparent!important;color:#D9AE45!important}
+.pg-del .rbtn{background:#1F4250!important;border-color:#1F4250!important;box-shadow:0 0 0 5px var(--fl),0 0 0 7px #1F4250!important}
+/* «Остались вопросы» — симметрично: телефон крупно, кнопка под ним */
+.frame.cta,.cta:not(.cta2){display:none!important}
+.cta2{display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center}
+.cta2 h2{margin:0;font:900 clamp(26px,3.4vw,44px) var(--fut);text-transform:uppercase;letter-spacing:.14em;color:var(--hc,#E8B53A)}
+.cta2 .it{margin:0;font-family:var(--it);font-style:italic;font-size:20px;opacity:.85}
+.cta2 .cta-phone{font:900 clamp(26px,3.6vw,46px) var(--fut);letter-spacing:.06em;color:inherit;text-decoration:none;white-space:nowrap}
+.cta2 .rbtn{margin-top:14px}
+/* лавка: титр чистый; марки — своей полосой и своим шрифтом */
+.brandstrip{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;gap:18px;padding:16px 0}
+.brandstrip::before{content:"";position:absolute;z-index:-1;inset:0;background:#4A161D;box-shadow:0 0 0 100vmax #4A161D;clip-path:inset(0 -100vmax)}
+.bs-k{font:700 10px var(--fut);text-transform:uppercase;letter-spacing:.34em;color:rgba(232,181,58,.7)}
+html body.pg .brandstrip .chips{display:flex!important;flex-wrap:wrap;justify-content:center;gap:2px 0;margin:0!important;padding:0;border:0!important;background:none!important;width:auto!important}
+html body.pg .brandstrip .chips li{border:0!important;list-style:none}
+html body.pg .brandstrip .chips li+li::before{content:"◆";margin:0 10px;font-size:7px;vertical-align:middle;color:rgba(232,181,58,.55)}
+html body.pg .brandstrip .chips button{height:auto!important;padding:2px 2px!important;border:0!important;background:none!important;font:500 italic 21px/1.2 var(--it)!important;letter-spacing:.01em!important;text-transform:none!important;color:#F3E6CC!important;cursor:pointer}
+html body.pg .brandstrip .chips button[aria-pressed=true]{color:#E8B53A!important;text-decoration:underline;text-underline-offset:5px}
+html body.pg .brandstrip .chips button:hover{color:#E8B53A!important}
+.dlv-link{display:block;width:max-content;max-width:100%;margin:0 auto 18px;font-family:var(--it);font-style:italic;font-size:19px;color:#D9AE45;text-decoration:none;border-bottom:1px solid rgba(217,174,69,.5)}
+.sh-dlv{display:none!important}
+.mc-sub{margin:22px 0 4px;align-self:flex-start;font:700 11px var(--fut);text-transform:uppercase;letter-spacing:.34em;color:#A3271F}
+.mc-sub:first-of-type{margin-top:0}
+.mc-k{margin:6px 0 0;font-family:var(--it);font-style:italic;font-size:19px;color:#3E5248}
+@media (max-width:760px){.brandstrip{flex-direction:column;gap:6px}html body.pg .brandstrip .chips button{font-size:18px!important}}
+/* 3D и разрез в одной рамке */
+.viz{position:relative;border:3px solid #1E4A3F;background:#F3E9D6;margin:0 auto 40px}
+.viz .l3d{border:0!important;margin:0!important}
+.viz-sw{position:absolute;left:14px;top:14px;z-index:5;display:flex;border:1px solid #1E4A3F;background:#F3E9D6}
+.viz-sw button{padding:7px 14px;border:0;background:none;font:700 10px var(--fut);text-transform:uppercase;letter-spacing:.16em;color:#1E4A3F;cursor:pointer}
+.viz-sw button+button{border-left:1px solid #1E4A3F}
+.viz-sw button.on{background:#1E4A3F;color:#F3E9D6}
+.viz-p{display:none}.viz-p.on{display:block}
+.viz-p[data-p="2"]{padding:70px 20px 30px}
+.viz .shaftfig,.viz .escfig{margin-bottom:10px}
+@media (max-width:760px){.viz-sw{left:50%;transform:translateX(-50%);top:auto;bottom:10px}.viz .l3d .views{top:10px}}
+/* свет по шву — ярче и живее, без тряски */
+.sk-beam{width:10px!important;margin-left:-5px!important;background:linear-gradient(180deg,rgba(255,236,170,0),#fff6d8 18%,#ffffff 50%,#fff6d8 82%,rgba(255,236,170,0))!important;box-shadow:0 0 26px 10px rgba(255,214,120,.75),0 0 60px 24px rgba(255,214,120,.35)!important}
+.navlift.trav .sk-door{animation:none!important}
+.navlift.trav .sk-beam{animation:beamRun .7s ease-in-out!important}
+/* контакты: блоки разными полосами */
+.pg-cnt .phone-plq,.pg-cnt .form-plaque,.pg-cnt .mapfig,.pg-cnt .two{position:relative;isolation:isolate}
+.pg-cnt .phone-plq{margin:0 auto!important;padding:var(--blk) 0!important;border:0!important;box-shadow:none!important;background:none!important}
+.pg-cnt .phone-plq::before{content:"";position:absolute;z-index:-1;inset:0;background:#C8361F;box-shadow:0 0 0 100vmax #C8361F;clip-path:inset(0 -100vmax)}
+.pg-cnt .phone-plq *{color:#F6D78A!important}
+.pg-cnt .form-plaque{margin:0 auto!important;padding:var(--blk) 30px!important}
+.pg-cnt .mapfig{margin:var(--blk) auto calc(var(--blk) + 60px)!important}
+.pg-cnt .two{margin:0 auto!important;padding:var(--blk) 0!important;gap:40px!important}
+.pg-cnt .two::before{content:"";position:absolute;z-index:-1;inset:0;background:#EFD9C8;box-shadow:0 0 0 100vmax #EFD9C8;clip-path:inset(0 -100vmax)}
+.pg-cnt .two>*{border:0!important;box-shadow:none!important;background:none!important}
+.pg-cnt .psign{margin-bottom:0!important}
+/* доставка: морской с песочным; фургон выезжает, фура уезжает */
+.pg-del .dl-band::before{background:#F3E9D6;box-shadow:0 0 0 100vmax #F3E9D6}
+.pg-del .dl-tabs{color:#1F4250}
+.pg-del .dl-tabs .tab-nav{color:#1F4250}
+.pg-del .dl-tabs .tab-nav button.on{background:#1F4250;color:#F3E9D6}
+.pg-del .opt{border-color:rgba(31,66,80,.5)}
+.pg-del .opt:hover{border-color:#1F4250;background:rgba(31,66,80,.05)}
+.pg-del .opt b{color:#1F4250}.pg-del .opt-v{color:#1F4250}.pg-del .opt em{color:#3E4F55}
+.pg-del .h2.sec-gap,.pg-del .cta2 h2{color:#1F4250!important}
+.pg-del .qa{--hc:#1F4250;--text:#1F2A2E;--fb:#1F4250}
+.pg-del .cta2{color:#1F4250}
+.delfig{position:relative}
+.dl-van,.dl-truck{position:absolute;height:auto;opacity:0;transition:transform 1.6s cubic-bezier(.3,.6,.2,1),opacity .6s ease}
+.dl-van{left:40.61%;top:46.29%;width:13.67%;transform:translateX(-120%);transition-delay:1.1s}
+.dl-truck{left:62.63%;top:40.19%;width:21.14%;transform:translateX(-30%);transition-delay:1.7s}
+.delfig.rv .dl-van,.delfig.rv .dl-truck{opacity:1;transform:none}
+/* боковая панель «Заявка» — в стиле сайта */
+.drawer-in{background:#F3E9D6!important;color:#1E2A26!important;border-left:3px solid #1E4A3F!important;box-shadow:-10px 0 0 -4px #F3E9D6,-12px 0 0 -4px #1E4A3F!important}
+.drawer-head{border-bottom:1px solid rgba(30,74,63,.35)!important;padding-bottom:16px!important}
+.drawer-head h2,.drawer-head h3,.drawer-head b{font:900 20px var(--fut)!important;text-transform:uppercase;letter-spacing:.24em!important;color:#1E4A3F!important}
+.drawer-body,.drawer-body p,.drawer-body li{color:#1E2A26!important}
+.drawer-body input,.drawer-body textarea{background:transparent!important;border:1px solid rgba(30,74,63,.5)!important;color:#1E2A26!important}
+.drawer-body em,.drawer-body small{font-family:var(--it)!important;font-style:italic!important}
+.drawer-in .btn-fill,.drawer-in .abtn-fill{background:#1E4A3F!important;color:#F3E9D6!important;border-color:#1E4A3F!important}
+.drawer .em{color:#1E4A3F!important;--cut:#F3E9D6!important}
+.dl-pic{position:relative;width:min(1500px,100%);margin:0 auto}
+html body .dl-band .delfig .dl-pic img.dl-base{display:block;width:100%!important;clip-path:inset(0 100% 0 0);transition:clip-path 2.4s cubic-bezier(.4,0,.2,1)}
+html body .dl-band .delfig.rv .dl-pic img.dl-base{clip-path:inset(0 0 0 0)}
+html body .dl-band .delfig .dl-pic img.dl-van,html body .dl-band .delfig .dl-pic img.dl-truck{margin:0!important;clip-path:none!important}
+html body .dl-band .delfig .dl-pic img.dl-van{width:13.67%!important}
+html body .dl-band .delfig .dl-pic img.dl-truck{width:21.14%!important}
+.pg-del .psign .mx-sub,.pg-del .psign .mx-floor{color:#E8D9B5!important}
+@media (min-width:1100px){html body.pg .brandstrip .chips{flex-wrap:nowrap!important}html body.pg .brandstrip .chips button{font-size:18px!important;white-space:nowrap}html body.pg .brandstrip .chips li+li::before{margin:0 8px}}
