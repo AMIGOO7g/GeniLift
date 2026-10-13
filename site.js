@@ -166,7 +166,7 @@
         raf = requestAnimationFrame(st); };
       ind.textContent = '0' + Math.max(1, s.n - 1);
       new IntersectionObserver(es => es.forEach(en => { if (en.intersectionRatio > .6) play(true); else if (en.intersectionRatio < .1) play(false); }), { threshold: [0, .1, .6] }).observe(s.ls);
-      s.body.classList.add('go');
+      s.body.classList.add('go', 'arrived');
     });
   } else if (secs.length && secs[0].ls) {
     const hdrH = () => (document.querySelector('.hdr') || {}).offsetHeight || 0;
@@ -210,6 +210,7 @@
     const finish = () => {
       const r = ride; ride = null;
       if (r.p >= 1) {
+        r.s.body.classList.add('arrived');
         lock(false); scrollTo({ top: bodyY(r.i), behavior: 'instant' });
         requestAnimationFrame(() => draw(r.s, 0));
       } else { lock(false); draw(r.s, 0); scrollTo({ top: lsY(r.i), behavior: 'instant' }); }
@@ -231,7 +232,7 @@
     const intro = () => root.classList.contains('intro-on') || root.classList.contains('nav-in');
     const near = (y, v) => Math.abs(y - v) <= 3;
     const landingAt = y => secs.findIndex((s, i) => near(y, lsY(i)));
-    const titleAt = y => secs.findIndex((s, i) => near(y, bodyY(i)));
+    const titleAt = y => secs.findIndex((s, i) => y >= bodyY(i) - 3 && y <= bodyY(i) + 60);
     const K = 1500;
     let snapping = false;
     const snap = to => {                                         // короткий доезд 350 мс, ввод на это время заблокирован
@@ -293,7 +294,7 @@
       begin(i, 0); ride.auto = true; ride.target = 1;
     }));
     window.__glRide = () => ({ ride: ride && { i: ride.i, p: +ride.p.toFixed(3) }, y: scrollY, ls: secs.map((s, i) => lsY(i)), body: secs.map((s, i) => bodyY(i)) });
-    window.__glGoFloor = n => { ride = null; lock(false); secs[n - 1].body.classList.add('go'); scrollTo({ top: bodyY(n - 1), behavior: 'instant' }); };
+    window.__glGoFloor = n => { ride = null; lock(false); secs[n - 1].body.classList.add('go', 'arrived'); scrollTo({ top: bodyY(n - 1), behavior: 'instant' }); };
     addEventListener('hashchange', () => { const m = location.hash.match(/floor-(\d)/); if (m) window.__glGoFloor(+m[1]); });
     if (location.hash.match(/floor-(\d)/)) setTimeout(() => window.__glGoFloor(+location.hash.match(/floor-(\d)/)[1]), 60);
     const fbg = document.getElementById('floorBg');

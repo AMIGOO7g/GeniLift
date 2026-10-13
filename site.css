@@ -3253,3 +3253,41 @@ html.ride-lock,html.ride-lock body{overflow:visible!important}
 /* заголовки — без «хвоста» разрядки: центр текста = центр страницы */
 .mx-t,.ch-t,.mc-t,.sec-t,.cta2 h2,.dp-h h2,.h2{text-indent:0!important}
 .mx-t,.ch-t,.mc-t,.cta2 h2,.dp-h h2{margin-right:0!important;padding-left:var(--ls-pad,0)}
+
+/* ===== v61 ===== */
+/* титул следующего этажа не виден, пока на него не приехали — подсматривать нечего */
+.home .fl > .fl-body:not(.arrived) .tc{visibility:hidden}
+.hdr{transition:background-color .55s ease,color .55s ease!important}
+/* лифт переходов: лифт с подписью — ровно по центру свободной области */
+.navlift{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:12px}
+/* «О компании»: зелёная полоса — сразу под рамкой титула */
+.pg-about .page>.wrap>.dipband{margin-top:calc(-1 * var(--frx))!important}
+/* номера на разрезах — как в 3D: тёмный круг, светлая жирная цифра, двойной ободок */
+.sf-pt{width:28px!important;height:28px!important;margin:-14px 0 0 -14px!important;background:#1E4A3F!important;color:#F3E9D6!important;border:2px solid #F3E9D6!important;box-shadow:0 0 0 2px #1E4A3F!important;font:800 12px var(--fut)!important}
+.sf-pt.off{background:#F3E9D6!important;color:#1E4A3F!important;border-color:#1E4A3F!important;box-shadow:none!important}
+.viz.dark .sf-pt,.where-in .sf-pt{background:#E8C988!important;color:#2A2B1A!important;border-color:#2A2B1A!important;box-shadow:0 0 0 2px #E8C988!important}
+.viz.dark .sf-pt.off,.where-in .sf-pt.off{background:#3E4127!important;color:#E8C988!important;border-color:#E8C988!important;box-shadow:none!important}
+.escfig .sf-pt{width:30px!important;height:30px!important;margin:-15px 0 0 -15px!important}
+/* 3D и разрезы: метки обреза по углам вместо рамки-окна */
+.viz,.where-in{--cm:#1E4A3F;border:0!important;outline:0!important;background:
+ linear-gradient(var(--cm),var(--cm)) left top/34px 2px no-repeat,linear-gradient(var(--cm),var(--cm)) left top/2px 34px no-repeat,
+ linear-gradient(var(--cm),var(--cm)) right top/34px 2px no-repeat,linear-gradient(var(--cm),var(--cm)) right top/2px 34px no-repeat,
+ linear-gradient(var(--cm),var(--cm)) left bottom/34px 2px no-repeat,linear-gradient(var(--cm),var(--cm)) left bottom/2px 34px no-repeat,
+ linear-gradient(var(--cm),var(--cm)) right bottom/34px 2px no-repeat,linear-gradient(var(--cm),var(--cm)) right bottom/2px 34px no-repeat!important}
+.viz.dark,.where-in{--cm:#E8C988}
+.viz:not(.dark){background-color:transparent!important}
+.where-in{padding:40px 20px 20px!important}
+.where .sf-lb,.where .sf-lb strong{color:#E8D9B5!important}.where .sf-lb em{color:rgba(232,217,181,.75)!important}
+.where .sf-lb b{border-color:#E8C988!important;color:#E8C988!important}.where .sf-ln{border-color:#E8D9B5!important}
+/* подзаголовки титулов — светлые, как надпись «Этаж …» */
+html body.pg .psign p.mx-sub,html body.pg .psign .mx-sub{color:var(--hc)!important;opacity:.95!important}
+html body.pg-del .psign p.mx-sub{color:#E8C988!important}
+/* ЕДИНАЯ ТИПОГРАФИКА — пять уровней на весь сайт */
+:root{--t1:clamp(40px,6.2vw,96px);--t2:clamp(26px,3.2vw,44px);--t3:clamp(14px,1.2vw,16px);--tl:11px;--tb:17px;--ti:19px}
+.ps-t,.mx-t{font-size:var(--t1)!important;line-height:1!important}
+.sec-t,.ch-t,.h2,.cta2 h2,.dp-h h2,.mc-t,.sh-h h2{font-size:var(--t2)!important;line-height:1.1!important;letter-spacing:.14em!important}
+.mp-tx b,.opt b,.dn b,.ar-t,.esc-s h3,.esc-s h2,.sh-h h3,.dr strong,.about-cols h3,.about-cols b,.perks b,.mc-n,.desk-k,.cf-cap b,.sf-tip strong,.l3d-card b{font-size:var(--t3)!important;letter-spacing:.16em!important}
+.ch-k,.dp-k,.mx-floor,.bs-k,.kind a,.kind button,.tab-nav button,.viz-sw button,.views button,.sf-lb strong,.ar-k,.mc-sub,.eb-k{font-size:var(--tl)!important}
+.mx-sub,.dip-text,.ch-list span,.qa-a p,.about-text p,.desk-t{font-size:var(--tb)!important}
+.it,.mc-row em,.ch-note,.big3 em,.dr em,.ar-d,.opt em,.dp-t,.cta2 .it,.sf-tip em,.l3d-card i,.esc-list em,.sf-list em,.perks span,.mc-foot,.mc-k{font-size:var(--ti)!important}
+.viz.dark,.where-in.viz.dark{border:0!important;outline:0!important}
