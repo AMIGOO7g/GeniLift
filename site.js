@@ -136,115 +136,125 @@
     layout(); frame();
   }
 
-  /* ---------- Лифт — сцена поверх страницы. Колёсико и палец двигают САМ лифт (страница стоит):
-     крутите медленно — двери идут медленно. Остановились — лифт докатывается к ближайшему положению.
-     Внутри раздела лифта нет; на краю этажа — кнопка «Следующий этаж» ---------- */
-  const stage = document.getElementById('stage');
-  const secs = [...document.querySelectorAll('section.fl')].map(el => ({ el, body: el.querySelector('.fl-body'), n: +el.dataset.floor }));
-  if (stage && secs.length) {
-    const stl = stage.querySelector('.st-lift'), copy = stage.querySelector('.st-copy');
-    const cab = document.getElementById('stCab'), num = document.getElementById('stNum');
+  /* ---------- Лифт — «площадка» между этажами. Внизу этажа лифт выезжает обычной прокруткой и встаёт на место.
+     Дальше колёсико/палец ведёт поездку: свет по шву, табло меняет этаж, двери открываются, камера едет к титру.
+     Вверх — зеркально. Проскочить этаж мимо лифта нельзя ---------- */
+  const secs = [...document.querySelectorAll('section.fl')].map(el => ({ el, ls: el.querySelector('.liftsec'), body: el.querySelector('.fl-body'), n: +el.dataset.floor }));
+  if (secs.length && secs[0].ls) {
     const hdrH = () => (document.querySelector('.hdr') || {}).offsetHeight || 0;
     const topOf = el => el.getBoundingClientRect().top + scrollY;
-    const startY = i => topOf(secs[i].body) - hdrH();
-    const endY = i => Math.max(startY(i), topOf(secs[i].body) + secs[i].body.offsetHeight - innerHeight);
-    [2, 3, 4, 5].forEach(n => { const im = new Image(); im.src = 'assets/shaft/sk-cab-' + n + '.webp'; });
+    const lsY = i => Math.max(0, topOf(secs[i].ls) - hdrH());
+    const bodyY = i => topOf(secs[i].body) - hdrH();
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
     const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-    let cur = 0;                       // 0 — стоим у закрытого лифта первого этажа
-    let ride = null;                   // { to, base, p, target, auto }
-    const setLift = n => { cab.src = 'assets/shaft/sk-cab-' + n + '.webp'; num.textContent = '0' + n; window.__glFloor = n; };
-    const setCopy = s => {
-      copy.className = 'st-copy ' + s.el.className; copy.setAttribute('style', s.el.getAttribute('style') || ''); copy.dataset.tone = s.el.dataset.tone || '';
-      const b = document.createElement('div'); b.className = 'wrap fl-body go'; b.appendChild(s.el.querySelector('.tc').cloneNode(true));
-      copy.replaceChildren(b);
-    };
     const lock = on => root.classList.toggle('ride-lock', on);
-    /* p: 0 — этаж «до» (лифт скрыт или закрыт), 1 — титр следующего этажа */
-    const draw = p => {
-      const show = ride.base > 0 ? clamp(p / .1) : 1;
-      const o = ease(clamp((p - .1) / .45)), pan = ease(clamp((p - .58) / .42));
-      stage.style.opacity = show; stage.style.visibility = show > 0 ? 'visible' : 'hidden';
-      stage.style.setProperty('--o', o.toFixed(4));
-      stl.style.transform = `translate3d(${(-pan * 100).toFixed(3)}vw,0,0)`;
-      copy.style.transform = `translate3d(${((1 - pan) * 100).toFixed(3)}vw,0,0)`;
+    let ride = null, lastY = scrollY;
+    secs.forEach(s => {
+      s.lin = s.ls.querySelector('.ls-in'); s.copy = s.ls.querySelector('.ls-copy');
+      s.ind = s.ls.querySelector('.sk-ind'); s.door = s.ls.querySelector('.sk-door'); s.beam = s.ls.querySelector('.sk-beam'); s.nm = s.ls.querySelector('.ls-name');
+      s.from = '0' + Math.max(1, s.n - 1); s.to = '0' + s.n;
+    });
+    const fill = s => {
+      if (s.filled) return; s.filled = true;
+      s.copy.className = 'ls-copy ' + s.el.className; s.copy.setAttribute('style', s.el.getAttribute('style') || ''); s.copy.dataset.tone = s.el.dataset.tone || '';
+      const b = document.createElement('div'); b.className = 'wrap fl-body go'; b.appendChild(s.el.querySelector('.tc').cloneNode(true));
+      s.copy.replaceChildren(b);
     };
-    const begin = (base, p) => {              // base — этаж «до» (0 — лифт первого этажа)
-      const s = secs[base];
-      setLift(s.n); setCopy(s); s.body.classList.add('go');
-      ride = { base, p, target: p, auto: false, last: performance.now() };
-      lock(true); draw(p);
+    /* p: 0 — лифт закрыт (табло — прошлый этаж), 1 — титр этажа на месте */
+    const draw = (s, p) => {
+      const tr = clamp(p / .28), open = ease(clamp((p - .3) / .36)), pan = ease(clamp((p - .68) / .32));
+      s.ind.textContent = (s.n === 1 || tr > .5) ? s.to : s.from;
+      s.beam.style.opacity = (Math.sin(Math.PI * tr) * (open < .02 ? 1 : 0)).toFixed(3);
+      s.door.style.transform = tr > 0 && tr < 1 ? `translateY(${(Math.sin(tr * Math.PI * 7) * 1.6 * (1 - tr)).toFixed(2)}px)` : '';
+      s.nm.style.opacity = clamp((tr - .45) / .4).toFixed(3);
+      s.ls.style.setProperty('--o', open.toFixed(4));
+      s.lin.style.transform = `translate3d(${(-pan * 100).toFixed(3)}vw,0,0)`;
+      s.copy.style.transform = `translate3d(${((1 - pan) * 100).toFixed(3)}vw,0,0)`;
+    };
+    secs.forEach(s => draw(s, 0));
+    const begin = (i, p) => {
+      const s = secs[i]; fill(s); s.body.classList.add('go');
+      ride = { s, i, p, start: p, target: p, auto: false, last: performance.now() };
+      lock(true); scrollTo({ top: lsY(i), behavior: 'instant' }); draw(s, p);
+      window.__glFloor = s.n;
     };
     const finish = () => {
       const r = ride; ride = null;
-      if (r.p >= 1) {                         // приехали на этаж base+1
-        cur = r.base + 1; lock(false);
-        scrollTo({ top: startY(cur - 1), behavior: 'instant' });
-        requestAnimationFrame(() => { stage.style.visibility = 'hidden'; stage.style.opacity = 0; });
-      } else {                                // остались на этаже base
-        cur = r.base;
-        if (cur === 0) { scrollTo({ top: 0, behavior: 'instant' }); draw0(); return; }
-        lock(false); stage.style.visibility = 'hidden';
-      }
+      if (r.p >= 1) {
+        lock(false); scrollTo({ top: bodyY(r.i), behavior: 'instant' });
+        requestAnimationFrame(() => draw(r.s, 0));
+      } else { lock(false); draw(r.s, 0); scrollTo({ top: lsY(r.i), behavior: 'instant' }); }
+      lastY = scrollY;
     };
-    const draw0 = () => { ride = { base: 0, p: 0 }; draw(0); ride = null; stage.style.visibility = 'visible'; stage.style.opacity = 1; lock(true); setLift(1); };
     const tick = () => {
       if (ride) {
         const now = performance.now();
-        if (!ride.auto && now - ride.last > 650) { ride.auto = true; ride.target = ride.p > .45 ? 1 : 0; }
-        ride.p += (ride.target - ride.p) * (ride.auto ? .085 : .16);
+        if (!ride.auto && now - ride.last > 650) { ride.auto = true; ride.target = ride.start < .5 ? (ride.p > .3 ? 1 : 0) : (ride.p < .7 ? 0 : 1); }
+        ride.p += (ride.target - ride.p) * (ride.auto ? .07 : .16);
         if (Math.abs(ride.target - ride.p) < .002) ride.p = ride.target;
-        draw(ride.p);
+        draw(ride.s, ride.p);
         if (ride.auto && (ride.p === 0 || ride.p === 1)) finish();
       }
       requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
     const nudge = d => { ride.target = clamp(ride.target + d); ride.auto = false; ride.last = performance.now(); };
-    const atEnd = () => cur >= 1 && cur < secs.length && scrollY >= endY(cur - 1) - 3;
-    const atStart = () => cur >= 1 && scrollY <= startY(cur - 1) + 3;
-    const startDown = () => { if (cur < secs.length) begin(cur, 0); };
-    const startUp = () => { if (cur >= 1) { const b = cur - 1; if (b > 0) scrollTo({ top: endY(b - 1), behavior: 'instant' }); begin(b, 1); ride.dirUp = true; } };
-    const intro = () => root.classList.contains('intro-on');
-    draw0();
-    /* колёсико */
-    const K = 1600;                            // пикселей колёсика на всю поездку
+    const intro = () => root.classList.contains('intro-on') || root.classList.contains('nav-in');
+    const near = (y, v) => Math.abs(y - v) <= 3;
+    const landingAt = y => secs.findIndex((s, i) => near(y, lsY(i)));
+    const titleAt = y => secs.findIndex((s, i) => near(y, bodyY(i)));
+    const K = 1500;
     addEventListener('wheel', e => {
       if (intro()) return;
       if (ride) { e.preventDefault(); nudge(e.deltaY / K); return; }
-      if (cur === 0) { e.preventDefault(); if (e.deltaY > 0) { startDown(); nudge(e.deltaY / K); } return; }
-      if (e.deltaY > 0 && atEnd() && cur < secs.length) { e.preventDefault(); startDown(); nudge(e.deltaY / K); }
-      else if (e.deltaY < 0 && atStart()) { e.preventDefault(); startUp(); nudge(e.deltaY / K); }
+      const y = scrollY;
+      if (e.deltaY > 0) {
+        const i = landingAt(y);
+        if (i >= 0) { e.preventDefault(); begin(i, 0); nudge(e.deltaY / K); return; }
+        const j = secs.findIndex((s, k) => y < lsY(k) && y + e.deltaY >= lsY(k));          // лифт выезжает и встаёт на место
+        if (j >= 0) { e.preventDefault(); scrollTo({ top: lsY(j), behavior: 'smooth' }); }
+      } else if (e.deltaY < 0) {
+        const i = titleAt(y);
+        if (i >= 0) { e.preventDefault(); begin(i, 1); nudge(e.deltaY / K); }
+      }
     }, { passive: false });
-    /* палец: тянете дальше края этажа — лифт идёт ровно настолько, насколько тянете */
-    let ty = null, tStart = null;
-    addEventListener('touchstart', e => { ty = e.touches[0].clientY; tStart = null; }, { passive: true });
+    /* инерция, полоса прокрутки, телефон: заехали на площадку — лифт встаёт и ведётся пальцем */
+    addEventListener('scroll', () => {
+      if (ride || intro()) { lastY = scrollY; return; }
+      const y = scrollY, down = y > lastY; lastY = y;
+      secs.forEach((s, i) => {
+        if (y > lsY(i) + 3 && y < bodyY(i) - 3) { if (down) begin(i, 0); else begin(i, 1); }
+      });
+    }, { passive: true });
+    let ty = null;
+    addEventListener('touchstart', e => { ty = e.touches[0].clientY; }, { passive: true });
     addEventListener('touchmove', e => {
-      if (intro() || ty == null) return;
+      if (ty == null || intro()) return;
       const y = e.touches[0].clientY, dy = ty - y;
       if (ride) { e.preventDefault(); nudge(dy / (innerHeight * .8)); ty = y; return; }
-      if (cur === 0 && dy > 6) { e.preventDefault(); startDown(); nudge(dy / (innerHeight * .8)); ty = y; return; }
-      if (cur === 0) { e.preventDefault(); return; }
-      if (dy > 8 && atEnd() && cur < secs.length) { e.preventDefault(); startDown(); ty = y; }
-      else if (dy < -8 && atStart()) { e.preventDefault(); startUp(); ty = y; }
+      if (dy > 6) { const i = landingAt(scrollY); if (i >= 0) { e.preventDefault(); begin(i, 0); nudge(dy / (innerHeight * .8)); ty = y; } }
+      else if (dy < -6) { const i = titleAt(scrollY); if (i >= 0) { e.preventDefault(); begin(i, 1); nudge(dy / (innerHeight * .8)); ty = y; } }
     }, { passive: false });
-    addEventListener('touchend', () => { ty = null; if (ride) { ride.auto = true; ride.target = ride.p > (ride.dirUp ? .8 : .2) ? 1 : 0; } }, { passive: true });
+    addEventListener('touchend', () => { ty = null; if (ride) { ride.auto = true; ride.target = ride.start < .5 ? (ride.p > .18 ? 1 : 0) : (ride.p < .82 ? 0 : 1); } }, { passive: true });
     addEventListener('keydown', e => {
       const d = ['ArrowDown', 'PageDown', ' '].includes(e.key) ? 1 : ['ArrowUp', 'PageUp'].includes(e.key) ? -1 : 0;
       if (!d || intro()) return;
       if (ride) { e.preventDefault(); ride.auto = true; ride.target = d > 0 ? 1 : 0; return; }
-      if ((cur === 0 && d > 0) || (d > 0 && atEnd() && cur < secs.length)) { e.preventDefault(); startDown(); ride.auto = true; ride.target = 1; }
-      else if (d < 0 && atStart()) { e.preventDefault(); startUp(); ride.auto = true; ride.target = 0; }
+      const i = d > 0 ? landingAt(scrollY) : titleAt(scrollY);
+      if (i >= 0) { e.preventDefault(); begin(i, d > 0 ? 0 : 1); ride.auto = true; ride.target = d > 0 ? 1 : 0; }
     });
-    /* кнопка «Следующий этаж» в конце каждого этажа */
-    document.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click', () => {
+    /* кнопка «Следующий этаж» */
+    document.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click', async () => {
       if (ride) return;
-      const i = secs.findIndex(s => s.el.contains(b));
-      cur = i + 1; startDown(); ride.auto = true; ride.target = 1;
+      const i = secs.findIndex(s => s.el.contains(b)) + 1; if (i <= 0 || i >= secs.length) return;
+      scrollTo({ top: lsY(i), behavior: 'smooth' });
+      await new Promise(r => setTimeout(r, 700));
+      begin(i, 0); ride.auto = true; ride.target = 1;
     }));
-    window.__glRide = () => ({ cur, ride: ride && { base: ride.base, p: +ride.p.toFixed(3) } });
-    window.__glGoFloor = n => { ride = null; stage.style.visibility = 'hidden'; lock(false); cur = n; secs[n - 1].body.classList.add('go'); scrollTo({ top: startY(n - 1), behavior: 'instant' }); };
+    window.__glRide = () => ({ ride: ride && { i: ride.i, p: +ride.p.toFixed(3) }, y: scrollY, ls: secs.map((s, i) => lsY(i)), body: secs.map((s, i) => bodyY(i)) });
+    window.__glGoFloor = n => { ride = null; lock(false); secs[n - 1].body.classList.add('go'); scrollTo({ top: bodyY(n - 1), behavior: 'instant' }); };
     addEventListener('hashchange', () => { const m = location.hash.match(/floor-(\d)/); if (m) window.__glGoFloor(+m[1]); });
+    if (location.hash.match(/floor-(\d)/)) setTimeout(() => window.__glGoFloor(+location.hash.match(/floor-(\d)/)[1]), 60);
     const fbg = document.getElementById('floorBg');
     if (fbg) {
       const bio = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { const f = en.target.closest('.fl'); fbg.style.setProperty('--fbg', f.dataset.bg); if (!ride) window.__glFloor = +f.dataset.floor; } }), { rootMargin: '-40% 0px -40% 0px' });
@@ -275,24 +285,43 @@
     floors.forEach(f => fio.observe(f));
   }
 
-  /* ---------- Переход между страницами — лифтом: двери закрываются, новая страница открывается с того же лифта ---------- */
+  /* ---------- Переход между разделами — поездка: двери закрываются на этом этаже, свет по шву,
+     табло меняет этаж, на новой странице открываются двери нужной кабины. Внутри раздела — мягко, без лифта ---------- */
   const nl = document.getElementById('navlift');
-  if (root.classList.contains('nav-in')) {
-    const openNav = () => { nl.classList.add('go'); setTimeout(() => root.classList.remove('nav-in'), reduce ? 0 : 950); };
-    Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 700))]).then(() => setTimeout(openNav, 80));
-    try { sessionStorage.removeItem('gl-nav'); } catch (e) {}
-  }
+  const FL = { '': 1, 'o-kompanii': 2, 'obekty': 2, 'zapchasti': 3, 'korzina': 3, 'dostavka': 3, 'servis': 4, 'ustroystvo': 4, 'kontakty': 5 };
+  const NAMES = { 1: ['Этаж первый', 'Холл'], 2: ['Этаж второй', 'О компании'], 3: ['Этаж третий', 'Скобяная лавка'], 4: ['Этаж четвёртый', 'Монтаж и сервис'], 5: ['Этаж пятый', 'Контакты'] };
   const base = new URL((document.querySelector('.hdr-logo') || {}).href || './', location.href).pathname;
   const sect = u => { const p = new URL(u, location.href).pathname; return p.startsWith(base) ? p.slice(base.length).split('/')[0] : p; };
+  const floorOf = u => { const m = String(u).match(/#floor-(\d)/); if (m) return +m[1]; return FL[sect(u)] || 1; };
+  const R = nl ? nl.dataset.r || '' : '';
+  const setNl = (cabN, num, nameN) => {
+    if (!nl) return;
+    if (cabN) document.getElementById('nlCab').src = R + 'assets/shaft/sk-cab-' + cabN + '.webp';
+    document.getElementById('nlNum').textContent = '0' + num;
+    const nm = document.getElementById('nlName'); if (nameN) { nm.querySelector('span').textContent = NAMES[nameN][0]; nm.querySelector('b').textContent = NAMES[nameN][1]; }
+  };
+  if (root.classList.contains('nav-in') && nl) {
+    let from = 1, to = floorOf(location.href);
+    try { const v = sessionStorage.getItem('gl-nav') || ''; const m = v.match(/^(\d)>(\d)$/); if (m) { from = +m[1]; to = +m[2]; } sessionStorage.removeItem('gl-nav'); } catch (e) {}
+    setNl(to, from, to);
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    (async () => {
+      await Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), wait(600)]);
+      nl.classList.add('trav'); await wait(450);
+      setNl(0, to, to); nl.classList.add('named'); await wait(450);
+      nl.classList.remove('trav'); nl.classList.add('go'); await wait(950);
+      root.classList.remove('nav-in');
+    })();
+  }
   const go = href => {
     if (reduce || !nl) { location.href = href; return; }
-    if (sect(href) === sect(location.href) && sect(href) !== '') {          // тот же раздел — без лифта, мягкое затемнение
-      root.classList.add('soft-out'); setTimeout(() => { location.href = href; }, 260); return;
-    }
-    try { sessionStorage.setItem('gl-nav', '1'); } catch (e) {}
-    nl.classList.remove('go'); nl.classList.add('on');
-    setTimeout(() => nl.classList.add('shut'), 260);
-    setTimeout(() => { location.href = href; }, 1000);
+    if (sect(href) === sect(location.href) && !/#floor-/.test(href)) { root.classList.add('soft-out'); setTimeout(() => { location.href = href; }, 260); return; }
+    const from = sect(location.href) === '' ? (window.__glFloor || 1) : floorOf(location.href), to = floorOf(href);
+    try { sessionStorage.setItem('gl-nav', from + '>' + to); } catch (e) {}
+    setNl(from, from, from);
+    nl.classList.remove('go', 'named', 'trav'); nl.classList.add('on');
+    setTimeout(() => nl.classList.add('shut'), 300);
+    setTimeout(() => { location.href = href; }, 1100);
   };
   document.addEventListener('click', e => {
     const a = e.target.closest('a[href]');
@@ -634,3 +663,24 @@ document.querySelectorAll('.sf-pt').forEach(pt => {
   let t; pt.addEventListener('mouseenter', () => { clearTimeout(t); pt.classList.add('hov'); });
   pt.addEventListener('mouseleave', () => { t = setTimeout(() => pt.classList.remove('hov'), 380); });
 });
+
+/* ---------- Подсказки шахты: закрываются по нажатию на свободное место ---------- */
+document.addEventListener('click', e => { if (!e.target.closest('.sf-pt')) document.querySelectorAll('.sf-pt.open,.sf-pt.hov').forEach(x => x.classList.remove('open', 'hov')); });
+/* ---------- Заголовок внутренних страниц — в одну строку: подгоняем размер под ширину ---------- */
+(() => {
+  const fitT = () => document.querySelectorAll('.pg .psign .mx-t').forEach(t => {
+    t.style.fontSize = ''; const max = parseFloat(getComputedStyle(t).fontSize), box = t.parentElement.clientWidth * .96;
+    let f = max; t.style.whiteSpace = 'nowrap';
+    while (t.scrollWidth > box && f > 26) { f -= 2; t.style.fontSize = f + 'px'; }
+    if (t.scrollWidth > box) t.style.whiteSpace = 'normal';
+  });
+  fitT(); addEventListener('resize', fitT); if (document.fonts) document.fonts.ready.then(fitT);
+})();
+
+/* ---------- Вкладки «Лифт · Эскалатор» ---------- */
+document.querySelectorAll('[data-tabs]').forEach(t => t.addEventListener('click', e => {
+  const b = e.target.closest('[data-tab]'); if (!b) return;
+  t.querySelectorAll('[data-tab]').forEach(x => x.classList.toggle('on', x === b));
+  t.querySelectorAll('[data-pane]').forEach(p => { const on = p.dataset.pane === b.dataset.tab; p.classList.toggle('on', on); if (on) p.querySelectorAll('[data-reveal]').forEach(r => r.classList.add('rv')); });
+  dispatchEvent(new Event('resize'));
+}));

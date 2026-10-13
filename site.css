@@ -2832,3 +2832,155 @@ html.nav-in body,html.intro-on body{animation:none}
 html:not(.intro-on) .intro{display:none!important}
 .pg .ttl-band::after,.pg .page>.wrap>.psign.ttl-band::after{left:calc(var(--frx) - var(--bl,0px))!important;right:calc(var(--frx) - var(--br,0px))!important;top:calc(var(--frx) - var(--bt,0px))!important;bottom:var(--frx)!important;border:3px solid var(--hc)!important;display:block!important;content:""!important}
 .pg .page>.wrap>.psign.ttl-band{margin-bottom:0!important}
+
+/* ===== v55 ===== */
+/* лифт — площадка между этажами, в потоке страницы */
+.stage{display:none!important}
+.liftsec{display:block!important;position:relative;height:calc(100vh - var(--hdr));background:#F7F5F4;overflow:hidden}
+@supports (height:100svh){.liftsec{height:calc(100svh - var(--hdr))}}
+.liftsec .ls-in{position:absolute;inset:0;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding-bottom:var(--bar);transition:none!important;will-change:transform}
+.liftsec .sk-door{height:min(calc(100vh - var(--hdr) - 150px),740px)!important;width:auto!important;aspect-ratio:1122/1402}
+@supports (height:100svh){.liftsec .sk-door{height:min(calc(100svh - var(--hdr) - var(--bar) - 130px),740px,112vw)!important}}
+.liftsec .sk-l{transform:translate3d(calc(var(--o,0) * -100%),0,0)!important;transition:none!important}
+.liftsec .sk-r{transform:translate3d(calc(var(--o,0) * 100%),0,0)!important;transition:none!important}
+.liftsec .sk-ind{font-size:clamp(11px,1.9vh,20px)}
+.sk-beam{position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;background:linear-gradient(180deg,rgba(255,226,150,0),rgba(255,226,150,.95) 30%,#fff3cf 50%,rgba(255,226,150,.95) 70%,rgba(255,226,150,0));box-shadow:0 0 18px 6px rgba(255,214,120,.55);opacity:0;pointer-events:none;z-index:3}
+.ls-name{display:flex;align-items:baseline;gap:12px;margin:0;font:600 11px var(--fut);text-transform:uppercase;letter-spacing:.32em;color:#2a2520;opacity:0}
+.ls-name b{font-weight:800;letter-spacing:.2em;color:#7A5810}
+.ls-copy{position:absolute;inset:0;overflow:hidden;background:var(--fb);transform:translate3d(100vw,0,0);will-change:transform}
+.ls-copy .fl-body{margin:0 auto;padding-top:0!important}
+.ls-copy .mx-sign{opacity:1!important}
+.ls-copy .mx-n{opacity:.08!important;transform:translate(-50%,-50%)!important}
+body.home{animation:none!important}
+/* переход между разделами: свет по шву, табло, название этажа */
+.navlift{flex-direction:column;gap:12px}
+.navlift .ls-name{opacity:0;transition:opacity .4s}
+.navlift.named .ls-name{opacity:1}
+.navlift.trav .sk-beam{animation:beamRun .9s ease-in-out}
+.navlift.trav .sk-door{animation:cabShake .9s ease-in-out}
+@keyframes beamRun{0%,100%{opacity:0}30%,70%{opacity:1}}
+@keyframes cabShake{0%,100%{transform:none}20%{transform:translateY(1.5px)}40%{transform:translateY(-1.5px)}60%{transform:translateY(1px)}80%{transform:translateY(-.5px)}}
+.navlift .sk-ind{font-size:clamp(11px,1.9vh,20px)}
+/* колокол: качается внутри круга */
+.em-alarm .sw2{transform-box:fill-box!important;transform-origin:50% 6%!important}
+.em-alarm.rv .sw2{animation:emRing 1s ease-in-out!important}
+/* подсказки шахты на телефоне — карточка внизу экрана, в пределах экрана */
+@media (max-width:900px){
+  .sf-tip{position:fixed!important;left:12px!important;right:12px!important;top:auto!important;bottom:calc(var(--bar) + 12px)!important;width:auto!important;transform:none!important}
+  .sf-pt:hover .sf-tip,.sf-pt:focus .sf-tip,.sf-pt.open .sf-tip,.sf-pt.hov .sf-tip{transform:none!important}
+  .sf-tip::before{display:none}
+}
+/* внутренние страницы — титр как вывеска: без цифры, название в одну строку, крошки внутри рамки */
+.pg .psign .mx-n{display:none!important}
+.pg .psign .mx-floor{display:flex;align-items:center;gap:14px;opacity:.85}
+.pg .psign .mx-floor::before,.pg .psign .mx-floor::after{content:"";width:46px;height:1px;background:currentColor}
+.pg .psign .mx-t{line-height:1!important;letter-spacing:.08em!important}
+.pg .crumbs{margin-top:calc(var(--frx) + 18px)!important;position:relative;z-index:2}
+.title-prod .psign,.title-shop .psign{border:0!important;box-shadow:none!important;outline:0!important}
+.title-prod,.title-shop{border-top:0!important;border-bottom:0!important;box-shadow:none!important;outline:0!important}
+html body.pg .title-prod .psign::after,html body.pg .title-shop .psign::after{display:none!important;content:none!important;border:0!important}
+
+/* ===== v56: эскалаторы, «Устройство», вкладки ===== */
+.tabs{width:100%}
+.tab-nav{display:flex;justify-content:center;gap:0;margin:0 auto 28px;width:max-content;border:1px solid currentColor}
+.tab-nav button{padding:10px 26px;border:0;background:none;color:inherit;font:700 12px var(--fut);text-transform:uppercase;letter-spacing:.24em;cursor:pointer}
+.tab-nav button+button{border-left:1px solid currentColor}
+.tab-nav button.on{background:#1E4A3F;color:#F3E9D6}
+.tab-pane{display:none}.tab-pane.on{display:block}
+/* разрез эскалатора с номерами */
+.escfig{position:relative;width:min(1100px,100%);margin:0 auto 24px}
+.escfig img{display:block;width:100%;height:auto;clip-path:inset(0 100% 0 0);transition:clip-path 2s cubic-bezier(.4,0,.2,1)}
+.escfig.rv img{clip-path:inset(0 0 0 0)}
+.escfig .sf-pt{opacity:0;transition:opacity .45s;transition-delay:calc(1.4s + var(--d,0ms))}
+.escfig.rv .sf-pt{opacity:1}
+.escfig .sf-pt:not(.off){background:#1E4A3F;color:#F3E9D6}
+.sf-tip button{padding:0;border:0;border-bottom:1px solid currentColor;background:none;font:700 11px var(--fut);text-transform:uppercase;letter-spacing:.16em;color:#A3271F;cursor:pointer}
+.esc-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 34px;width:min(1000px,100%);margin:10px auto 0;padding:0;list-style:none;text-align:left}
+.esc-list li{display:flex;align-items:center;gap:12px}
+.esc-list b{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:50%;border:3px double #1E4A3F;font:900 11px var(--fut);color:#163A30}
+.esc-list strong{display:block;font:700 12px var(--fut);text-transform:uppercase;letter-spacing:.12em;color:#163A30}
+.esc-list em{display:block;font-family:var(--it);font-style:italic;font-size:16px;color:#3E5248}
+@media (max-width:760px){.esc-list{grid-template-columns:1fr}.escfig .sf-pt{width:18px;height:18px;margin:-9px 0 0 -9px;font-size:9px}}
+/* страница отдела эскалаторов */
+.esc-intro{position:relative;isolation:isolate;padding:50px 0 60px;margin:0 0 50px}
+.esc-intro::before{content:"";position:absolute;z-index:-1;inset:0;background:#F3E9D6;box-shadow:0 0 0 100vmax #F3E9D6;clip-path:inset(0 -100vmax)}
+.esc-sects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:0 0 60px}
+.esc-s{padding:26px 28px;border:2px solid rgba(217,174,69,.7);scroll-margin-top:110px}
+.esc-s:target{border-color:#F6EBD5;background:rgba(246,235,213,.05)}
+.esc-s h2{margin:0 0 8px;font:900 18px var(--fut);text-transform:uppercase;letter-spacing:.16em;color:#F6EBD5}
+.esc-s .it{margin:0 0 16px;font-size:18px;color:rgba(246,235,213,.8)}
+.esc-acts{display:flex;flex-wrap:wrap;gap:10px}
+@media (max-width:760px){.esc-sects{grid-template-columns:1fr}}
+.dev-link{display:block;width:max-content;max-width:100%;margin:-30px auto 40px;font:700 12px var(--fut);text-transform:uppercase;letter-spacing:.18em;color:#D9AE45;text-decoration:none;border-bottom:1px solid currentColor}
+/* «Устройство»: 3D-лифт в рамке страницы */
+.dev{padding:20px 0 60px;color:#163A30}
+.l3d{position:relative;height:min(82vh,860px);min-height:520px;margin:0 auto;border:3px solid #1E4A3F;background:#F3E9D6;overflow:hidden}
+.l3d canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+.l3d canvas:active{cursor:grabbing}
+.l3d .views{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:3;display:flex;border:1px solid #1E4A3F;background:#F3E9D6}
+.l3d .views button{padding:6px 12px;border:0;background:none;font:700 10px var(--fut);letter-spacing:.16em;text-transform:uppercase;color:#1E4A3F;cursor:pointer}
+.l3d .views button+button{border-left:1px solid #1E4A3F}.l3d .views button.on{background:#1E4A3F;color:#F3E9D6}
+.l3d .pt{position:absolute;z-index:2;display:grid;place-items:center;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;background:#F3E9D6;border:2px solid #1E4A3F;font:700 12px var(--fut);color:#1E4A3F;cursor:pointer}
+.l3d .pt:hover,.l3d .pt.on{background:#1E4A3F;color:#F3E9D6}
+.l3d .pt.back{opacity:.35}
+.l3d-card{position:absolute;z-index:4;left:50%;bottom:16px;transform:translateX(-50%);width:min(440px,calc(100% - 30px));padding:14px 18px;background:#F7F0E2;border:2px solid #1E4A3F;display:none;text-align:left}
+.l3d-card.on{display:block}
+.l3d-card b{display:block;font:800 13px var(--fut);letter-spacing:.14em;text-transform:uppercase}
+.l3d-card i{display:block;margin:6px 0 10px;font-family:var(--it);font-style:italic;font-size:17px;color:#2E4A40}
+.l3d-card a{font:700 11px var(--fut);letter-spacing:.16em;text-transform:uppercase;color:#A3271F;text-decoration:none;border-bottom:1px solid currentColor}
+.l3d-hint{position:absolute;z-index:1;left:0;right:0;bottom:14px;margin:0;text-align:center;font:600 10px var(--fut);letter-spacing:.22em;text-transform:uppercase;opacity:.55;pointer-events:none}
+.l3d-card.on~.l3d-hint{display:none}
+@media (max-width:760px){.l3d{height:74vh;min-height:460px}.l3d .views button{padding:6px 8px;font-size:9px;letter-spacing:.08em}.tab-nav button{padding:9px 18px}}
+
+/* ===== v56: эскалаторы, «Устройство», вкладки ===== */
+.tabs{width:100%}
+.tab-nav{display:flex;justify-content:center;gap:0;margin:0 auto 28px;width:max-content;border:1px solid currentColor}
+.tab-nav button{padding:10px 26px;border:0;background:none;color:inherit;font:700 12px var(--fut);text-transform:uppercase;letter-spacing:.24em;cursor:pointer}
+.tab-nav button+button{border-left:1px solid currentColor}
+.tab-nav button.on{background:#1E4A3F;color:#F3E9D6}
+.tab-pane{display:none}.tab-pane.on{display:block}
+/* разрез эскалатора с номерами */
+.escfig{position:relative;width:min(1100px,100%);margin:0 auto 24px}
+.escfig img{display:block;width:100%;height:auto;clip-path:inset(0 100% 0 0);transition:clip-path 2s cubic-bezier(.4,0,.2,1)}
+.escfig.rv img{clip-path:inset(0 0 0 0)}
+.escfig .sf-pt{opacity:0;transition:opacity .45s;transition-delay:calc(1.4s + var(--d,0ms))}
+.escfig.rv .sf-pt{opacity:1}
+.escfig .sf-pt:not(.off){background:#1E4A3F;color:#F3E9D6}
+.sf-tip button{padding:0;border:0;border-bottom:1px solid currentColor;background:none;font:700 11px var(--fut);text-transform:uppercase;letter-spacing:.16em;color:#A3271F;cursor:pointer}
+.esc-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 34px;width:min(1000px,100%);margin:10px auto 0;padding:0;list-style:none;text-align:left}
+.esc-list li{display:flex;align-items:center;gap:12px}
+.esc-list b{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:50%;border:3px double #1E4A3F;font:900 11px var(--fut);color:#163A30}
+.esc-list strong{display:block;font:700 12px var(--fut);text-transform:uppercase;letter-spacing:.12em;color:#163A30}
+.esc-list em{display:block;font-family:var(--it);font-style:italic;font-size:16px;color:#3E5248}
+@media (max-width:760px){.esc-list{grid-template-columns:1fr}.escfig .sf-pt{width:18px;height:18px;margin:-9px 0 0 -9px;font-size:9px}}
+/* страница отдела эскалаторов */
+.esc-intro{position:relative;isolation:isolate;padding:50px 0 60px;margin:0 0 50px}
+.esc-intro::before{content:"";position:absolute;z-index:-1;inset:0;background:#F3E9D6;box-shadow:0 0 0 100vmax #F3E9D6;clip-path:inset(0 -100vmax)}
+.esc-sects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:0 0 60px}
+.esc-s{padding:26px 28px;border:2px solid rgba(217,174,69,.7);scroll-margin-top:110px}
+.esc-s:target{border-color:#F6EBD5;background:rgba(246,235,213,.05)}
+.esc-s h2{margin:0 0 8px;font:900 18px var(--fut);text-transform:uppercase;letter-spacing:.16em;color:#F6EBD5}
+.esc-s .it{margin:0 0 16px;font-size:18px;color:rgba(246,235,213,.8)}
+.esc-acts{display:flex;flex-wrap:wrap;gap:10px}
+@media (max-width:760px){.esc-sects{grid-template-columns:1fr}}
+.dev-link{display:block;width:max-content;max-width:100%;margin:-30px auto 40px;font:700 12px var(--fut);text-transform:uppercase;letter-spacing:.18em;color:#D9AE45;text-decoration:none;border-bottom:1px solid currentColor}
+/* «Устройство»: 3D-лифт в рамке страницы */
+.dev{padding:20px 0 60px;color:#163A30}
+.l3d{position:relative;height:min(82vh,860px);min-height:520px;margin:0 auto;border:3px solid #1E4A3F;background:#F3E9D6;overflow:hidden}
+.l3d canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+.l3d canvas:active{cursor:grabbing}
+.l3d .views{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:3;display:flex;border:1px solid #1E4A3F;background:#F3E9D6}
+.l3d .views button{padding:6px 12px;border:0;background:none;font:700 10px var(--fut);letter-spacing:.16em;text-transform:uppercase;color:#1E4A3F;cursor:pointer}
+.l3d .views button+button{border-left:1px solid #1E4A3F}.l3d .views button.on{background:#1E4A3F;color:#F3E9D6}
+.l3d .pt{position:absolute;z-index:2;display:grid;place-items:center;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;background:#F3E9D6;border:2px solid #1E4A3F;font:700 12px var(--fut);color:#1E4A3F;cursor:pointer}
+.l3d .pt:hover,.l3d .pt.on{background:#1E4A3F;color:#F3E9D6}
+.l3d .pt.back{opacity:.35}
+.l3d-card{position:absolute;z-index:4;left:50%;bottom:16px;transform:translateX(-50%);width:min(440px,calc(100% - 30px));padding:14px 18px;background:#F7F0E2;border:2px solid #1E4A3F;display:none;text-align:left}
+.l3d-card.on{display:block}
+.l3d-card b{display:block;font:800 13px var(--fut);letter-spacing:.14em;text-transform:uppercase}
+.l3d-card i{display:block;margin:6px 0 10px;font-family:var(--it);font-style:italic;font-size:17px;color:#2E4A40}
+.l3d-card a{font:700 11px var(--fut);letter-spacing:.16em;text-transform:uppercase;color:#A3271F;text-decoration:none;border-bottom:1px solid currentColor}
+.l3d-hint{position:absolute;z-index:1;left:0;right:0;bottom:14px;margin:0;text-align:center;font:600 10px var(--fut);letter-spacing:.22em;text-transform:uppercase;opacity:.55;pointer-events:none}
+.l3d-card.on~.l3d-hint{display:none}
+@media (max-width:760px){.l3d{height:74vh;min-height:460px}.l3d .views button{padding:6px 8px;font-size:9px;letter-spacing:.08em}.tab-nav button{padding:9px 18px}}
+.dev-sub{margin:50px 0 20px!important}
