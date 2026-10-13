@@ -1,8 +1,9 @@
 (function(){
 const INFO={handrail:['Поручень','Резиновый поручень движется синхронно со ступенями.','poruchni'],steps:['Ступени','Несущие ступени с роликами; на площадках выравниваются в пол.','stupeni'],step_chain:['Ступенчатая цепь','Тянет ступени по замкнутой петле.','stupenchatye-tsepi'],drive:['Приводная станция','Верхняя звёздочка передаёт усилие на ступенчатую цепь.','prochee'],motor:['Мотор и редуктор','Привод эскалатора на верхней площадке.','prochee'],controller:['Шкаф управления','Управление, защиты и пуск эскалатора.','prochee'],handrail_drive:['Привод поручня','Фрикционное колесо, которое ведёт поручень.','friktsionnye-kolesa'],tension:['Натяжная станция','Нижнее колесо с пружиной держит цепь в натяжении.','natyazhnye-tsepi'],truss:['Ферма','Стальная несущая конструкция под ступенями.',''],combs:['Гребёнки','Пластины на входе и выходе, в которые «уходят» ступени.','grebenki']};
 const ORDER=['handrail','steps','step_chain','drive','motor','controller','handrail_drive','tension','truss','combs'];
-const INK=0x1E4A3F, CREAM=0xF3E9D6, HI=0xA3271F;
-const host=document.getElementById('e3d'); if(!host) return; const cv=host.querySelector('canvas');
+const host=document.getElementById('e3d'); if(!host) return; const DARK=host.dataset.theme==='dark'; const INK=DARK?0xE8D9B5:0x1E4A3F, CREAM=DARK?0x3E4127:0xF3E9D6, HI=DARK?0xF2C230:0xA3271F;
+const v3=h=>`vec3(${((h>>16)&255)/255},${((h>>8)&255)/255},${(h&255)/255})`;
+const cv=host.querySelector('canvas');
 const BASE=host.dataset.base||'';
 const R=new THREE.WebGLRenderer({canvas:cv,antialias:true}); R.setPixelRatio(Math.min(2,devicePixelRatio)); R.setClearColor(CREAM);
 const S=new THREE.Scene(); const C=new THREE.PerspectiveCamera(30,1,.1,300);
@@ -11,7 +12,7 @@ let viewAnim=null; ctl.addEventListener('start',()=>{ctl.autoRotate=false; viewA
 const parts={}, hulls={}, pts=[];
 const off={polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1};
 const fill=new THREE.MeshBasicMaterial({color:CREAM,...off});
-const hatchM=(dens,a)=>new THREE.ShaderMaterial({...off,vertexShader:'void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:`void main(){float s=mod(gl_FragCoord.x+gl_FragCoord.y,${dens.toFixed(1)});vec3 cr=vec3(.953,.914,.839),ik=vec3(.118,.29,.247);gl_FragColor=vec4(s<1.2?mix(cr,ik,${a}):cr,1.);}`});
+const hatchM=(dens,a)=>new THREE.ShaderMaterial({...off,vertexShader:'void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:`void main(){float s=mod(gl_FragCoord.x+gl_FragCoord.y,${dens.toFixed(1)});vec3 cr=${v3(CREAM)},ik=${v3(INK)};gl_FragColor=vec4(s<1.2?mix(cr,ik,${a}):cr,1.);}`});
 const hStep=hatchM(6,.32), hFloor=hatchM(5,.42);
 const reg=(k,o,list=parts)=>{(list[k]=list[k]||[]).push(o);};
 const lineM=()=>new THREE.LineBasicMaterial({color:INK});

@@ -3202,3 +3202,54 @@ html.ride-lock,html.ride-lock body{overflow:visible!important}
 .pg-del .cta2::before{content:"";position:absolute;z-index:-1;inset:0;background:#F3E9D6;box-shadow:0 0 0 100vmax #F3E9D6;clip-path:inset(0 -100vmax)}
 .pg-del .dl-tabs{padding:var(--blk) 0;margin:0!important}
 .pg-about .about-text{padding-top:0!important}.fl .about-cols{margin-top:30px!important}
+
+/* ===== v60 ===== */
+/* лифт переходов — та же разметка, что лифт на главной: под шапкой, того же размера */
+.navlift{top:var(--hdr)!important;z-index:45!important}
+.navlift .sk-door{height:min(calc(100vh - var(--hdr) - 150px),740px)!important}
+@supports (height:100svh){.navlift .sk-door{height:min(calc(100svh - var(--hdr) - var(--bar) - 130px),740px,112vw)!important}}
+.navlift{padding-bottom:var(--bar)}
+/* «Лифты · Эскалаторы» на страницах услуг */
+.kind-srv{margin:30px auto 0!important;color:#1E4A3F}
+.kind-srv button{padding:10px 26px;border:0;background:none;font:700 12px var(--fut);text-transform:uppercase;letter-spacing:.24em;color:inherit;cursor:pointer}
+.kind-srv button+button{border-left:1px solid currentColor}
+.kind-srv button.on{background:#1E4A3F;color:#F3E9D6}
+.kind-pane{display:none}.kind-pane.on{display:block}
+/* «чертёж на тёмном»: 3D и разрез на тёмных страницах лавки */
+.viz.dark{background:transparent!important;border:1px solid rgba(232,217,181,.55)!important;outline:1px solid rgba(232,217,181,.25);outline-offset:6px}
+.viz.dark .l3d{background:transparent!important}
+.viz.dark .viz-sw,.viz.dark .l3d .views,.viz.dark .l3d .zoom{background:#3E4127;border-color:#E8D9B5}
+.viz.dark .viz-sw button,.viz.dark .l3d .views button,.viz.dark .l3d .zoom button{color:#E8D9B5}
+.viz.dark .viz-sw button+button,.viz.dark .l3d .views button+button{border-color:#E8D9B5}
+.viz.dark .l3d .zoom button+button{border-color:#E8D9B5}
+.viz.dark .viz-sw button.on,.viz.dark .l3d .views button.on,.viz.dark .l3d .zoom button:hover{background:#E8D9B5;color:#2A2B1A}
+.viz.dark .l3d .pt{background:#3E4127;border-color:#E8C988;color:#E8C988}
+.viz.dark .l3d .pt:hover,.viz.dark .l3d .pt.on{background:#E8C988;color:#2A2B1A}
+.viz.dark .l3d-card{background:#2F3120;border-color:#E8C988}
+.viz.dark .l3d-card b{color:#E8C988!important}.viz.dark .l3d-card i{color:#E8D9B5!important}.viz.dark .l3d-card a{color:#F2C230!important}
+.viz.dark .l3d-hint{color:#E8D9B5}
+.viz.dark .shaftfig .sf-ln{border-color:#E8D9B5}
+.viz.dark .sf-lb,.viz.dark .sf-lb strong{color:#E8D9B5!important}
+.viz.dark .sf-lb em{color:rgba(232,217,181,.75)!important}
+.viz.dark .sf-lb b{border-color:#E8C988!important;color:#E8C988}
+.viz.dark .sf-pt{background:#3E4127!important;border-color:#E8C988!important;color:#E8C988!important}
+.viz.dark .sf-pt:not(.off){background:#E8C988!important;color:#2A2B1A!important}
+.viz.dark .sf-tip{background:#2F3120;border-color:#E8C988}
+.viz.dark .sf-tip strong{color:#E8C988}.viz.dark .sf-tip em{color:#E8D9B5}.viz.dark .sf-tip a,.viz.dark .sf-tip button{color:#F2C230}
+.viz.dark .sf-list,.viz.dark .esc-list{color:#E8D9B5}
+.viz.dark .esc-list strong,.viz.dark .sf-list strong{color:#E8D9B5!important}
+.viz.dark .esc-list em,.viz.dark .sf-list em{color:rgba(232,217,181,.75)!important}
+.viz.dark .esc-list b,.viz.dark .sf-list b{border-color:#E8C988!important;color:#E8C988!important}
+.esc-intro::before{background:transparent!important;box-shadow:none!important}
+/* карточка подсказки 3D — свои цвета, читается на любой странице */
+.l3d-card b{color:#1E4A3F!important}.l3d-card i{color:#2E4A40!important}.l3d-card a{color:#A3271F!important}
+/* подзаголовок титула — тем же цветом, что надпись над заголовком */
+.pg .psign .mx-sub{color:var(--hc)!important;opacity:.92}
+/* подписи доставки — под своими машинами */
+.dl-pic figcaption span{bottom:-56px!important}
+.dl-band .delfig{padding-bottom:90px!important}
+/* отдельные круглые кнопки — по центру своего блока */
+.and-acts{margin:0 auto!important;padding:var(--blk) 0!important}
+/* заголовки — без «хвоста» разрядки: центр текста = центр страницы */
+.mx-t,.ch-t,.mc-t,.sec-t,.cta2 h2,.dp-h h2,.h2{text-indent:0!important}
+.mx-t,.ch-t,.mc-t,.cta2 h2,.dp-h h2{margin-right:0!important;padding-left:var(--ls-pad,0)}

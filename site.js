@@ -376,7 +376,7 @@
     const key = a.closest('.lm-keys') || a.closest('.plan');
     if (key) { a.classList.add('lit'); setTimeout(() => go(a.href), 260); } else go(a.href);
   });
-  addEventListener('pageshow', e => { root.classList.remove('soft-out', 'nav-in'); if (nl) nl.classList.remove('on', 'shut', 'trav', 'named'); if (e.persisted) document.body.style.opacity = ''; });
+  addEventListener('pageshow', e => { if (!e.persisted) return; root.classList.remove('soft-out', 'nav-in'); if (nl) nl.classList.remove('on', 'shut', 'trav', 'named', 'go', 'pan'); });
 
   /* ---------- Меню: лифтовая панель ---------- */
   const lm = document.getElementById('liftmenu');
@@ -739,3 +739,18 @@ document.querySelectorAll('.viz').forEach(v => v.querySelector('.viz-sw').addEve
   t.style.fontSize = ''; t.style.whiteSpace = 'nowrap'; const box = (t.closest('.mx-sign') || t.parentElement).clientWidth * .9; let f = parseFloat(getComputedStyle(t).fontSize);
   while (t.scrollWidth > box && f > 30) { f -= 2; t.style.fontSize = f + 'px'; } }); };
   fit(); addEventListener('resize', fit); if (document.fonts) document.fonts.ready.then(fit); })();
+
+/* ---------- Сервис: «Лифты · Эскалаторы» переключает всю страницу; ?t=esc — сразу эскалаторы ---------- */
+(() => {
+  const nav = document.querySelector('[data-kinds]'); if (!nav) return;
+  const set = k => {
+    nav.querySelectorAll('[data-k]').forEach(b => b.classList.toggle('on', b.dataset.k === k));
+    document.querySelectorAll('.kind-pane').forEach(p => { const on = p.dataset.kind === k; p.classList.toggle('on', on); if (on) p.querySelectorAll('[data-reveal]').forEach(r => r.classList.add('rv')); });
+    dispatchEvent(new Event('resize'));
+  };
+  nav.addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) { set(b.dataset.k); history.replaceState(null, '', b.dataset.k === 'esc' ? '?t=esc' : location.pathname); } });
+  if (/[?&]t=esc/.test(location.search)) set('esc');
+})();
+
+/* ---------- Разрядка: компенсируем «хвост» после последней буквы — заголовки строго по центру ---------- */
+document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forEach(e => { const ls = parseFloat(getComputedStyle(e).letterSpacing) || 0; if (ls > 1) e.style.paddingLeft = ls + 'px'; });

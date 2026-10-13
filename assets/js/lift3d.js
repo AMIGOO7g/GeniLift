@@ -2,8 +2,9 @@
 const INFO={machine:['Тяговая лебёдка','Мотор, редуктор и канатоведущий шкив — поднимают и опускают кабину.'],cabinet:['Шкаф управления','Платы и привод — «мозг» лифта: движение, двери, вызовы.'],governor:['Ограничитель скорости','Следит за скоростью кабины через свой канат и при превышении включает ловители.'],ropes:['Тяговые канаты','Держат кабину и противовес, перекинуты через шкив лебёдки.'],car:['Кабина','Кабина в раме-купе с башмаками и ловителями, двери открываются вместе с дверьми шахты.'],rails:['Направляющие','Стальные рельсы по всей высоте шахты — по ним скользят башмаки.'],counterweight:['Противовес','Уравновешивает кабину и движется ей навстречу.'],buffers:['Буферы','Пружинные упоры в приямке — последняя ступень безопасности.'],landing_doors:['Двери шахты','На каждом этаже; замки и контакты — частая причина остановок.']};
 const SHOP={machine:'enkodery',cabinet:'platy-upravleniya',governor:'vyklyuchateli',ropes:'kanaty',car:'knopki-i-posty',rails:'bashmaki',counterweight:'bashmaki',buffers:'drugoe',landing_doors:'vyklyuchateli'};
 const ORDER=['machine','cabinet','governor','ropes','landing_doors','car','counterweight','rails','buffers'];
-const INK=0x1E4A3F, CREAM=0xF3E9D6, HI=0xA3271F;
-const host=document.getElementById('l3d'); if(!host) return; const cv=host.querySelector('canvas'); const RR=document.currentScript?document.currentScript.dataset.r:'';
+const host=document.getElementById('l3d'); if(!host) return; const DARK=host.dataset.theme==='dark'; const INK=DARK?0xE8D9B5:0x1E4A3F, CREAM=DARK?0x3E4127:0xF3E9D6, HI=DARK?0xF2C230:0xA3271F;
+const v3=h=>`vec3(${((h>>16)&255)/255},${((h>>8)&255)/255},${(h&255)/255})`;
+const cv=host.querySelector('canvas'); const RR=document.currentScript?document.currentScript.dataset.r:'';
 const R=new THREE.WebGLRenderer({canvas:cv,antialias:true}); R.setPixelRatio(Math.min(2,devicePixelRatio)); R.setClearColor(CREAM);
 const S=new THREE.Scene(); const C=new THREE.PerspectiveCamera(30,1,.1,200);
 const ctl=new THREE.OrbitControls(C,cv); ctl.enableDamping=true; ctl.dampingFactor=.08; ctl.autoRotate=true; ctl.autoRotateSpeed=.6; ctl.enablePan=false; ctl.enableZoom=false; ctl.minPolarAngle=.05; ctl.maxPolarAngle=1.75;
@@ -13,7 +14,7 @@ const parts={}, pts=[], hulls={}; let carNode,cwNode,carBase,cwBase;
 const off={polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1};
 const fill=new THREE.MeshBasicMaterial({color:CREAM,...off});
 const hatch=(dens,alpha)=>new THREE.ShaderMaterial({...off,uniforms:{a:{value:alpha}},vertexShader:'void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-  fragmentShader:`uniform float a;void main(){float s=mod(gl_FragCoord.x+gl_FragCoord.y,${dens.toFixed(1)});vec3 cr=vec3(.953,.914,.839),ik=vec3(.118,.29,.247);gl_FragColor=vec4(s<1.2?mix(cr,ik,a):cr,1.);}`});
+  fragmentShader:`uniform float a;void main(){float s=mod(gl_FragCoord.x+gl_FragCoord.y,${dens.toFixed(1)});vec3 cr=${v3(CREAM)},ik=${v3(INK)};gl_FragColor=vec4(s<1.2?mix(cr,ik,a):cr,1.);}`});
 const hatchCar=hatch(7,.38), hatchCw=hatch(4.5,.5);
 const lineMat=()=>new THREE.LineBasicMaterial({color:INK});
 const hullMat=new THREE.MeshBasicMaterial({color:INK,side:THREE.BackSide});
