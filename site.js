@@ -152,14 +152,32 @@
      Дальше колёсико/палец ведёт поездку: свет по шву, табло меняет этаж, двери открываются, камера едет к титру.
      Вверх — зеркально. Проскочить этаж мимо лифта нельзя ---------- */
   const secs = [...document.querySelectorAll('section.fl')].map(el => ({ el, ls: el.querySelector('.liftsec'), body: el.querySelector('.fl-body'), n: +el.dataset.floor }));
-  if (secs.length && secs[0].ls) {
+  const MOBILE = matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+  if (secs.length && secs[0].ls && MOBILE) {
+    secs.forEach(s => {
+      const ind = s.ls.querySelector('.sk-ind'), beam = s.ls.querySelector('.sk-beam'), nm = s.ls.querySelector('.ls-name');
+      let raf = 0;
+      const play = on => { cancelAnimationFrame(raf); const t0 = performance.now(), from = +(s.ls.style.getPropertyValue('--o') || 0), D = on ? 2400 : 400;
+        const st = now => { const k = Math.min(1, (now - t0) / D);
+          if (on) { const tr = Math.min(1, k / .4), op = Math.max(0, (k - .45) / .55), e = op < .5 ? 2 * op * op : 1 - Math.pow(-2 * op + 2, 2) / 2;
+            ind.textContent = (s.n === 1 || tr > .5) ? '0' + s.n : '0' + Math.max(1, s.n - 1); beam.style.opacity = (Math.sin(Math.PI * tr) * (op < .02 ? 1 : 0)).toFixed(3); beam.style.setProperty('--bp', (tr * 100).toFixed(1) + '%'); nm.style.opacity = Math.min(1, tr * 1.5).toFixed(2); s.ls.style.setProperty('--o', e.toFixed(3)); }
+          else { s.ls.style.setProperty('--o', (from * (1 - k)).toFixed(3)); }
+          if (k < 1) raf = requestAnimationFrame(st); };
+        raf = requestAnimationFrame(st); };
+      ind.textContent = '0' + Math.max(1, s.n - 1);
+      new IntersectionObserver(es => es.forEach(en => { if (en.intersectionRatio > .6) play(true); else if (en.intersectionRatio < .1) play(false); }), { threshold: [0, .1, .6] }).observe(s.ls);
+      s.body.classList.add('go');
+    });
+  } else if (secs.length && secs[0].ls) {
     const hdrH = () => (document.querySelector('.hdr') || {}).offsetHeight || 0;
     const topOf = el => el.getBoundingClientRect().top + scrollY;
     const lsY = i => Math.max(0, topOf(secs[i].ls) - hdrH());
     const bodyY = i => topOf(secs[i].body) - hdrH();
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
     const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-    const lock = on => root.classList.toggle('ride-lock', on);
+    let locked = false; const lock = on => { locked = on; };
+    addEventListener('touchmove', e => { if (locked) e.preventDefault(); }, { passive: false });
+    addEventListener('keydown', e => { if (locked && ['ArrowDown','ArrowUp','PageDown','PageUp',' ','Home','End'].includes(e.key)) e.preventDefault(); });
     let ride = null, lastY = scrollY;
     secs.forEach(s => {
       s.lin = s.ls.querySelector('.ls-in'); s.copy = s.ls.querySelector('.ls-copy');
@@ -176,7 +194,7 @@
     const draw = (s, p) => {
       const tr = clamp(p / .28), open = ease(clamp((p - .3) / .36)), pan = ease(clamp((p - .68) / .32));
       s.ind.textContent = (s.n === 1 || tr > .5) ? s.to : s.from;
-      s.beam.style.opacity = (Math.sin(Math.PI * tr) * (open < .02 ? 1 : 0)).toFixed(3);
+      s.beam.style.opacity = (Math.min(1, Math.sin(Math.PI * tr) * 1.6) * (open < .02 ? 1 : 0)).toFixed(3); s.beam.style.setProperty('--bp', (tr * 100).toFixed(1) + '%');
       s.nm.style.opacity = clamp((tr - .45) / .4).toFixed(3);
       s.ls.style.setProperty('--o', open.toFixed(4));
       s.lin.style.transform = `translate3d(${(-pan * 100).toFixed(3)}vw,0,0)`;
@@ -332,8 +350,9 @@
       await Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), wait(600)]);
       nl.classList.add('trav'); await wait(450);
       setNl(0, to, to); nl.classList.add('named'); await wait(450);
-      nl.classList.remove('trav'); nl.classList.add('go'); await wait(950);
-      root.classList.remove('nav-in');
+      nl.classList.remove('trav'); nl.classList.add('go'); await wait(1000);
+      nl.classList.add('pan'); await wait(900);
+      root.classList.remove('nav-in'); setTimeout(() => nl.classList.remove('pan', 'go', 'named'), 400);
     })();
   }
   const go = href => {

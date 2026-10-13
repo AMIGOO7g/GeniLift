@@ -3157,3 +3157,48 @@ html body .dl-band .delfig .dl-pic img.dl-van{width:13.67%!important}
 html body .dl-band .delfig .dl-pic img.dl-truck{width:21.14%!important}
 .pg-del .psign .mx-sub,.pg-del .psign .mx-floor{color:#E8D9B5!important}
 @media (min-width:1100px){html body.pg .brandstrip .chips{flex-wrap:nowrap!important}html body.pg .brandstrip .chips button{font-size:18px!important;white-space:nowrap}html body.pg .brandstrip .chips li+li::before{margin:0 8px}}
+
+/* ===== v59 ===== */
+/* блокировка поездки — без overflow:hidden (из-за него пропадала шапка) */
+html.ride-lock,html.ride-lock body{overflow:visible!important}
+/* свет по шву — бегущее пятно с сиянием */
+.sk-beam{--bp:0%;width:14px!important;margin-left:-7px!important;background:radial-gradient(ellipse 50% 22% at 50% var(--bp),#fff 0%,#fff3c8 35%,rgba(255,220,140,.55) 60%,rgba(255,220,140,0) 100%),linear-gradient(180deg,rgba(255,226,150,0),rgba(255,226,150,.35) 50%,rgba(255,226,150,0))!important;box-shadow:none!important;filter:blur(.6px) drop-shadow(0 0 10px rgba(255,214,120,.9)) drop-shadow(0 0 26px rgba(255,200,90,.6));mix-blend-mode:screen}
+.navlift.trav .sk-beam{animation:beamRun2 .9s linear!important}
+@keyframes beamRun2{0%{opacity:0;--bp:-10%}12%{opacity:1}88%{opacity:1}100%{opacity:0;--bp:110%}}
+@property --bp{syntax:'<percentage>';inherits:false;initial-value:0%}
+/* переход через меню: двери открылись — камера уходит вправо к титулу */
+.navlift.pan{transform:translate3d(-100%,0,0);transition:transform .9s cubic-bezier(.65,0,.35,1)!important;opacity:1!important;visibility:visible!important}
+/* о компании: две эмблемы, три главы вместо колонок */
+.dip-ems{display:flex;justify-content:center;gap:14px}
+.dip-ems .em{width:92px!important}
+.about-cols{position:relative;isolation:isolate;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px!important;margin:0 auto!important;padding:var(--blk) 0!important;border:0!important;counter-reset:ch}
+.about-cols::before{content:"";position:absolute;z-index:-1;inset:0;background:#E9DCC6;box-shadow:0 0 0 100vmax #E9DCC6;clip-path:inset(0 -100vmax)}
+.about-cols>*{border:0!important;padding:0!important;text-align:center;counter-increment:ch}
+.about-cols>*::before{content:counter(ch,upper-roman);display:block;margin:0 auto 14px;font:900 46px/1 var(--fut);color:#A3271F;letter-spacing:.06em}
+.about-cols h3,.about-cols b,.about-cols strong{display:block;font:800 14px var(--fut)!important;text-transform:uppercase;letter-spacing:.24em!important;color:#1E2A26!important;margin-bottom:10px}
+.about-cols p{font-family:var(--it)!important;font-style:italic;font-size:19px!important;line-height:1.45;color:#3E3A33!important}
+@media (max-width:760px){.about-cols{grid-template-columns:1fr}}
+/* прейскурант: разделители «Лифты» / «Эскалаторы» заметнее строк */
+.mc-sub{display:flex!important;align-items:center;gap:16px;width:100%;margin:30px 0 8px!important;align-self:stretch!important;font:900 15px var(--fut)!important;letter-spacing:.42em!important;color:#A3271F!important;text-align:center}
+.mc-sub::before,.mc-sub::after{content:"";flex:1;height:1px;background:#A3271F;opacity:.6}
+.mc-sub:first-of-type{margin-top:6px!important}
+/* лавка: марки — внизу бордового титула, без отдельного цвета */
+.brandstrip::before{background:var(--fb,#5E1C24)!important;box-shadow:0 0 0 100vmax var(--fb,#5E1C24)!important}
+.brandstrip{padding:6px 0 22px!important;border-top:0}
+.brandstrip .bs-k{color:rgba(232,181,58,.75)}
+.shop-3d{margin:10px 0 50px}
+.shop-3d .viz{background:#F3E9D6}
+/* доставка: три полосы */
+.del-faq{position:relative;isolation:isolate;padding:var(--blk) 0!important;margin:0!important}
+.del-faq::before{content:"";position:absolute;z-index:-1;inset:0;background:#1F4250;box-shadow:0 0 0 100vmax #1F4250;clip-path:inset(0 -100vmax)}
+.pg-del .del-faq .h2.sec-gap{margin-top:0!important;color:#E8C988!important}
+.pg-del .del-faq .qa{--hc:#E8C988;--text:#F3E9D6;--fb:#E8C988;margin-bottom:0!important}
+.pg-del .del-faq .qa-q,.pg-del .del-faq .qa-q span{color:#F3E9D6!important}
+.pg-del .del-faq .qa-i.on .qa-q{background:#E8C988!important;color:#1F4250!important}
+.pg-del .del-faq .qa-i.on .qa-q span{color:#1F4250!important}
+.pg-del .del-faq .qa-a,.pg-del .del-faq .qa-a p{color:#F3E9D6!important;border-color:#E8C988!important}
+.pg-del .del-faq .qa-qt b,.pg-del .del-faq .qa-q b{border-color:#E8C988!important;color:#E8C988!important}
+.pg-del .cta2{position:relative;isolation:isolate}
+.pg-del .cta2::before{content:"";position:absolute;z-index:-1;inset:0;background:#F3E9D6;box-shadow:0 0 0 100vmax #F3E9D6;clip-path:inset(0 -100vmax)}
+.pg-del .dl-tabs{padding:var(--blk) 0;margin:0!important}
+.pg-about .about-text{padding-top:0!important}.fl .about-cols{margin-top:30px!important}
