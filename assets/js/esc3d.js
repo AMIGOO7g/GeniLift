@@ -6,7 +6,7 @@ const host=document.getElementById('e3d'); if(!host) return; const cv=host.query
 const BASE=host.dataset.base||'';
 const R=new THREE.WebGLRenderer({canvas:cv,antialias:true}); R.setPixelRatio(Math.min(2,devicePixelRatio)); R.setClearColor(CREAM);
 const S=new THREE.Scene(); const C=new THREE.PerspectiveCamera(30,1,.1,300);
-const ctl=new THREE.OrbitControls(C,cv); ctl.enableDamping=true; ctl.dampingFactor=.08; ctl.autoRotate=true; ctl.autoRotateSpeed=.5; ctl.enablePan=false; ctl.minPolarAngle=.05; ctl.maxPolarAngle=1.7;
+const ctl=new THREE.OrbitControls(C,cv); ctl.enableDamping=true; ctl.dampingFactor=.08; ctl.autoRotate=true; ctl.autoRotateSpeed=.5; ctl.enablePan=false; ctl.enableZoom=false; ctl.minPolarAngle=.05; ctl.maxPolarAngle=1.7;
 let viewAnim=null; ctl.addEventListener('start',()=>{ctl.autoRotate=false; viewAnim=null; setView(null);});
 const parts={}, hulls={}, pts=[];
 const off={polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1};
@@ -107,9 +107,10 @@ host.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',e=>
 function fit(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; const top_=64,bot=40;
   const vf=C.fov*Math.PI/180, hf=2*Math.atan(Math.tan(vf/2)*C.aspect), useH=(h-top_-bot)/h; const sz=box3.getSize(new THREE.Vector3());
   const r=Math.hypot(sz.x,sz.z)/2*1.05, rv=Math.max(sz.y,Math.hypot(sz.x,sz.z)*.55)/2*1.1; const d=Math.max(rv/Math.tan(vf*useH/2)+r*.35, r/Math.tan(hf*.95/2)+r*.2)*.92;
-  const dir=C.position.clone().sub(ctl.target).normalize(); C.position.copy(ctl.target).add(dir.multiplyScalar(d)); C.setViewOffset(w,h,0,-(top_-bot)/2,w,h); ctl.minDistance=d*.45; ctl.maxDistance=d*1.3; ctl.update(); }
+  const dir=C.position.clone().sub(ctl.target).normalize(); C.position.copy(ctl.target).add(dir.multiplyScalar(d)); C.setViewOffset(w,h,0,-(top_-bot)/2,w,h); ctl.minDistance=d*.62; ctl.maxDistance=d; ctl.update(); }
 function resize(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; R.setSize(w,h,false); C.aspect=w/h; C.fov=w<700?42:30; C.updateProjectionMatrix(); fit(); }
-addEventListener('resize',resize); new ResizeObserver(resize).observe(host);
+addEventListener('resize',resize);
+  host.querySelectorAll('.zoom button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const k=+b.dataset.z>0?.85:1/.85; const dir=C.position.clone().sub(ctl.target); const nd=Math.min(ctl.maxDistance,Math.max(ctl.minDistance,dir.length()*k)); C.position.copy(ctl.target).add(dir.setLength(nd)); })); new ResizeObserver(resize).observe(host);
 const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; const v=new THREE.Vector3(); let last=performance.now(), sh=0;
 function loop2(){ requestAnimationFrame(loop2); if(!host.offsetParent) return;
   const now=performance.now(), dt=Math.min(.05,(now-last)/1000); last=now; if(!picked) sh+=dt*.35;

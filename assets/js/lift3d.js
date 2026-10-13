@@ -3,10 +3,10 @@ const INFO={machine:['Тяговая лебёдка','Мотор, редукто
 const SHOP={machine:'enkodery',cabinet:'platy-upravleniya',governor:'vyklyuchateli',ropes:'kanaty',car:'knopki-i-posty',rails:'bashmaki',counterweight:'bashmaki',buffers:'drugoe',landing_doors:'vyklyuchateli'};
 const ORDER=['machine','cabinet','governor','ropes','landing_doors','car','counterweight','rails','buffers'];
 const INK=0x1E4A3F, CREAM=0xF3E9D6, HI=0xA3271F;
-const host=document.getElementById('l3d'); if(!host) throw 0; const cv=host.querySelector('canvas'); const RR=document.currentScript?document.currentScript.dataset.r:'';
+const host=document.getElementById('l3d'); if(!host) return; const cv=host.querySelector('canvas'); const RR=document.currentScript?document.currentScript.dataset.r:'';
 const R=new THREE.WebGLRenderer({canvas:cv,antialias:true}); R.setPixelRatio(Math.min(2,devicePixelRatio)); R.setClearColor(CREAM);
 const S=new THREE.Scene(); const C=new THREE.PerspectiveCamera(30,1,.1,200);
-const ctl=new THREE.OrbitControls(C,cv); ctl.enableDamping=true; ctl.dampingFactor=.08; ctl.autoRotate=true; ctl.autoRotateSpeed=.6; ctl.enablePan=false; ctl.minPolarAngle=.05; ctl.maxPolarAngle=1.75;
+const ctl=new THREE.OrbitControls(C,cv); ctl.enableDamping=true; ctl.dampingFactor=.08; ctl.autoRotate=true; ctl.autoRotateSpeed=.6; ctl.enablePan=false; ctl.enableZoom=false; ctl.minPolarAngle=.05; ctl.maxPolarAngle=1.75;
 let viewAnim=null;
 ctl.addEventListener('start',()=>{ctl.autoRotate=false; viewAnim=null; setView(null);});
 const parts={}, pts=[], hulls={}; let carNode,cwNode,carBase,cwBase;
@@ -69,10 +69,11 @@ new THREE.GLTFLoader().load(RR+'assets/model/genilift_elevator.glb',g=>{
     el.addEventListener('click',e=>{e.stopPropagation(); pick(k);});
     pts.push({k,p,el,moves:k==='car'?'car':k==='counterweight'?'cw':null,base:p.clone()});
   });
+  const HI=(host.dataset.hi||'').split(',').filter(Boolean); if(HI.length){ pts.forEach(p=>p.el.classList.toggle('dim',!HI.includes(p.k))); Object.entries(parts).forEach(([k,ls])=>{ if(HI.includes(k)) ls.forEach(l=>l.material.color.setHex(0x8E2620)); }); }
   resize(); loop();
 });
 const card=host.querySelector('.l3d-card'); let picked=null;
-function paint(){ Object.entries(parts).forEach(([kk,ls])=>ls.forEach(l=>l.material.color.setHex(kk===picked?HI:INK))); Object.entries(hulls).forEach(([kk,hs])=>hs.forEach(h=>h.material.color.setHex(kk===picked?HI:INK))); }
+function paint(){ const H2=(host.dataset.hi||'').split(','); Object.entries(parts).forEach(([kk,ls])=>ls.forEach(l=>l.material.color.setHex(kk===picked?HI:(H2.includes(kk)?0x8E2620:INK)))); Object.entries(hulls).forEach(([kk,hs])=>hs.forEach(h=>h.material.color.setHex(kk===picked?HI:INK))); }
 function pick(k){ picked=k; paint(); pts.forEach(p=>p.el.classList.toggle('on',p.k===k)); card.querySelector('b').textContent=INFO[k][0]; card.querySelector('i').textContent=INFO[k][1]; card.querySelector('a').href=RR+'zapchasti/?cat='+(SHOP[k]||''); card.classList.add('on'); ctl.autoRotate=false; }
 cv.addEventListener('click',()=>{ picked=null; paint(); card.classList.remove('on'); pts.forEach(p=>p.el.classList.remove('on')); });
 /* виды */
@@ -88,9 +89,10 @@ function fit(){ if(!window.__box) return;
   ctl.target.copy(__box.getCenter(new THREE.Vector3()));
   const dir=C.position.clone().sub(ctl.target); if(dir.lengthSq()<1e-6) dir.set(1,.35,1); dir.normalize();
   C.position.copy(ctl.target).add(dir.multiplyScalar(d)); C.setViewOffset(w,h,0,-(top-bot)/2,w,h);
-  ctl.minDistance=d*.5; ctl.maxDistance=d*1.25; ctl.update(); }
+  ctl.minDistance=d*.62; ctl.maxDistance=d; ctl.update(); }
 function resize(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; R.setSize(w,h,false); C.aspect=w/h; C.fov=w<700?40:30; C.updateProjectionMatrix(); fit(); }
-addEventListener('resize',resize); new ResizeObserver(resize).observe(host); if(window.visualViewport) visualViewport.addEventListener('resize',resize); new ResizeObserver(resize).observe(host);
+addEventListener('resize',resize);
+  host.querySelectorAll('.zoom button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const k=+b.dataset.z>0?.85:1/.85; const dir=C.position.clone().sub(ctl.target); const nd=Math.min(ctl.maxDistance,Math.max(ctl.minDistance,dir.length()*k)); C.position.copy(ctl.target).add(dir.setLength(nd)); })); new ResizeObserver(resize).observe(host); if(window.visualViewport) visualViewport.addEventListener('resize',resize); new ResizeObserver(resize).observe(host);
 const v=new THREE.Vector3(); let tm=0, last=performance.now();
 const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
 function travel(t){ /* цикл 16 с: стоянка внизу, подъём, стоянка вверху, спуск */ const c=t%16; let u;

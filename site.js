@@ -30,7 +30,19 @@
   if (root.classList.contains('intro-on')) {
     let done = false;
     const steps = ['s1', 's2', 's3', 's5'];
-    const end = () => { if (done) return; done = true; root.classList.add('s5'); setTimeout(() => { root.classList.remove('intro-on', ...steps); openHero(); }, 950); try { sessionStorage.setItem('gl-intro', '1'); } catch (e) {} };
+    const end = () => { if (done) return; done = true;
+      const lg = document.querySelector('.intro-logo'), tg = document.querySelector('.hdr-logo');
+      if (lg && tg) {
+        const a = lg.getBoundingClientRect(), b = tg.getBoundingClientRect();
+        const k = Math.min(b.height / a.height, .5) * 1.4;
+        lg.style.transition = 'transform .85s cubic-bezier(.65,0,.35,1), opacity .5s ease .45s';
+        lg.style.transform = `translate(${(b.left + b.width / 2) - (a.left + a.width / 2)}px, ${(b.top + b.height / 2) - (a.top + a.height / 2)}px) scale(${k})`;
+        lg.style.opacity = '0';
+      }
+      root.classList.add('s5');
+      setTimeout(() => root.classList.add('wm-in'), 600);
+      setTimeout(() => { root.classList.remove('intro-on', ...steps); openHero(); }, 950);
+      try { sessionStorage.setItem('gl-intro', '1'); } catch (e) {} };
     const wait = ms => new Promise(r => setTimeout(r, ms));
     (async () => {
       await wait(200); root.classList.add('s1');
@@ -165,7 +177,6 @@
       const tr = clamp(p / .28), open = ease(clamp((p - .3) / .36)), pan = ease(clamp((p - .68) / .32));
       s.ind.textContent = (s.n === 1 || tr > .5) ? s.to : s.from;
       s.beam.style.opacity = (Math.sin(Math.PI * tr) * (open < .02 ? 1 : 0)).toFixed(3);
-      s.door.style.transform = tr > 0 && tr < 1 ? `translateY(${(Math.sin(tr * Math.PI * 7) * 1.6 * (1 - tr)).toFixed(2)}px)` : '';
       s.nm.style.opacity = clamp((tr - .45) / .4).toFixed(3);
       s.ls.style.setProperty('--o', open.toFixed(4));
       s.lin.style.transform = `translate3d(${(-pan * 100).toFixed(3)}vw,0,0)`;
@@ -190,8 +201,8 @@
       if (ride) {
         const now = performance.now();
         if (!ride.auto && now - ride.last > 650) { ride.auto = true; ride.target = ride.start < .5 ? (ride.p > .3 ? 1 : 0) : (ride.p < .7 ? 0 : 1); }
-        ride.p += (ride.target - ride.p) * (ride.auto ? .07 : .16);
-        if (Math.abs(ride.target - ride.p) < .002) ride.p = ride.target;
+        ride.p += (ride.target - ride.p) * (ride.auto ? .13 : .18);
+        if (Math.abs(ride.target - ride.p) < (ride.auto ? .015 : .002)) ride.p = ride.target;
         draw(ride.s, ride.p);
         if (ride.auto && (ride.p === 0 || ride.p === 1)) finish();
       }
@@ -206,7 +217,7 @@
     const K = 1500;
     addEventListener('wheel', e => {
       if (intro()) return;
-      if (ride) { e.preventDefault(); nudge(e.deltaY / K); return; }
+      if (ride) { e.preventDefault(); if (ride.p > .9 && e.deltaY > 0) { ride.auto = true; ride.target = 1; } else if (ride.p < .1 && e.deltaY < 0) { ride.auto = true; ride.target = 0; } else nudge(e.deltaY / K); return; }
       const y = scrollY;
       if (e.deltaY > 0) {
         const i = landingAt(y);
@@ -315,8 +326,8 @@
   }
   const go = href => {
     if (reduce || !nl) { location.href = href; return; }
-    if (sect(href) === sect(location.href) && !/#floor-/.test(href)) { root.classList.add('soft-out'); setTimeout(() => { location.href = href; }, 260); return; }
     const from = sect(location.href) === '' ? (window.__glFloor || 1) : floorOf(location.href), to = floorOf(href);
+    if (from === to && !/#floor-/.test(href)) { root.classList.add('soft-out'); setTimeout(() => { location.href = href; }, 260); return; }
     try { sessionStorage.setItem('gl-nav', from + '>' + to); } catch (e) {}
     setNl(from, from, from);
     nl.classList.remove('go', 'named', 'trav'); nl.classList.add('on');

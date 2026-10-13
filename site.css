@@ -2984,3 +2984,75 @@ html body.pg .title-prod .psign::after,html body.pg .title-shop .psign::after{di
 .l3d-card.on~.l3d-hint{display:none}
 @media (max-width:760px){.l3d{height:74vh;min-height:460px}.l3d .views button{padding:6px 8px;font-size:9px;letter-spacing:.08em}.tab-nav button{padding:9px 18px}}
 .dev-sub{margin:50px 0 20px!important}
+
+/* ===== v57 ===== */
+/* заставка: название в шапке появляется, когда логотип «прилетел» */
+html.intro-on:not(.wm-in) .hdr-logo{opacity:0}
+.hdr-logo{transition:opacity .7s ease}
+/* лифт: края рисунка мягко растворяются в фоне */
+.liftsec .sk-base,.navlift .sk-base{-webkit-mask-image:radial-gradient(ellipse 58% 60% at 50% 50%,#000 72%,transparent 100%);mask-image:radial-gradient(ellipse 58% 60% at 50% 50%,#000 72%,transparent 100%)}
+.liftsec,.navlift{background:#F7F5F4!important}
+/* без ползунка-шахты */
+.shaftbar{display:none!important}
+/* плитка эскалаторов — как остальные */
+.dn-esc{opacity:1!important;border-style:solid!important}
+/* воздух у кругов гарантий */
+.fl .rings,.pg .rings{margin-top:56px!important;margin-bottom:56px!important}
+.sect-d{padding-top:80px!important;padding-bottom:80px!important}
+/* круглые кнопки-печати для главных призывов */
+.rbtn,.and-acts .abtn-fill,.cta .btn-fill,.pg-cnt main form .btn-fill[type=submit],.pg-shop main form [type=submit].btn-fill,.pg-shop main form [type=submit].abtn-fill{
+  display:inline-flex!important;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:150px!important;height:150px!important;padding:16px!important;border-radius:50%!important;
+  border:2px solid #1E4A3F!important;box-shadow:0 0 0 5px #F3E9D6,0 0 0 7px #1E4A3F!important;background:#F3E9D6!important;color:#1E4A3F!important;
+  font:800 12px/1.25 var(--fut)!important;text-transform:uppercase;letter-spacing:.14em;text-align:center;white-space:normal!important;cursor:pointer;transition:background .3s,color .3s,transform .3s!important}
+.rbtn i{font-style:normal;font-size:18px;transition:transform .3s}
+.rbtn:hover,.and-acts .abtn-fill:hover,.cta .btn-fill:hover,.pg-cnt main form .btn-fill[type=submit]:hover,.pg-shop main form [type=submit].btn-fill:hover,.pg-shop main form [type=submit].abtn-fill:hover{background:#1E4A3F!important;color:#F3E9D6!important;transform:none!important}
+.rbtn:hover i{transform:translateX(4px)}
+.and-acts{display:flex;justify-content:center;margin:70px auto 60px!important}
+.pg-cnt main form .btn-fill[type=submit]{border-color:#C8361F!important;box-shadow:0 0 0 5px #E9B23B,0 0 0 7px #C8361F!important;background:#E9B23B!important;color:#5a1208!important;margin:10px auto 0;align-self:center}
+.pg-cnt main form .btn-fill[type=submit]:hover{background:#C8361F!important;color:#F6D78A!important}
+.cta .btn-fill{border-color:#D9AE45!important;box-shadow:0 0 0 5px var(--panel,#2f2a1e),0 0 0 7px #D9AE45!important;background:transparent!important;color:#D9AE45!important}
+.cta .btn-fill:hover{background:#D9AE45!important;color:#2a1a10!important}
+/* вход в лавку на главной: «Лифты» и «Эскалаторы» */
+.tc-two{display:flex;justify-content:center;gap:clamp(24px,5vw,70px);margin-top:26px}
+.rc-em{display:flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none;color:var(--hc)}
+.rc-em .em{width:clamp(96px,10vw,130px);color:var(--hc);--cut:var(--fb)}
+.rc-em b{font:800 13px var(--fut);text-transform:uppercase;letter-spacing:.24em}
+.rc-em:hover .em{color:#F6EBD5}
+/* лавка: переключатель «Лифты · Эскалаторы» */
+.kind{display:flex;justify-content:center;margin:0 auto 16px;width:max-content;border:1px solid currentColor;color:#E8B53A}
+.kind a{padding:8px 22px;font:700 11px var(--fut);text-transform:uppercase;letter-spacing:.24em;color:inherit;text-decoration:none}
+.kind a+a{border-left:1px solid currentColor}
+.kind a.on{background:#E8B53A;color:#2a1a10}
+.kind-esc{margin:10px auto 30px}
+/* 3D: кнопки приближения, приглушённые номера вне услуги */
+.l3d .zoom{position:absolute;right:14px;top:14px;z-index:3;display:flex;flex-direction:column;border:1px solid #1E4A3F;background:#F3E9D6}
+.l3d .zoom button{width:34px;height:34px;border:0;background:none;font:700 18px var(--fut);color:#1E4A3F;cursor:pointer}
+.l3d .zoom button+button{border-top:1px solid #1E4A3F}
+.l3d .zoom button:hover{background:#1E4A3F;color:#F3E9D6}
+.l3d .pt.dim{opacity:.3}
+.chap .l3d{margin-bottom:40px}
+.esc-intro .l3d{margin-bottom:10px}
+.esc-depts{grid-template-columns:repeat(3,minmax(0,1fr))!important;margin-top:20px!important}
+.esc-s h3{margin:0 0 8px;font:900 17px var(--fut);text-transform:uppercase;letter-spacing:.16em;color:#F6EBD5}
+/* доставка: рисунок полосой на всю ширину; вкладки и карточки */
+.dl-band{position:relative;isolation:isolate;padding:30px 0 90px;margin:0 0 50px}
+.dl-band::before{content:"";position:absolute;z-index:-1;inset:0;background:#F3E9D6;box-shadow:0 0 0 100vmax #F3E9D6;clip-path:inset(0 -100vmax)}
+.dl-band .delfig{width:min(1500px,100vw);margin-left:50%;transform:translateX(-50%);background:none!important;box-shadow:none!important;clip-path:none!important;padding:0 0 60px!important}
+.dl-tabs{margin:0 auto 70px;color:#F6EBD5}
+.dl-tabs .tab-nav{color:#D9AE45}
+.dl-tabs .tab-nav button.on{background:#D9AE45;color:#2a1a10}
+.opt3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.opt{display:flex;flex-direction:column;align-items:center;gap:6px;padding:30px 22px;border:2px solid rgba(217,174,69,.7);text-align:center;transition:border-color .3s,background .3s}
+.opt:hover{border-color:#F6EBD5;background:rgba(246,235,213,.05)}
+.opt b{font:800 14px var(--fut);text-transform:uppercase;letter-spacing:.16em;color:#F6EBD5}
+.opt-v{font:900 clamp(22px,2.6vw,32px) var(--fut);color:#D9AE45;white-space:nowrap}
+.opt em{font-family:var(--it);font-style:italic;font-size:18px;color:rgba(246,235,213,.82)}
+.papers2{display:none!important}
+@media (max-width:760px){.opt3{grid-template-columns:1fr}.esc-depts{grid-template-columns:1fr!important}.tc-two{gap:20px}}
+.dl-band .delfig{width:100vw!important;margin-left:calc(50% - 50vw)!important;transform:none!important}
+.dl-band .delfig img{width:min(1500px,100%);margin:0 auto}
+.pg .page{overflow-x:clip}
+@media (min-width:1100px){.catstrip button{padding:3px 8px!important;font-size:10px!important;letter-spacing:.06em!important}.title-shop .chips button{padding:3px 9px!important;font-size:10.5px!important;letter-spacing:.06em!important}}
+@media (min-width:1100px){.catstrip li{margin:0!important;padding:0!important}.catstrip button{padding:3px 7px!important;font-size:10px!important;letter-spacing:.04em!important;min-width:0!important}}
+@media (min-width:1100px){html body.pg nav.catstrip ol li button{padding:4px 9px!important;font-size:10.5px!important;letter-spacing:.06em!important}
+html body.pg nav.catstrip ol li button i,html body.pg nav.catstrip ol li button small,html body.pg nav.catstrip ol li button span:first-child{display:none!important}}
