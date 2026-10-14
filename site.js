@@ -780,31 +780,36 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
     if (rest === '') return 0; const m = rest.match(/^([a-z-]+)\/$/); return m && SLUGS[m[1]] ? SLUGS[m[1]] : -1; };
   const here = floorOfUrl(new URL(location.href));
   const isHome = document.body.classList.contains('home-bld');
+  const D = document.documentElement;
+  // новая страница раскрывается из точки
+  let irisBg = ''; try { irisBg = sessionStorage.getItem('gl-iris') || ''; sessionStorage.removeItem('gl-iris'); } catch (e) {}
+  if (irisBg) { D.style.background = irisBg; D.classList.add('iris-in'); requestAnimationFrame(() => requestAnimationFrame(() => D.classList.add('iris-go'))); setTimeout(() => D.classList.remove('iris-in', 'iris-go'), 1000); }
+  // текущая страница сжимается в точку → переход
+  const irisOut = href => { const bg = getComputedStyle(document.querySelector('.hdr') || document.body).backgroundColor;
+    try { sessionStorage.setItem('gl-iris', '#141210'); } catch (e) {}
+    D.classList.add('iris-out'); setTimeout(() => { location.href = href; }, 620); };
   document.addEventListener('click', e => {
     const a = e.target.closest('a[href]'); if (!a || e.metaKey || e.ctrlKey || e.shiftKey || a.target) return;
     const u = new URL(a.getAttribute('href'), location.href); if (u.hash && u.pathname === location.pathname) return;
     const to = floorOfUrl(u); if (to < 0) return;
     e.preventDefault(); e.stopImmediatePropagation();
     if (isHome) { if (to > 0 && window.__bldGo) window.__bldGo(to); return; }
-    try { if (here > 0) sessionStorage.setItem('gl-from', here); } catch (err) {}
-    location.href = root.pathname + (to > 0 ? '?go=' + to : '');
+    if (u.pathname === location.pathname) return;
+    irisOut(u.href);
   }, true);
-  // вывеска в рамке на стене: надпись строго в рамке, при нехватке места — в две строки
-  window.__fitSign = rc => { const box = rc && rc.querySelector('.sign'); if (!box) return; const t = box.querySelector('.t'), k = box.querySelector('.k');
-    const W = box.clientWidth * .88, Hh = box.clientHeight * .86, raw = (t.dataset.raw || t.textContent).trim(); t.dataset.raw = raw; k.style.fontSize = Math.max(8, box.clientHeight * .075) + 'px';
-    const fitT = (html, lines) => { t.innerHTML = html; let f = box.clientHeight * (lines === 1 ? .36 : .27); t.style.fontSize = f + 'px';
-      while ((t.scrollWidth > W || t.offsetHeight + k.offsetHeight * 1.8 > Hh) && f > 8) { f -= 1; t.style.fontSize = f + 'px'; } return f; };
-    const f1 = fitT(raw, 1), parts = raw.split(' ');
-    if (parts.length > 1 && f1 < box.clientHeight * .24) { let best = null; for (let i = 1; i < parts.length; i++) { const a = parts.slice(0, i).join(' '), b = parts.slice(i).join(' '), sc = Math.max(a.length, b.length); if (!best || sc < best.sc) best = { sc, html: a + '<br>' + b }; }
-      if (fitT(best.html, 2) < f1) fitT(raw, 1); }
-    box.classList.add('ok'); };
-  const hero = document.querySelector('.room-hero');
-  if (hero) { try { sessionStorage.removeItem('gl-enter'); } catch (e) {}
-    const rc = hero.querySelector('.rc'); const fitR = () => window.__fitSign(rc);
-    fitR(); addEventListener('resize', fitR); if (document.fonts) document.fonts.ready.then(fitR); }
+  addEventListener('pageshow', e => { if (e.persisted) D.classList.remove('iris-out'); });
+  // поиск по сайту: лупа в шапке
+  const openSearch = async () => {
+    let box = document.getElementById('srch');
+    if (!box) { box = document.createElement('div'); box.id = 'srch'; box.innerHTML = '<div class="sr-in"><input type="search" placeholder="Артикул, деталь, марка или услуга" autocomplete="off"><button class="sr-x" aria-label="Закрыть">×</button></div><div class="sr-res"></div>'; document.body.appendChild(box);
+      const inp = box.querySelector('input'), res = box.querySelector('.sr-res'); let IDX = null;
+      try { IDX = await (await fetch(root.href + 'assets/search.json')).json(); } catch (e) { IDX = []; }
+      const norm = s => s.toLowerCase().replace(/ё/g, 'е');
+      inp.addEventListener('input', () => { const q = norm(inp.value.trim()); if (q.length < 2) { res.innerHTML = ''; return; }
+        const words = q.split(/\s+/); const hits = IDX.filter(x => { const h = norm(x.t + ' ' + x.d + ' ' + x.u); return words.every(w => h.includes(w)); }).slice(0, 12);
+        res.innerHTML = hits.length ? hits.map(x => `<a href="${root.href + x.u}">${x.i ? `<img src="${root.href + x.i}" alt="">` : '<i></i>'}<span><b>${x.t}</b><small>${x.d}</small></span></a>`).join('') : '<p class="sr-no">Ничего не нашли — позвоните: <a href="tel:+79854817228">+7 985 481-72-28</a></p>'; });
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') { const f = res.querySelector('a'); if (f) location.href = f.href; } if (e.key === 'Escape') box.classList.remove('on'); });
+      box.querySelector('.sr-x').onclick = () => box.classList.remove('on'); box.addEventListener('click', e => { if (e.target === box) box.classList.remove('on'); }); }
+    box.classList.add('on'); setTimeout(() => box.querySelector('input').focus(), 50); };
+  document.querySelectorAll('[data-search]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); e.stopImmediatePropagation(); openSearch(); }, true));
 })();
-
-/* ---------- Рисунки на полях: карандаш → цвет при появлении ---------- */
-(() => { const els = document.querySelectorAll('[data-sk]'); if (!els.length) return;
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .35 });
-  els.forEach(e => io.observe(e)); })();

@@ -85,12 +85,12 @@ host.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',e=>
 function fit(){ if(!window.__box) return;
   const w=cv.clientWidth||innerWidth, h=cv.clientHeight||innerHeight; const top=8, bot=8;
   const vf=C.fov*Math.PI/180, hf=2*Math.atan(Math.tan(vf/2)*C.aspect); const useH=(h-top-bot)/h;
-  const sz=__box.getSize(new THREE.Vector3()), rV=sz.y/2*1.12, rH=Math.max(sz.x,sz.z)/2*1.2;
+  const sz=__box.getSize(new THREE.Vector3()), rV=sz.y/2*1.12, rH=Math.hypot(sz.x,sz.z)/2*1.1;
   const d=Math.max(rV/Math.tan(vf*useH/2), rH/Math.tan(hf*.9/2))*1.08+rH*.35;
   ctl.target.copy(__box.getCenter(new THREE.Vector3()));
   const dir=C.position.clone().sub(ctl.target); if(dir.lengthSq()<1e-6) dir.set(1,.35,1); dir.normalize();
   C.position.copy(ctl.target).add(dir.multiplyScalar(d)); C.setViewOffset(w,h,0,-(top-bot)/2,w,h);
-  ctl.minDistance=d*.72; ctl.maxDistance=d*1.05; ctl.update(); }
+  ctl.minDistance=d*.86; ctl.maxDistance=d*1.12; ctl.update(); }
 let _w0=0,_h0=0; function resize(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; if(w===_w0&&Math.abs(h-_h0)<160) return; _w0=w; _h0=h; R.setSize(w,h,false); C.aspect=w/h; C.fov=w<700?40:30; C.updateProjectionMatrix(); fit(); }
 let _rw=0; addEventListener('resize',()=>{ if(innerWidth!==_rw){ _rw=innerWidth; resize(); } });
   host.querySelectorAll('.zoom button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const k=+b.dataset.z>0?.85:1/.85; const dir=C.position.clone().sub(ctl.target); const nd=Math.min(ctl.maxDistance,Math.max(ctl.minDistance,dir.length()*k)); C.position.copy(ctl.target).add(dir.setLength(nd)); })); new ResizeObserver(resize).observe(host);  new ResizeObserver(resize).observe(host);

@@ -14,7 +14,7 @@
   const hh = () => (hdr ? hdr.getBoundingClientRect().height : 72);
   const barH = () => { const b = document.querySelector('.mbar'); return b && getComputedStyle(b).display !== 'none' ? b.getBoundingClientRect().height : 0; };
   function fit() {
-    const top = hh() + 10, bot = barH() + 10, aw = innerWidth - 16, ah = innerHeight - top - bot;
+    const mob = innerWidth <= 760, top = hh() + (mob ? 18 : 34), bot = barH() + (mob ? 64 : 40), aw = innerWidth - 16, ah = innerHeight - top - bot;
     const s = Math.min(aw / (BOX.x1 - BOX.x0), ah / (BOX.y1 - BOX.y0));
     Object.assign(B.style, { width: 1086 * s + 'px', height: 1448 * s + 'px', left: (innerWidth / 2 - (BOX.x0 + BOX.x1) / 2 * s) + 'px', top: (top + (ah - (BOX.y1 - BOX.y0) * s) / 2 - BOX.y0 * s) + 'px' });
     stage.style.top = '0px'; B.style.transform = 'none';
@@ -30,10 +30,13 @@
     rc.querySelector('.tint').style.setProperty('--bg', cs.getPropertyValue('--bg')); rc.querySelector('.sign').style.setProperty('--hc', cs.getPropertyValue('--hc'));
     rc.querySelector('.k').textContent = pq.querySelector('.pk').textContent; const t = rc.querySelector('.t'); t.textContent = pq.querySelector('.pt').textContent; t.dataset.raw = t.textContent;
     if (window.__fitSign) window.__fitSign(rc); }
-  async function enterRoom(n) {
-    roomv.classList.add('show'); fitRoom(); fillRoom(n); await wait(30);
-    stage.classList.add('left'); roomv.classList.add('in'); await wait(1150);
-    try { sessionStorage.setItem('gl-enter', n); sessionStorage.setItem('gl-floor', n); } catch (e) {}
+  async function enterRoom(n) {                       // «диафрагма»: круг цвета этажа раскрывается из таблички
+    const pq = B.querySelector(`.pq[data-f="${n}"]`), r = pq.getBoundingClientRect(), bg = getComputedStyle(pq).getPropertyValue('--bg').trim();
+    const ir = document.createElement('div'); ir.className = 'iris-cover'; ir.style.background = bg;
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2; ir.style.clipPath = `circle(0px at ${cx}px ${cy}px)`; document.body.appendChild(ir);
+    await wait(30); ir.style.transition = 'clip-path .9s cubic-bezier(.65,0,.35,1)'; ir.style.clipPath = `circle(${Math.hypot(innerWidth, innerHeight)}px at ${cx}px ${cy}px)`;
+    await wait(900);
+    try { sessionStorage.setItem('gl-iris', bg); sessionStorage.setItem('gl-floor', n); } catch (e) {}
     location.href = R + SLUG[n] + '/';
   }
   async function go(n) {
@@ -49,29 +52,18 @@
   addEventListener('pageshow', e => { if (e.persisted) { busy = false; stage.classList.remove('left'); roomv.classList.remove('in', 'show'); } });
   async function start() {
     fit(); setPos(carTop(floor)); light(floor, true); needleTo(floor, true);
-    const q = new URLSearchParams(location.search), to = +(q.get('go') || 0);
-    let from = 0; try { from = +(sessionStorage.getItem('gl-from') || 0); sessionStorage.removeItem('gl-from'); } catch (e) {}
     let seen = false; try { seen = !!sessionStorage.getItem('gl-intro'); sessionStorage.setItem('gl-intro', '1'); } catch (e) {}
-    if (to || from) history.replaceState(null, '', location.pathname);
-    const it = document.getElementById('bIntro');
-    if (from) {                                          // вернулись из раздела: комната уезжает, здание возвращается
-      it && it.remove(); document.documentElement.classList.add('b-ready');
-      roomv.classList.add('show', 'in', 'now'); stage.classList.add('left', 'now'); fitRoom(); fillRoom(from); await wait(60);
-      roomv.classList.remove('now'); stage.classList.remove('now'); await wait(30);
-      roomv.classList.remove('in'); stage.classList.remove('left'); await wait(1150); roomv.classList.remove('show');
-    } else if (seen || to) { it && it.remove(); document.documentElement.classList.add('b-ready'); }
-    else {                                               // заставка: логотип со стрелками → надпись в меню
-      document.documentElement.classList.add('b-intro');
-      const fl = document.getElementById('bFly'), wm = document.querySelector('.hdr-logo');
-      await wait(150); it.classList.add('s1'); await wait(1400); it.classList.add('s2'); fl.style.opacity = '1'; await wait(700);
-      if (wm) { const a = fl.getBoundingClientRect(), b = wm.getBoundingClientRect(), k = b.width / a.width;
-        fl.style.transition = 'transform 1s cubic-bezier(.65,0,.35,1), opacity .4s ease .9s';
-        fl.style.transform = `translate(calc(-50% + ${(b.left + b.width / 2) - (a.left + a.width / 2)}px), calc(-50% + ${(b.top + b.height / 2) - (a.top + a.height / 2)}px)) scale(${k})`; }
-      await wait(500); it.classList.add('out'); document.documentElement.classList.remove('b-intro'); document.documentElement.classList.add('b-ready');
-      const hn = document.getElementById('bHint'); if (hn) setTimeout(() => hn.classList.add('on'), 900); await wait(700); fl.style.opacity = '0'; setTimeout(() => it.remove(), 800);
-    }
-    const hint = B.querySelector('.bhint'); if (hint && !seen && !to && !from) setTimeout(() => hint.classList.add('on'), 600);
-    if (to && to >= 1 && to <= 5) { busy = false; go(to); }
+    const it = document.getElementById('bIntro'), hn = document.querySelector('.bhint');
+    if (seen) { it && it.remove(); document.documentElement.classList.add('b-ready'); hn && hn.classList.add('on'); return; }
+    document.documentElement.classList.add('b-intro', 'b-nologo');
+    const fl = document.getElementById('bFly'), wm = document.querySelector('.hdr-logo');
+    await wait(150); it.classList.add('s1'); await wait(1400); it.classList.add('s2'); fl.style.opacity = '1'; await wait(700);
+    it.classList.add('out'); document.documentElement.classList.remove('b-intro'); document.documentElement.classList.add('b-ready');
+    if (wm) { const a = fl.getBoundingClientRect(), b2 = wm.getBoundingClientRect(), k = b2.height / a.height;
+      fl.style.transition = 'transform 1.1s cubic-bezier(.65,0,.35,1), color 1.1s ease';
+      fl.style.transform = `translate(calc(-50% + ${(b2.left + b2.width / 2) - (a.left + a.width / 2)}px), calc(-50% + ${(b2.top + b2.height / 2) - (a.top + a.height / 2)}px)) scale(${k})`; fl.classList.add('gold'); }
+    await wait(1150); document.documentElement.classList.remove('b-nologo'); fl.style.transition = 'none'; fl.style.opacity = '0'; setTimeout(() => it.remove(), 800);
+    hn && setTimeout(() => hn.classList.add('on'), 600);
   }
   if (document.readyState === 'complete') start(); else addEventListener('load', start);
 })();
