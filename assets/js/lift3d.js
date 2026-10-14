@@ -83,17 +83,17 @@ function setView(v){ host.querySelectorAll('.views button').forEach(b=>b.classLi
 host.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const v=b.dataset.v; setView(v);
   const d=C.position.distanceTo(ctl.target); viewAnim={from:C.position.clone().sub(ctl.target).normalize(),to:VIEWS[v].clone().normalize(),t:0,d,v}; ctl.autoRotate=false; }));
 function fit(){ if(!window.__box) return;
-  const w=cv.clientWidth||innerWidth, h=cv.clientHeight||innerHeight; const top=w<700?150:132, bot=w<700?70:56;
+  const w=cv.clientWidth||innerWidth, h=cv.clientHeight||innerHeight; const top=8, bot=8;
   const vf=C.fov*Math.PI/180, hf=2*Math.atan(Math.tan(vf/2)*C.aspect); const useH=(h-top-bot)/h;
-  const sz=__box.getSize(new THREE.Vector3()), rV=sz.y/2*1.12, rH=Math.hypot(sz.x,sz.z)/2*1.12;
-  const d=Math.max(rV/Math.tan(vf*useH/2)+rH, rH/Math.tan(hf*.88/2)+rH);
+  const sz=__box.getSize(new THREE.Vector3()), rV=sz.y/2*1.12, rH=Math.max(sz.x,sz.z)/2*1.2;
+  const d=Math.max(rV/Math.tan(vf*useH/2), rH/Math.tan(hf*.9/2))*1.08+rH*.35;
   ctl.target.copy(__box.getCenter(new THREE.Vector3()));
   const dir=C.position.clone().sub(ctl.target); if(dir.lengthSq()<1e-6) dir.set(1,.35,1); dir.normalize();
   C.position.copy(ctl.target).add(dir.multiplyScalar(d)); C.setViewOffset(w,h,0,-(top-bot)/2,w,h);
-  ctl.minDistance=d*.62; ctl.maxDistance=d; ctl.update(); }
-function resize(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; R.setSize(w,h,false); C.aspect=w/h; C.fov=w<700?40:30; C.updateProjectionMatrix(); fit(); }
-addEventListener('resize',resize);
-  host.querySelectorAll('.zoom button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const k=+b.dataset.z>0?.85:1/.85; const dir=C.position.clone().sub(ctl.target); const nd=Math.min(ctl.maxDistance,Math.max(ctl.minDistance,dir.length()*k)); C.position.copy(ctl.target).add(dir.setLength(nd)); })); new ResizeObserver(resize).observe(host); if(window.visualViewport) visualViewport.addEventListener('resize',resize); new ResizeObserver(resize).observe(host);
+  ctl.minDistance=d*.72; ctl.maxDistance=d*1.05; ctl.update(); }
+let _w0=0,_h0=0; function resize(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; if(w===_w0&&Math.abs(h-_h0)<160) return; _w0=w; _h0=h; R.setSize(w,h,false); C.aspect=w/h; C.fov=w<700?40:30; C.updateProjectionMatrix(); fit(); }
+let _rw=0; addEventListener('resize',()=>{ if(innerWidth!==_rw){ _rw=innerWidth; resize(); } });
+  host.querySelectorAll('.zoom button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const k=+b.dataset.z>0?.85:1/.85; const dir=C.position.clone().sub(ctl.target); const nd=Math.min(ctl.maxDistance,Math.max(ctl.minDistance,dir.length()*k)); C.position.copy(ctl.target).add(dir.setLength(nd)); })); new ResizeObserver(resize).observe(host);  new ResizeObserver(resize).observe(host);
 const v=new THREE.Vector3(); let tm=0, last=performance.now();
 const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
 function travel(t){ /* цикл 16 с: стоянка внизу, подъём, стоянка вверху, спуск */ const c=t%16; let u;
@@ -109,7 +109,7 @@ function loop(){
   ctl.update(); R.render(S,C);
   const rw=cv.clientWidth, rh=cv.clientHeight;
   pts.forEach(o=>{ v.copy(o.p).project(C); o.el.style.left=((v.x+1)/2*rw)+'px'; o.el.style.top=(cv.offsetTop+(1-v.y)/2*rh)+'px'; o.el.style.left=(cv.offsetLeft+(v.x+1)/2*rw)+'px';
-    const camD=C.position.distanceTo(ctl.target), pD=C.position.distanceTo(o.p); o.el.classList.toggle('back',pD>camD+.4); });
+    const camD=C.position.distanceTo(ctl.target), pD=C.position.distanceTo(o.p); o.el.style.visibility=(v.y<-1||v.y>1||v.x<-1||v.x>1)?'hidden':''; o.el.classList.toggle('back',pD>camD+.4); });
   requestAnimationFrame(loop); }
 
 })();

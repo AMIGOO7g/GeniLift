@@ -108,9 +108,9 @@ host.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',e=>
 function fit(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; const top_=10,bot=10;
   const vf=C.fov*Math.PI/180, hf=2*Math.atan(Math.tan(vf/2)*C.aspect), useH=(h-top_-bot)/h; const sz=box3.getSize(new THREE.Vector3());
   const r=Math.hypot(sz.x,sz.z)/2*1.05, rv=Math.max(sz.y,Math.hypot(sz.x,sz.z)*.55)/2*1.1; const d=Math.max(rv/Math.tan(vf*useH/2)+r*.35, r/Math.tan(hf*.95/2)+r*.2)*.92;
-  const dir=C.position.clone().sub(ctl.target).normalize(); C.position.copy(ctl.target).add(dir.multiplyScalar(d)); C.setViewOffset(w,h,0,-(top_-bot)/2,w,h); ctl.minDistance=d*.62; ctl.maxDistance=d; ctl.update(); }
-function resize(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; R.setSize(w,h,false); C.aspect=w/h; C.fov=w<700?42:30; C.updateProjectionMatrix(); fit(); }
-addEventListener('resize',resize);
+  const dir=C.position.clone().sub(ctl.target).normalize(); C.position.copy(ctl.target).add(dir.multiplyScalar(d)); C.setViewOffset(w,h,0,-(top_-bot)/2,w,h); ctl.minDistance=d*.72; ctl.maxDistance=d*1.05; ctl.update(); }
+let _w0=0,_h0=0; function resize(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; if(w===_w0&&Math.abs(h-_h0)<160) return; _w0=w; _h0=h; R.setSize(w,h,false); C.aspect=w/h; C.fov=w<700?42:30; C.updateProjectionMatrix(); fit(); }
+let _rw=0; addEventListener('resize',()=>{ if(innerWidth!==_rw){ _rw=innerWidth; resize(); } });
   host.querySelectorAll('.zoom button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const k=+b.dataset.z>0?.85:1/.85; const dir=C.position.clone().sub(ctl.target); const nd=Math.min(ctl.maxDistance,Math.max(ctl.minDistance,dir.length()*k)); C.position.copy(ctl.target).add(dir.setLength(nd)); })); new ResizeObserver(resize).observe(host);
 const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; const v=new THREE.Vector3(); let last=performance.now(), sh=0;
 function loop2(){ requestAnimationFrame(loop2); if(!host.offsetParent) return;
@@ -125,6 +125,6 @@ function loop2(){ requestAnimationFrame(loop2); if(!host.offsetParent) return;
   if(viewAnim){ viewAnim.t=Math.min(1,viewAnim.t+dt/.9); const k=ease(viewAnim.t); C.position.copy(ctl.target).add(viewAnim.from.clone().lerp(viewAnim.to,k).normalize().multiplyScalar(viewAnim.d)); if(viewAnim.t>=1){ if(viewAnim.v==='free') ctl.autoRotate=true; viewAnim=null; } }
   ctl.update(); R.render(S,C);
   const rw=cv.clientWidth, rh=cv.clientHeight, camD=C.position.distanceTo(ctl.target);
-  pts.forEach(o=>{ v.copy(o.p).project(C); o.el.style.left=((v.x+1)/2*rw)+'px'; o.el.style.top=(cv.offsetTop+(1-v.y)/2*rh)+'px'; o.el.style.left=(cv.offsetLeft+(v.x+1)/2*rw)+'px'; o.el.classList.toggle('back',C.position.distanceTo(o.p)>camD+.5); }); }
+  pts.forEach(o=>{ v.copy(o.p).project(C); o.el.style.left=((v.x+1)/2*rw)+'px'; o.el.style.top=(cv.offsetTop+(1-v.y)/2*rh)+'px'; o.el.style.left=(cv.offsetLeft+(v.x+1)/2*rw)+'px'; o.el.style.visibility=(v.y<-1||v.y>1||v.x<-1||v.x>1)?'hidden':''; o.el.classList.toggle('back',C.position.distanceTo(o.p)>camD+.5); }); }
 resize(); loop2();
 })();

@@ -3375,3 +3375,48 @@ html body.pg-del[data-tone] .psign p.mx-sub{color:#E8D9B5!important}
 .pg-obj .hdr{--hc:#F3E9D6}
 .pg-obj ol.incl{grid-template-columns:repeat(2,minmax(0,440px))!important;justify-content:center!important;gap:30px 60px!important}
 .pg-obj ol.incl li{display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important;gap:10px!important}
+
+/* ===== v63 ===== */
+/* плавные переходы между страницами без вспышки — силами браузера */
+@view-transition{navigation:auto}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.35s}
+html.fadein:not(.intro-on) body:not(.home){animation:none!important}
+html.soft-out body{opacity:1!important}
+/* этаж целиком невидим, пока на него не приехали — снизу ничего не «подсматривает» */
+.home .fl > .fl-body:not(.arrived){visibility:hidden}
+/* каждый этаж в своём цвете и на телефоне */
+.home .fl{background:var(--fl)}
+/* этаж 2: без бежевой полосы между титулом и зелёной полосой */
+.fl .flbody:has(> .dipband:first-child){padding-top:0!important}
+.fl .flbody > .dipband:first-child{margin-top:0!important}
+/* титулы: без золотой линии по нижней кромке полосы */
+.pg .psign::before,.pg .title-shop::before,.pg .title-prod::before{border-bottom:0!important}
+/* диптих: воздух — эмблемы · заголовок · текст · подпись; цифры на одной оси */
+.dip-l{gap:0!important;justify-content:center}
+.dip-l .dip-ems{margin-bottom:28px}
+.dip-k{margin:0 0 22px!important}
+.dip-text{margin:0 0 26px!important}
+.dip-sign{margin:0!important;padding-top:22px!important}
+.dr{display:grid!important;grid-template-columns:170px 1fr;align-items:center;gap:0 24px}
+.dr b{min-width:0!important;width:170px;text-align:right!important}
+.dr span{min-width:0}
+@media (max-width:760px){.dr{grid-template-columns:110px 1fr;gap:0 14px}.dr b{width:110px;font-size:36px!important}}
+/* кнопка и «следующий этаж» — без лишнего пустого поля */
+.fl .and-acts{padding:48px 0 0!important}
+.fl .nx-line{margin:44px auto 56px!important}
+.pg .and-acts{padding:64px 0!important}
+/* подпись «потяните…» — под рамкой, не под табличкой рисунка */
+.l3d{overflow:visible!important}
+.l3d canvas{inset:58px 0 18px 0!important}
+.l3d .l3d-hint{bottom:auto!important;top:calc(100% + 40px)!important;left:0;right:0}
+.viz{margin-bottom:110px!important}
+@media (max-width:760px){.l3d canvas{inset:96px 0 14px 0!important}.viz{margin-bottom:100px!important}}
+/* разрезы на телефоне: номера — на самом рисунке */
+@media (max-width:900px){
+  .viz .shaftfig{aspect-ratio:auto!important;width:min(440px,92%)!important;margin:0 auto 24px!important}
+  .viz .shaftfig img{position:static!important;display:block;width:100%!important;height:auto!important;left:auto!important}
+  .viz .shaftfig .sf-pt{left:var(--mx)!important}
+  .viz .shaftfig .sf-lb,.viz .shaftfig .sf-ln{display:none!important}
+  .viz .escfig{width:100%!important}
+  .viz-p[data-p="2"]{padding:70px 10px 30px!important}
+}

@@ -165,7 +165,8 @@
           if (k < 1) raf = requestAnimationFrame(st); };
         raf = requestAnimationFrame(st); };
       ind.textContent = '0' + Math.max(1, s.n - 1);
-      new IntersectionObserver(es => es.forEach(en => { if (en.intersectionRatio > .6) play(true); else if (en.intersectionRatio < .1) play(false); }), { threshold: [0, .1, .6] }).observe(s.ls);
+      const io = new IntersectionObserver(es => es.forEach(en => { if (en.intersectionRatio > .6) { const go = () => root.classList.contains('intro-on') ? setTimeout(go, 300) : setTimeout(() => play(true), s.n === 1 ? 700 : 0); go(); } else if (en.intersectionRatio < .1) play(false); }), { threshold: [0, .1, .6] });
+      io.observe(s.ls);
       s.body.classList.add('go', 'arrived');
     });
   } else if (secs.length && secs[0].ls) {
@@ -359,7 +360,7 @@
   const go = href => {
     if (reduce || !nl) { location.href = href; return; }
     const from = sect(location.href) === '' ? (window.__glFloor || 1) : floorOf(location.href), to = floorOf(href);
-    if (from === to && !/#floor-/.test(href)) { root.classList.add('soft-out'); setTimeout(() => { location.href = href; }, 260); return; }
+    if (from === to && !/#floor-/.test(href)) { location.href = href; return; }
     try { sessionStorage.setItem('gl-nav', from + '>' + to); } catch (e) {}
     setNl(from, from, from);
     nl.classList.remove('go', 'named', 'trav'); nl.classList.add('on');
@@ -699,7 +700,7 @@ document.querySelectorAll('[data-qa]').forEach(qa => {
     document.querySelectorAll('.ttl-band').forEach(el => { const r = el.getBoundingClientRect(); el.style.setProperty('--bt', Math.max(0, r.top + scrollY - hb) + 'px'); el.style.setProperty('--bl', r.left + 'px'); el.style.setProperty('--br', (vw - r.right) + 'px'); });
   };
   document.querySelectorAll('.pg .page>.wrap>.psign, .title-shop, .title-prod').forEach(el => el.classList.add('ttl-band'));
-  fit(); addEventListener('resize', fit); addEventListener('load', fit);
+  fit(); let _w2 = innerWidth; addEventListener('resize', () => { if (innerWidth !== _w2) { _w2 = innerWidth; fit(); } }); addEventListener('load', fit);
 })();
 /* ---------- Подсказки шахты: не исчезают, пока ведёте мышь к ним ---------- */
 document.querySelectorAll('.sf-pt').forEach(pt => {
@@ -717,7 +718,7 @@ document.addEventListener('click', e => { if (!e.target.closest('.sf-pt')) docum
     while (t.scrollWidth > box && f > 26) { f -= 2; t.style.fontSize = f + 'px'; }
     if (t.scrollWidth > box) t.style.whiteSpace = 'normal';
   });
-  fitT(); addEventListener('resize', fitT); if (document.fonts) document.fonts.ready.then(fitT);
+  fitT(); let _w1 = innerWidth; addEventListener('resize', () => { if (innerWidth !== _w1) { _w1 = innerWidth; fitT(); } }); if (document.fonts) document.fonts.ready.then(fitT);
 })();
 
 /* ---------- Вкладки «Лифт · Эскалатор» ---------- */
@@ -739,7 +740,7 @@ document.querySelectorAll('.viz').forEach(v => v.querySelector('.viz-sw').addEve
 (() => { const fit = () => { if (innerWidth < 900) return; document.querySelectorAll('.home .fl .mx-t').forEach(t => {
   t.style.fontSize = ''; t.style.whiteSpace = 'nowrap'; const box = (t.closest('.mx-sign') || t.parentElement).clientWidth * .9; let f = parseFloat(getComputedStyle(t).fontSize);
   while (t.scrollWidth > box && f > 30) { f -= 2; t.style.fontSize = f + 'px'; } }); };
-  fit(); addEventListener('resize', fit); if (document.fonts) document.fonts.ready.then(fit); })();
+  fit(); let _w3 = innerWidth; addEventListener('resize', () => { if (innerWidth !== _w3) { _w3 = innerWidth; fit(); } }); if (document.fonts) document.fonts.ready.then(fit); })();
 
 /* ---------- Сервис: «Лифты · Эскалаторы» переключает всю страницу; ?t=esc — сразу эскалаторы ---------- */
 (() => {
