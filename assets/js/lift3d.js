@@ -108,7 +108,7 @@ function loop(){
     C.position.copy(ctl.target).add(dir.multiplyScalar(viewAnim.d)); if(viewAnim.t>=1){ if(viewAnim.v==='free') ctl.autoRotate=true; viewAnim=null; } }
   ctl.update(); R.render(S,C);
   const rw=cv.clientWidth, rh=cv.clientHeight;
-  pts.forEach(o=>{ v.copy(o.p).project(C); o.el.style.left=((v.x+1)/2*rw)+'px'; o.el.style.top=((1-v.y)/2*rh)+'px';
+  pts.forEach(o=>{ v.copy(o.p).project(C); o.el.style.left=((v.x+1)/2*rw)+'px'; o.el.style.top=(cv.offsetTop+(1-v.y)/2*rh)+'px'; o.el.style.left=(cv.offsetLeft+(v.x+1)/2*rw)+'px';
     const camD=C.position.distanceTo(ctl.target), pD=C.position.distanceTo(o.p); o.el.classList.toggle('back',pD>camD+.4); });
   requestAnimationFrame(loop); }
 

@@ -230,7 +230,7 @@
     requestAnimationFrame(tick);
     const nudge = d => { ride.target = clamp(ride.target + d); ride.auto = false; ride.last = performance.now(); };
     const intro = () => root.classList.contains('intro-on') || root.classList.contains('nav-in');
-    const near = (y, v) => Math.abs(y - v) <= 3;
+    const near = (y, v) => Math.abs(y - v) <= 40;
     const landingAt = y => secs.findIndex((s, i) => near(y, lsY(i)));
     const titleAt = y => secs.findIndex((s, i) => y >= bodyY(i) - 3 && y <= bodyY(i) + 60);
     const K = 1500;
@@ -240,7 +240,7 @@
       const from = scrollY, t0 = performance.now(), D = 350;
       const st = now => { const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3);
         scrollTo({ top: from + (to - from) * e, behavior: 'instant' });
-        if (k < 1) requestAnimationFrame(st); else { snapping = false; lock(false); lastY = scrollY; } };
+        if (k < 1) requestAnimationFrame(st); else { scrollTo({ top: Math.round(to), behavior: 'instant' }); lastY = scrollY; setTimeout(() => { snapping = false; lock(false); lastY = scrollY; }, 260); } };
       requestAnimationFrame(st);
     };
     addEventListener('wheel', e => {
@@ -755,3 +755,15 @@ document.querySelectorAll('.viz').forEach(v => v.querySelector('.viz-sw').addEve
 
 /* ---------- Разрядка: компенсируем «хвост» после последней буквы — заголовки строго по центру ---------- */
 document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forEach(e => { const ls = parseFloat(getComputedStyle(e).letterSpacing) || 0; if (ls > 1) e.style.paddingLeft = ls + 'px'; });
+
+/* ---------- Лупа в шапке: строка поиска поверх шапки ---------- */
+(() => {
+  const ov = document.createElement('div'); ov.className = 'srch-ov'; ov.innerHTML = '<form><input type="search" name="q" placeholder="Артикул, марка или название детали" aria-label="Поиск по артикулу" autocomplete="off"><button type="submit">Найти</button><button type="button" class="srch-x" aria-label="Закрыть">×</button></form>';
+  document.body.appendChild(ov);
+  const base = (document.querySelector('.hdr-logo') || {}).getAttribute ? document.querySelector('.hdr-logo').getAttribute('href') : './';
+  const close = () => ov.classList.remove('on');
+  document.addEventListener('click', e => { const a = e.target.closest('a[href*="#q"]'); if (!a) return; e.preventDefault(); e.stopImmediatePropagation(); ov.classList.add('on'); setTimeout(() => ov.querySelector('input').focus(), 50); }, true);
+  ov.querySelector('.srch-x').addEventListener('click', close);
+  addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  ov.querySelector('form').addEventListener('submit', e => { e.preventDefault(); const q = ov.querySelector('input').value.trim(); if (!q) return; location.href = base + 'zapchasti/?q=' + encodeURIComponent(q); });
+})();

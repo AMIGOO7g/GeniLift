@@ -3291,3 +3291,87 @@ html body.pg-del .psign p.mx-sub{color:#E8C988!important}
 .mx-sub,.dip-text,.ch-list span,.qa-a p,.about-text p,.desk-t{font-size:var(--tb)!important}
 .it,.mc-row em,.ch-note,.big3 em,.dr em,.ar-d,.opt em,.dp-t,.cta2 .it,.sf-tip em,.l3d-card i,.esc-list em,.sf-list em,.perks span,.mc-foot,.mc-k{font-size:var(--ti)!important}
 .viz.dark,.where-in.viz.dark{border:0!important;outline:0!important}
+
+/* ===== v62 ===== */
+/* плавное появление страницы — только при обычном открытии, не после лифта (иначе мигание) */
+body,html.fadein body,body.home{animation:none!important}
+html.fadein:not(.intro-on) body:not(.home){animation:pgIn .45s ease both!important}
+/* створки заходят друг на друга — щели нет */
+.sk-l{width:50.8%!important}.sk-r{left:49.2%!important;width:50.8%!important}
+/* подвал — единый на всех страницах: «фундамент здания» */
+.ftr{background:#141210!important;color:#EDE3D1!important;border-top:0!important}
+.ftr *{border-color:rgba(237,227,209,.18)!important}
+.ftr a,.ftr span,.ftr p,.ftr li{color:#EDE3D1!important}
+.ftr h3,.ftr h4,.ftr .ftr-h,.ftr b,.ftr strong{color:#E2B23A!important}
+.ftr-legal,.ftr-legal *,.ftr small,.ftr .legal,.ftr .ftr-bot,.ftr .ftr-bot *{color:#CFC6B4!important;opacity:1!important}
+.ftr .lg-txt{fill:#EDE3D1!important}
+/* без лишних полос перед подвалом и между блоками */
+.pg main.page{padding-bottom:0!important;margin-bottom:0!important}
+.pg main.page>.wrap>:last-child{margin-bottom:0!important}
+.pg main.page>.wrap{padding-bottom:0!important}
+.ftr{margin-top:0!important}
+.pg main.page>.wrap>.cta2:last-child,.pg main.page>.wrap>section:last-child{padding-bottom:var(--blk)!important}
+/* «О компании»: зелёная полоса вплотную к титулу */
+.pg-about .page>.wrap>.psign{margin-bottom:0!important}
+.pg-about .page>.wrap>.dipband{margin-top:calc(-1 * var(--frx))!important}
+/* 3D: кнопки сверху и подпись снизу — в своих полосах, модель между ними и ни на что не наезжает */
+.l3d{height:min(86vh,900px)!important}
+.l3d canvas{top:58px!important;bottom:46px!important;height:auto!important;inset:58px 0 46px 0!important}
+.l3d .views{top:14px!important}
+.l3d .zoom{top:12px!important;flex-direction:row!important}
+.l3d .zoom button+button{border-top:0!important;border-left:1px solid currentColor!important}
+.l3d .l3d-hint{bottom:14px!important}
+.viz-sw{top:14px!important}
+.l3d-card{bottom:56px!important}
+@media (max-width:760px){
+  .l3d{height:78vh!important;min-height:520px}
+  .l3d canvas{inset:96px 0 40px 0!important}
+  .viz-sw{left:12px!important;top:12px!important;bottom:auto!important;transform:none!important}
+  .l3d .views{top:54px!important;left:50%!important}
+  .l3d .zoom{right:12px!important;top:12px!important}
+}
+/* гравюрная рамка: тонкая двойная линия, ромбы в углах, табличка-подпись */
+.viz{--cm:#1E4A3F;position:relative;background:none!important;border:1px solid var(--cm)!important;outline:1px solid var(--cm)!important;outline-offset:6px!important;margin:30px auto 80px!important;padding:0!important}
+.viz.dark{--cm:#E8C988;border:1px solid var(--cm)!important;outline:1px solid var(--cm)!important}
+.vz-d{position:absolute;z-index:6;width:12px;height:12px;background:var(--fl,#F3E9D6);border:1px solid var(--cm);transform:rotate(45deg)}
+.viz.dark .vz-d{background:#3E4127}
+.vz-tl{left:-13px;top:-13px}.vz-tr{right:-13px;top:-13px}.vz-bl{left:-13px;bottom:-13px}.vz-br{right:-13px;bottom:-13px}
+.viz-cap{position:absolute;z-index:6;left:50%;bottom:-20px;transform:translateX(-50%);margin:0;padding:6px 18px;background:var(--fl,#F3E9D6);border:1px solid var(--cm);outline:1px solid var(--cm);outline-offset:3px;white-space:nowrap}
+.viz.dark .viz-cap{background:#3E4127}
+.viz-cap span{font:700 11px var(--fut);text-transform:uppercase;letter-spacing:.28em;color:var(--cm)}
+.chap-a .viz .vz-d,.chap-a .viz .viz-cap{background:#F3E9D6}
+.chap-b .viz .vz-d,.chap-b .viz .viz-cap{background:#C9D3BE}
+/* разрезы крупнее и читабельнее */
+.viz .shaftfig{width:min(1180px,100%)!important;aspect-ratio:1.62!important}
+.viz .shaftfig img{left:28%!important;width:44%!important}
+.viz-p[data-p="2"]{padding:76px 24px 50px!important}
+.viz .escfig{width:min(1240px,100%)!important}
+.sf-lb strong{font-size:13px!important}.sf-lb em{font-size:17px!important}
+/* поиск поверх шапки */
+.srch-ov{position:fixed;left:0;right:0;top:0;z-index:120;display:flex;justify-content:center;padding:14px 20px;background:#141210;border-bottom:1px solid #C9A15A;transform:translateY(-110%);transition:transform .35s cubic-bezier(.3,.7,.2,1)}
+.srch-ov.on{transform:none}
+.srch-ov form{display:flex;width:min(760px,100%);border:1px solid #E2B23A}
+.srch-ov input{flex:1;min-width:0;padding:14px 16px;border:0;background:transparent;color:#F3E6CC;font:500 16px var(--fut)}
+.srch-ov input::placeholder{color:rgba(243,230,204,.5)}
+.srch-ov button[type=submit]{padding:0 22px;border:0;background:#E2B23A;color:#141210;font:800 12px var(--fut);text-transform:uppercase;letter-spacing:.2em;cursor:pointer}
+.srch-x{width:46px;border:0;border-left:1px solid #E2B23A;background:none;color:#E2B23A;font-size:22px;cursor:pointer}
+/* объекты: титул контрастно отделён от страницы */
+.pg-obj .hdr{background:#A3271F!important}
+/* контакты: «Офис» и «Реквизиты» — таблички-визитки */
+.pg-cnt .two::before{background:#E9B23B!important;box-shadow:0 0 0 100vmax #E9B23B!important}
+.pg-cnt .two{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px!important}
+.pg-cnt .two>*{position:relative;padding:40px 36px 34px!important;background:#F6E2A8!important;border:2px solid #C8361F!important;outline:1px solid #C8361F!important;outline-offset:6px;text-align:center}
+.pg-cnt .two h2,.pg-cnt .two h3,.pg-cnt .two .k,.pg-cnt .two>*>b:first-child,.pg-cnt .two>*>p:first-child{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 0 18px!important;font:800 13px var(--fut)!important;text-transform:uppercase;letter-spacing:.32em!important;color:#8E2620!important}
+.pg-cnt .two h2::before,.pg-cnt .two h2::after,.pg-cnt .two h3::before,.pg-cnt .two h3::after{content:"◆";font-size:8px;color:#C8361F}
+.pg-cnt .two li,.pg-cnt .two p,.pg-cnt .two span,.pg-cnt .two a{font-family:var(--it)!important;font-style:italic;font-size:19px!important;line-height:1.5;color:#5a1208!important;list-style:none}
+.pg-cnt .two ul,.pg-cnt .two ol{margin:0;padding:0}
+.pg-cnt .two li::before{display:none!important}
+@media (max-width:760px){.pg-cnt .two{grid-template-columns:1fr}}
+/* контакты: заголовок в рамке ответа — тёмный */
+.pg-cnt .qa-a p:first-child,.pg-cnt .qa-a b,.pg-cnt .qa-a strong,.pg-cnt .qa-a h3{color:#5a1208!important}
+html body.pg[data-tone] .psign p.mx-sub,html body.pg[data-tone] .page .psign .mx-sub{color:var(--hc)!important;opacity:.95!important}
+html body.pg-del[data-tone] .psign p.mx-sub{color:#E8D9B5!important}
+.pg-obj .psign,.pg-obj .ttl-band{--hc:#F3E9D6}
+.pg-obj .hdr{--hc:#F3E9D6}
+.pg-obj ol.incl{grid-template-columns:repeat(2,minmax(0,440px))!important;justify-content:center!important;gap:30px 60px!important}
+.pg-obj ol.incl li{display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important;gap:10px!important}

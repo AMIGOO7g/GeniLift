@@ -105,7 +105,7 @@ const VIEWS={side:new THREE.Vector3(0,.15,1),front:new THREE.Vector3(-1,.25,0),t
 const MOB=innerWidth<700; C.position.copy(ctr).add((MOB?VIEWS.side:VIEWS.free).clone()); if(MOB){ ctl.autoRotate=false; setTimeout(()=>setView('side'),0); }
 function setView(v){ host.querySelectorAll('.views button').forEach(b=>b.classList.toggle('on',b.dataset.v===v)); }
 host.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const v=b.dataset.v; setView(v); viewAnim={from:C.position.clone().sub(ctl.target).normalize(),to:VIEWS[v].clone().normalize(),t:0,d:C.position.distanceTo(ctl.target),v}; ctl.autoRotate=false; }));
-function fit(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; const top_=64,bot=40;
+function fit(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; const top_=10,bot=10;
   const vf=C.fov*Math.PI/180, hf=2*Math.atan(Math.tan(vf/2)*C.aspect), useH=(h-top_-bot)/h; const sz=box3.getSize(new THREE.Vector3());
   const r=Math.hypot(sz.x,sz.z)/2*1.05, rv=Math.max(sz.y,Math.hypot(sz.x,sz.z)*.55)/2*1.1; const d=Math.max(rv/Math.tan(vf*useH/2)+r*.35, r/Math.tan(hf*.95/2)+r*.2)*.92;
   const dir=C.position.clone().sub(ctl.target).normalize(); C.position.copy(ctl.target).add(dir.multiplyScalar(d)); C.setViewOffset(w,h,0,-(top_-bot)/2,w,h); ctl.minDistance=d*.62; ctl.maxDistance=d; ctl.update(); }
@@ -125,6 +125,6 @@ function loop2(){ requestAnimationFrame(loop2); if(!host.offsetParent) return;
   if(viewAnim){ viewAnim.t=Math.min(1,viewAnim.t+dt/.9); const k=ease(viewAnim.t); C.position.copy(ctl.target).add(viewAnim.from.clone().lerp(viewAnim.to,k).normalize().multiplyScalar(viewAnim.d)); if(viewAnim.t>=1){ if(viewAnim.v==='free') ctl.autoRotate=true; viewAnim=null; } }
   ctl.update(); R.render(S,C);
   const rw=cv.clientWidth, rh=cv.clientHeight, camD=C.position.distanceTo(ctl.target);
-  pts.forEach(o=>{ v.copy(o.p).project(C); o.el.style.left=((v.x+1)/2*rw)+'px'; o.el.style.top=((1-v.y)/2*rh)+'px'; o.el.classList.toggle('back',C.position.distanceTo(o.p)>camD+.5); }); }
+  pts.forEach(o=>{ v.copy(o.p).project(C); o.el.style.left=((v.x+1)/2*rw)+'px'; o.el.style.top=(cv.offsetTop+(1-v.y)/2*rh)+'px'; o.el.style.left=(cv.offsetLeft+(v.x+1)/2*rw)+'px'; o.el.classList.toggle('back',C.position.distanceTo(o.p)>camD+.5); }); }
 resize(); loop2();
 })();
