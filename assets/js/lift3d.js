@@ -90,7 +90,7 @@ function fit(){ if(!window.__box) return;
   ctl.target.copy(__box.getCenter(new THREE.Vector3()));
   const dir=C.position.clone().sub(ctl.target); if(dir.lengthSq()<1e-6) dir.set(1,.35,1); dir.normalize();
   C.position.copy(ctl.target).add(dir.multiplyScalar(d)); C.setViewOffset(w,h,0,-h*.07,w,h);
-  ctl.minDistance=d*.62; ctl.maxDistance=d*1.12; ctl.update(); }
+  ctl.minDistance=d*.98; ctl.maxDistance=d*1.3; ctl.update(); }
 let _w0=0,_h0=0; function resize(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; if(w===_w0&&Math.abs(h-_h0)<160) return; _w0=w; _h0=h; R.setSize(w,h,false); C.aspect=w/h; C.fov=w<700?40:30; C.updateProjectionMatrix(); fit(); }
 let _rw=0; addEventListener('resize',()=>{ if(innerWidth!==_rw){ _rw=innerWidth; resize(); } });
   host.querySelectorAll('.zoom button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const k=+b.dataset.z>0?.85:1/.85; const dir=C.position.clone().sub(ctl.target); const nd=Math.min(ctl.maxDistance,Math.max(ctl.minDistance,dir.length()*k)); C.position.copy(ctl.target).add(dir.setLength(nd)); })); new ResizeObserver(resize).observe(host);  new ResizeObserver(resize).observe(host);

@@ -781,12 +781,17 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
   const here = floorOfUrl(new URL(location.href));
   const isHome = document.body.classList.contains('home-bld');
   const D = document.documentElement;
-  // «диафрагма» как у Андерсона: страница медленно сжимается в точку и из той же точки раскрывается новая
-  let st = null; try { st = JSON.parse(sessionStorage.getItem('gl-iris') || 'null'); sessionStorage.removeItem('gl-iris'); } catch (e) {}
-  if (st) { D.style.setProperty('--ix', st.x + 'px'); D.style.setProperty('--iy', st.y + 'px'); D.classList.add('iris-in');
-    requestAnimationFrame(() => requestAnimationFrame(() => D.classList.add('iris-go'))); setTimeout(() => D.classList.remove('iris-in', 'iris-go'), 1300); }
-  const irisOut = (href, x, y) => { try { sessionStorage.setItem('gl-iris', JSON.stringify({ x, y })); } catch (e) {}
-    D.style.setProperty('--ix', x + 'px'); D.style.setProperty('--iy', y + 'px'); D.classList.add('iris-out'); setTimeout(() => { location.href = href; }, 950); };
+  // «диафрагма»: закрытие в центр экрана → темнота → открытие из центра, когда страница готова
+  // занавес-диафрагма: чёрный слой с круглым «окном» по центру экрана
+  const R = () => Math.hypot(innerWidth, innerHeight) / 2 + 30, ease = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+  const curtain = () => { let c = document.getElementById('irisC'); if (!c) { c = document.createElement('div'); c.id = 'irisC'; document.body.appendChild(c); } return c; };
+  const hole = (c, r) => { const m = `radial-gradient(circle at 50% 50%, transparent ${r}px, #000 ${r + .6}px)`; c.style.webkitMaskImage = m; c.style.maskImage = m; };
+  const run = (c, from, to, D2) => new Promise(res => { const t0 = performance.now(); const st = now => { const k = Math.min(1, (now - t0) / D2); hole(c, from + (to - from) * ease(k)); if (k < 1) requestAnimationFrame(st); else res(); }; requestAnimationFrame(st); });
+  let came = false; try { came = !!sessionStorage.getItem('gl-iris'); sessionStorage.removeItem('gl-iris'); } catch (e) {}
+  if (came) { const c = curtain(); hole(c, 0); D.classList.remove('iris-in');
+    const open = async () => { await run(c, 0, R(), 1100); c.remove(); };
+    if (document.readyState === 'complete') setTimeout(open, 80); else addEventListener('load', () => setTimeout(open, 80)); }
+  const irisOut = async href => { try { sessionStorage.setItem('gl-iris', '1'); } catch (e) {} const c = curtain(); hole(c, R()); await run(c, R(), 0, 1000); setTimeout(() => { location.href = href; }, 60); };
   window.addEventListener('click', e => {
     const a = e.target.closest && e.target.closest('a[href]'); if (!a || e.metaKey || e.ctrlKey || e.shiftKey || a.target || a.hasAttribute('download')) return;
     const href = a.getAttribute('href'); if (/^(tel:|mailto:|#)/.test(href)) return;
@@ -795,9 +800,9 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
     const to = floorOfUrl(u);
     if (isHome && to > 0 && window.__bldGo) { e.preventDefault(); e.stopImmediatePropagation(); window.__bldGo(to); return; }
     if (isHome) return;
-    e.preventDefault(); e.stopImmediatePropagation(); irisOut(u.href, e.clientX || innerWidth / 2, e.clientY || innerHeight / 2);
+    e.preventDefault(); e.stopImmediatePropagation(); irisOut(u.href);
   }, true);
-  addEventListener('pageshow', e => { if (e.persisted) D.classList.remove('iris-out'); });
+  addEventListener('pageshow', e => { if (e.persisted) { const c = document.getElementById('irisC'); c && c.remove(); } });
   // одна кнопка заявки справа внизу (ПК), с надписью и мягкой пульсацией
   if (!isHome) { const src = document.querySelector('[data-cart-open]');
     if (src) { const b = document.createElement('button'); b.type = 'button'; b.className = 'cta-fix'; b.innerHTML = '<span>Обсудить<br>объект</span>';

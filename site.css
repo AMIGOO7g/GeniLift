@@ -3857,3 +3857,57 @@ body[class*="pg-obj"] .psign h1,body[class*="pg-obj"] .ps-t{color:#F3E9D6!import
 .kind-esc a.on,.kind-esc a:hover{opacity:1}
 .kind-esc .k-em{width:76px;height:76px;color:var(--hc,#E8B53A);--cut:var(--fl)}
 .kind-esc span{font:700 11px var(--fut);letter-spacing:.3em;text-transform:uppercase;color:var(--hc,#E8B53A)}
+
+/* ===== правки v74 ===== */
+/* диафрагма из центра экрана */
+html.iris-in,html.iris-out{background:#0E0C0A!important}
+html.iris-in body{clip-path:circle(0 at 50% var(--cy,50vh))!important}
+html.iris-in.iris-go body{clip-path:circle(160vmax at 50% var(--cy,50vh))!important;transition:clip-path 1.1s cubic-bezier(.76,0,.24,1)!important}
+html.iris-out body{clip-path:circle(0 at 50% var(--cy,50vh))!important;transition:clip-path 1s cubic-bezier(.76,0,.24,1)!important}
+/* кнопка заявки: тёмная, латунная надпись — видна на любом фоне */
+@media (min-width:761px){.cta-fix{background:#141210!important;color:#E2B23A!important;box-shadow:0 0 0 3px #E2B23A,0 10px 24px rgba(0,0,0,.3)!important;width:108px!important;height:108px!important}.cta-fix span{font-size:10.5px!important;color:#E2B23A}}
+/* указатель этажей — благородный орех с латунью, контрастен любому этажу */
+.floorind{background:#2B2118!important;color:#C9A15A!important;padding:54px 20px 48px!important}
+.floorind .fi-c b{background:#2B2118!important;border-color:#C9A15A!important;outline-color:rgba(201,161,90,.45)!important;color:#E8D9B5!important}
+.floorind .fi-c small,.floorind .fi-bld{color:#C9A15A!important}
+.floorind .fi-row::before{background:#C9A15A!important;opacity:.4!important}
+.floorind .fi-c.on b{background:#E2B23A!important;border-color:#E2B23A!important;outline-color:#E2B23A!important;color:#141210!important}
+/* Холл: титул в рамке отдельной полосой; карточки — ровные строки и отступ снизу */
+.hall-title{position:relative;margin:0;padding:96px 20px!important;background:#22304A}
+.hall-title::after{content:"";position:absolute;inset:32px max(32px,calc(50% - 600px));border:5px solid #E2B23A;opacity:.85;pointer-events:none}
+.hall-body{padding:var(--blk,80px) 20px calc(var(--blk,80px) + 20px)!important}
+.hall-body .desk-c{display:flex!important;flex-direction:column;align-items:center}
+.hall-body .desk-t{min-height:3.2em;display:flex;align-items:flex-start;justify-content:center}
+.hall-body .desk-c>form,.hall-body .desk-c>.desk-act{margin-top:auto!important}
+.hall-body .desk-link{margin-top:22px!important;min-height:2.6em;display:flex;align-items:flex-start;justify-content:center}
+/* О компании: рамка с равными отступами сверху и снизу */
+body.pg-about .wrap .psign{padding-top:96px!important;padding-bottom:96px!important}
+body.pg-about .wrap .psign::after{top:36px!important;bottom:36px!important}
+body.pg-about .dip-l{justify-content:flex-start!important;padding-top:18px!important}
+body.pg-about .dip-ems{margin:0 0 26px!important}
+body.pg-about .dip :is(.dr,.dip-sign,.dip-k::after){border-color:rgba(163,39,31,.4)!important}
+body.pg-about .dip .dr{border-width:0 0 1px!important}
+body.pg-about .dip-k::after{height:1px!important}
+/* «Для кого / Как работаем / Что гарантируем» — крупно и спокойно */
+.about-cols{width:min(1180px,100%)!important;gap:0!important;border:0!important;margin:0 auto 60px!important}
+.about-cols div{padding:44px 40px!important;text-align:left!important}
+.about-cols div+div{border-left:1px solid rgba(163,39,31,.35)!important}
+.about-cols b{font:900 clamp(20px,1.8vw,26px)/1.15 var(--fut)!important;letter-spacing:.12em!important;border:0!important;padding:0!important;margin:0 0 16px!important}
+.about-cols b::after{content:"";display:block;width:64px;height:2px;margin-top:14px;background:currentColor}
+.about-cols span{font:500 italic clamp(19px,1.5vw,22px)/1.5 var(--it)!important}
+@media (max-width:860px){.about-cols{grid-template-columns:1fr!important}.about-cols div+div{border-left:0!important;border-top:1px solid rgba(163,39,31,.35)!important}}
+/* объекты: текущий пункт крошек — светлый */
+body.pg-obj .crumbs li{color:#F3E9D6!important}
+/* контакты: форма сразу под титулом, кнопка «Отправить» ниже и меньше */
+.pg-cnt .form-plaque{margin-top:var(--blk,80px)!important}
+.pg-cnt .form-plaque :is(button[type=submit],.rbtn,.abtn-fill){width:104px!important;height:104px!important;min-width:0!important;font-size:10px!important;margin-top:34px!important}
+.pg-cnt .phone-plq{margin:var(--blk,80px) 0 0!important}
+/* 3D: контейнер выше */
+.l3d{height:min(90vh,980px)!important;min-height:560px!important}
+
+html.iris-in body{clip-path:circle(0 at 50% 50vh)!important}
+html.iris-in{background:#0E0C0A!important}
+
+#irisC{position:fixed;inset:0;z-index:2147483000;background:#0E0C0A;pointer-events:none}
+html.iris-in body::after{content:"";position:fixed;inset:0;z-index:2147483001;background:#0E0C0A}
+html.iris-in body{clip-path:none!important}
