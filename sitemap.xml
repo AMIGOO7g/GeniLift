@@ -299,7 +299,6 @@
   <url><loc>https://genilift.ru/zapchasti/lg50-dl2/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/lrs-50-5/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/panasonic-aad03020/</loc></url>
-  <url><loc>https://genilift.ru/zapchasti/a-esc-a-9/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/canny-esc-cann-203-200-109-145mm/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/canny-esc-cann-50-x50/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/canny-esc-cann-60-x55/</loc></url>
@@ -332,6 +331,7 @@
   <url><loc>https://genilift.ru/zapchasti/esc-98x30-6204/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/esc-98x31-6203/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/esc-99x30-6204/</loc></url>
+  <url><loc>https://genilift.ru/zapchasti/esc-a-9/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/fujitec-esc-fuji-0215cbd001/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/fujitec-esc-fuji-150x38-6003/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/fujitec-esc-fuji-203-199-100-145mm-2/</loc></url>
@@ -442,11 +442,11 @@
   <url><loc>https://genilift.ru/zapchasti/kone-esc-kone-km5072085h01/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/kone-esc-kone-km5072738h01/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/kone-esc-kone-l47332173a/</loc></url>
-  <url><loc>https://genilift.ru/zapchasti/lg-s-esc-lg-457-34mm/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/lg-sigma-esc-lg-1000mm-2/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/lg-sigma-esc-lg-1000mm-800mm-600mm/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/lg-sigma-esc-lg-1000mm/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/lg-sigma-esc-lg-17joints/</loc></url>
+  <url><loc>https://genilift.ru/zapchasti/lg-sigma-esc-lg-457-34mm/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/lg-sigma-esc-lg-60x55-6202/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/lg-sigma-esc-lg-70x50-6202/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/lg-sigma-esc-lg-76x16-6203/</loc></url>
@@ -631,12 +631,11 @@
   <url><loc>https://genilift.ru/zapchasti/toshiba-esc-tosh-5p6k1175p012-14-11-13/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/toshiba-esc-tosh-70x43/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/toshiba-esc-tosh-lr-001/</loc></url>
-  <url><loc>https://genilift.ru/zapchasti/xizi-131-esc-xizi-3/</loc></url>
-  <url><loc>https://genilift.ru/zapchasti/xizi-m-esc-xizi-xaa346si/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/xizi-otis-esc-xizi-1000mm-800mm-2/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/xizi-otis-esc-xizi-1000mm-800mm/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/xizi-otis-esc-xizi-127-140-152mm/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/xizi-otis-esc-xizi-203-199-145-145mm/</loc></url>
+  <url><loc>https://genilift.ru/zapchasti/xizi-otis-esc-xizi-3/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/xizi-otis-esc-xizi-390-100mm/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/xizi-otis-esc-xizi-456-30mm/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/xizi-otis-esc-xizi-456-35mm/</loc></url>
@@ -652,6 +651,7 @@
   <url><loc>https://genilift.ru/zapchasti/xizi-otis-esc-xizi-ldtj-a-14-ldtj-a-16/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/xizi-otis-esc-xizi-scs319900105/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/xizi-otis-esc-xizi-scs319901-02-03/</loc></url>
+  <url><loc>https://genilift.ru/zapchasti/xizi-otis-esc-xizi-xaa346si/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/xizi-otis-esc-xizi-xaa455j1-xaa455m1/</loc></url>
   <url><loc>https://genilift.ru/zapchasti/yungtay-esc-yung-57/</loc></url>
 </urlset>

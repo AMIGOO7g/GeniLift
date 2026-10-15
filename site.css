@@ -4017,3 +4017,12 @@ body.pg-cnt .qa .qa-qt{color:#8F2F20!important}
 /* эскалаторные карточки: понятное название крупно, артикул мелко */
 .tag-pn-name{font-size:13px!important;line-height:1.3!important;letter-spacing:.06em!important;text-transform:none!important}
 .tag-art{font:600 10px var(--fut)!important;letter-spacing:.12em!important;opacity:.65}
+
+/* ===== Лавка эскалаторов как Лавка лифтов; всё по центру ===== */
+.esc-s{text-align:center!important}
+.esc-s>h3,.esc-s>.it{text-align:center!important;margin-left:auto!important;margin-right:auto!important}
+.esc-s .esc-acts{display:flex!important;justify-content:center!important;gap:12px;flex-wrap:wrap}
+.esc-s .esc-brands{justify-content:center!important}
+.esc-s .esc-grid{text-align:left}
+.esc-s[hidden]{display:none!important}
+.dp-h{text-align:center!important}

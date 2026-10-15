@@ -811,6 +811,12 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
   const ems = document.querySelectorAll('svg.em'); const replay = el => { el.classList.remove('rv'); void el.getBoundingClientRect(); el.classList.add('rv'); };
   if (ems.length) { const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { replay(e.target); io2.unobserve(e.target); } }), { threshold: .5 });
     ems.forEach(el => { io2.observe(el); (el.closest('a,button,.desk-c,.dn,.fi-c') || el).addEventListener('mouseenter', () => replay(el)); }); }
+  // Лавка эскалаторов: марки и разделы — как в Лавке лифтов
+  const es = document.getElementById('escStrips');
+  if (es) { const setBrand = br => { document.querySelectorAll('.esc-s').forEach(sec => { let vis = 0; sec.querySelectorAll('.esc-grid .card').forEach(c => { const ok = !br || c.dataset.brand === br; c.hidden = !ok; if (ok) vis++; }); sec.hidden = !!br && !vis; }); };
+    window.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-ebrand],[data-ecat]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault();
+      if (b.dataset.ebrand !== undefined) { const on = b.getAttribute('aria-pressed') !== 'true'; es.querySelectorAll('[data-ebrand]').forEach(x => x.setAttribute('aria-pressed', 'false')); b.setAttribute('aria-pressed', on ? 'true' : 'false'); setBrand(on ? b.dataset.ebrand : ''); }
+      else { const t = document.getElementById(b.dataset.ecat); if (t) { t.hidden = false; scrollTo({ top: t.getBoundingClientRect().top + scrollY - 110, behavior: 'smooth' }); } } }, true); }
   // одна кнопка заявки справа внизу (ПК), с надписью и мягкой пульсацией
   if (!isHome) { const src = document.querySelector('[data-cart-open]');
     if (src) { const b = document.createElement('button'); b.type = 'button'; b.className = 'cta-fix'; b.innerHTML = '<span>Обсудить<br>объект</span>';
