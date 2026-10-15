@@ -3944,3 +3944,29 @@ body.pg-about .dipband{margin-top:0!important}
 body.pg-about .wrap .psign::after{bottom:36px!important}
 html body.pg-about main .dipband{margin-top:0!important}html body.pg-about main .wrap .psign{margin-bottom:0!important}
 html body.pg-about .page>.wrap>.dipband{margin-top:0!important}
+/* эскалаторы: сетка карточек в разделах */
+.esc-s .esc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:18px 0 26px}
+.esc-s .esc-grid .card{min-width:0}
+.esc-depts~.dept .esc-sects,.dept .esc-sects{display:block!important}
+.esc-sects .esc-s{width:auto!important;max-width:none!important;margin:0 0 34px!important}
+.esc-s .esc-grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))!important}
+
+/* ===== правки v77 ===== */
+html{background:#141210!important}
+/* Холл: кнопки и ссылки на одной линии */
+html body.pg-hall .hall-body .desk-c>:is(form,.desk-act,.desk-search){margin-top:24px!important;height:60px!important;min-height:60px!important;box-sizing:border-box}
+html body.pg-hall .hall-body .desk-c>.desk-call{display:flex!important;align-items:center;justify-content:center}
+html body.pg-hall .hall-body .desk-c>.desk-link{margin-top:26px!important}
+/* О компании: без прослойки, текст карточки по центру под эмблемами */
+.about-text,.about-cols{margin-bottom:0!important}
+body.pg-about .dip-l{display:flex!important;flex-direction:column!important;align-items:center}
+body.pg-about .dip-l>.dip-ems{margin:0!important}
+body.pg-about .dip-l>.dip-k{margin-top:auto!important}
+body.pg-about .dip-l>.dip-sign{margin-bottom:auto!important}
+/* фильтр марок в разделах эскалаторов */
+.esc-brands{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 18px}
+.esc-brands button{padding:7px 12px;border:1px solid rgba(232,181,58,.5);background:none;color:#E8D9B5;font:700 10px var(--fut);letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.esc-brands button em{margin-left:6px;font-style:normal;opacity:.6}
+.esc-brands button[aria-pressed="true"]{background:#E8B53A;color:#141210;border-color:#E8B53A}
+.esc-grid .card[hidden]{display:none!important}
+html body.pg-hall .hall-body .desk .desk-c>form.desk-search{margin-top:24px!important}html body.pg-hall .hall-body .desk .desk-c>.desk-t{height:3.4em!important;min-height:0!important;margin-bottom:0!important}

@@ -792,6 +792,7 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
     const open = async () => { await run(c, 0, R(), 1100); c.remove(); };
     if (document.readyState === 'complete') setTimeout(open, 80); else addEventListener('load', () => setTimeout(open, 80)); }
   const irisOut = async href => { try { sessionStorage.setItem('gl-iris', '1'); } catch (e) {} const c = curtain(); hole(c, R()); await run(c, R(), 0, 1000); setTimeout(() => { location.href = href; }, 60); };
+  window.__irisOut = href => irisOut(href);
   window.addEventListener('click', e => {
     const a = e.target.closest && e.target.closest('a[href]'); if (!a || e.metaKey || e.ctrlKey || e.shiftKey || a.target || a.hasAttribute('download')) return;
     const href = a.getAttribute('href'); if (/^(tel:|mailto:|#)/.test(href)) return;
@@ -803,6 +804,9 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
     e.preventDefault(); e.stopImmediatePropagation(); irisOut(u.href);
   }, true);
   addEventListener('pageshow', e => { if (e.persisted) { const c = document.getElementById('irisC'); c && c.remove(); } });
+  document.querySelectorAll('.esc-brands').forEach(bar => bar.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return;
+    const on = b.getAttribute('aria-pressed') !== 'true'; bar.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false')); b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    const br = on ? b.dataset.brand : ''; const grid = bar.nextElementSibling; grid.querySelectorAll('.card').forEach(c => { c.hidden = !!br && c.dataset.brand !== br; }); }));
   // одна кнопка заявки справа внизу (ПК), с надписью и мягкой пульсацией
   if (!isHome) { const src = document.querySelector('[data-cart-open]');
     if (src) { const b = document.createElement('button'); b.type = 'button'; b.className = 'cta-fix'; b.innerHTML = '<span>Обсудить<br>объект</span>';

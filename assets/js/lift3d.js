@@ -82,15 +82,20 @@ const VIEWS={front:new THREE.Vector3(0,.12,-1),side:new THREE.Vector3(1,.12,0),t
 function setView(v){ host.querySelectorAll('.views button').forEach(b=>b.classList.toggle('on',b.dataset.v===v)); }
 host.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const v=b.dataset.v; setView(v);
   const d=C.position.distanceTo(ctl.target); viewAnim={from:C.position.clone().sub(ctl.target).normalize(),to:VIEWS[v].clone().normalize(),t:0,d,v}; ctl.autoRotate=false; }));
-function fit(){ if(!window.__box) return;
-  const w=cv.clientWidth||innerWidth, h=cv.clientHeight||innerHeight; const top=8, bot=8;
-  const vf=C.fov*Math.PI/180, hf=2*Math.atan(Math.tan(vf/2)*C.aspect); const useH=(h-top-bot)/h;
-  const sz=__box.getSize(new THREE.Vector3()), rV=sz.y/2*1.12, rH=Math.hypot(sz.x,sz.z)/2*1.1;
-  const d=Math.max(rV/Math.tan(vf*useH/2), rH/Math.tan(hf*.9/2))*1.08+rH*.35;
-  ctl.target.copy(__box.getCenter(new THREE.Vector3()));
-  const dir=C.position.clone().sub(ctl.target); if(dir.lengthSq()<1e-6) dir.set(1,.35,1); dir.normalize();
-  C.position.copy(ctl.target).add(dir.multiplyScalar(d)); C.setViewOffset(w,h,0,-h*.07,w,h);
-  ctl.minDistance=d*.98; ctl.maxDistance=d*1.3; ctl.update(); }
+
+function __exactD(box,dir,pad){ const c=box.getCenter(new THREE.Vector3()), mn=box.min, mx=box.max, pts=[]; const fz=C.far; C.far=1e5; C.updateProjectionMatrix();
+  for(const x of [mn.x,mx.x]) for(const y of [mn.y,mx.y]) for(const z of [mn.z,mx.z]) pts.push(new THREE.Vector3(x,y,z));
+  const sp=C.position.clone(), sq=C.quaternion.clone(); let lo=.01, hi=800;
+  for(let i=0;i<30;i++){ const d=(lo+hi)/2; C.position.copy(c).addScaledVector(dir,d); C.lookAt(c); C.updateMatrixWorld(true); let m=0;
+    const inv=C.matrixWorldInverse; for(const p of pts){ const cs=p.clone().applyMatrix4(inv); if(cs.z>-C.near){ m=9; break; } const q=p.clone().project(C); m=Math.max(m,Math.abs(q.x),Math.abs(q.y)); } if(m>pad) lo=d; else hi=d; }
+  C.position.copy(sp); C.quaternion.copy(sq); C.far=fz; C.updateProjectionMatrix(); C.updateMatrixWorld(true); return hi; }
+let __clamp=false;
+function __fitExact(box){ C.clearViewOffset&&C.clearViewOffset(); C.updateProjectionMatrix(); const c=box.getCenter(new THREE.Vector3()); ctl.target.copy(c);
+  const dir=C.position.clone().sub(c); if(dir.lengthSq()<1e-6) dir.set(1,.35,1); dir.normalize(); const d=__exactD(box,dir,.9);
+  C.position.copy(c).addScaledVector(dir,d*1.4); ctl.minDistance=d; ctl.maxDistance=d*2.2; ctl.update();
+  if(!ctl.__exactHook){ ctl.__exactHook=1; ctl.addEventListener('change',()=>{ if(__clamp) return; const v=C.position.clone().sub(ctl.target), need=__exactD(box,v.clone().normalize(),.9);
+    ctl.minDistance=need; if(v.length()<need-1e-4){ __clamp=true; C.position.copy(ctl.target).add(v.setLength(need)); ctl.update(); __clamp=false; } }); } }
+function fit(){ if(!window.__box) return; __fitExact(__box); }
 let _w0=0,_h0=0; function resize(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; if(w===_w0&&Math.abs(h-_h0)<160) return; _w0=w; _h0=h; R.setSize(w,h,false); C.aspect=w/h; C.fov=w<700?40:30; C.updateProjectionMatrix(); fit(); }
 let _rw=0; addEventListener('resize',()=>{ if(innerWidth!==_rw){ _rw=innerWidth; resize(); } });
   host.querySelectorAll('.zoom button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const k=+b.dataset.z>0?.85:1/.85; const dir=C.position.clone().sub(ctl.target); const nd=Math.min(ctl.maxDistance,Math.max(ctl.minDistance,dir.length()*k)); C.position.copy(ctl.target).add(dir.setLength(nd)); })); new ResizeObserver(resize).observe(host);  new ResizeObserver(resize).observe(host);

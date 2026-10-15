@@ -30,14 +30,10 @@
     rc.querySelector('.tint').style.setProperty('--bg', cs.getPropertyValue('--bg')); rc.querySelector('.sign').style.setProperty('--hc', cs.getPropertyValue('--hc'));
     rc.querySelector('.k').textContent = pq.querySelector('.pk').textContent; const t = rc.querySelector('.t'); t.textContent = pq.querySelector('.pt').textContent; t.dataset.raw = t.textContent;
     if (window.__fitSign) window.__fitSign(rc); }
-  async function enterRoom(n) {                       // «диафрагма»: круг цвета этажа раскрывается из таблички
-    const pq = B.querySelector(`.pq[data-f="${n}"]`), r = pq.getBoundingClientRect(), bg = getComputedStyle(pq).getPropertyValue('--bg').trim();
-    const ir = document.createElement('div'); ir.className = 'iris-cover'; ir.style.background = bg;
-    const cx = r.left + r.width / 2, cy = r.top + r.height / 2; ir.style.clipPath = `circle(0px at ${cx}px ${cy}px)`; document.body.appendChild(ir);
-    await wait(30); ir.style.transition = 'clip-path .9s cubic-bezier(.65,0,.35,1)'; ir.style.clipPath = `circle(${Math.hypot(innerWidth, innerHeight)}px at ${cx}px ${cy}px)`;
-    await wait(900);
-    try { sessionStorage.setItem('gl-iris', '1'); sessionStorage.setItem('gl-floor', n); } catch (e) {}
-    location.href = R + SLUG[n] + '/';
+  async function enterRoom(n) {                       // точка в центр экрана → страница раздела
+    try { sessionStorage.setItem('gl-floor', n); } catch (e) {}
+    const href = R + SLUG[n] + '/';
+    if (window.__irisOut) window.__irisOut(href); else location.href = href;
   }
   async function go(n) {
     if (busy) return; busy = true; const fast = !!sessionStorage.getItem('gl-rides'); try { sessionStorage.setItem('gl-rides', '1'); } catch (e) {}
