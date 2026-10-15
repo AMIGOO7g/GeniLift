@@ -7,7 +7,7 @@ const cv=host.querySelector('canvas');
 const BASE=host.dataset.base||'';
 const R=new THREE.WebGLRenderer({canvas:cv,antialias:true}); R.setPixelRatio(Math.min(2,devicePixelRatio)); R.setClearColor(CREAM);
 const S=new THREE.Scene(); const C=new THREE.PerspectiveCamera(30,1,.1,300);
-const ctl=new THREE.OrbitControls(C,cv); ctl.enableDamping=true; ctl.dampingFactor=.08; ctl.autoRotate=true; ctl.autoRotateSpeed=.5; ctl.enablePan=false; ctl.enableZoom=false; ctl.minPolarAngle=.05; ctl.maxPolarAngle=1.7;
+const ctl=new THREE.OrbitControls(C,cv); ctl.enablePan=true; ctl.screenSpacePanning=true; ctl.panSpeed=.8; ctl.enableDamping=true; ctl.dampingFactor=.08; ctl.autoRotate=true; ctl.autoRotateSpeed=.5; ctl.enablePan=false; ctl.enableZoom=false; ctl.minPolarAngle=.05; ctl.maxPolarAngle=1.7;
 let viewAnim=null; ctl.addEventListener('start',()=>{ctl.autoRotate=false; viewAnim=null; setView(null);});
 const parts={}, hulls={}, pts=[];
 const off={polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1};

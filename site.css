@@ -3803,3 +3803,57 @@ a.fi-c:hover b{transform:translateY(-2px)}
 .pg-cnt .phone-plq *{color:#C8361F!important}
 .pg-cnt .form-plaque{margin-top:var(--blk,80px)!important}
 .floorind .fi-c.on b{background:#E2B23A!important;color:#141210!important;border-color:#E2B23A!important;outline-color:#E2B23A!important;opacity:1!important;visibility:visible!important}.floorind .fi-c.on small{opacity:1;font-weight:800}
+
+/* ===== правки по скриншотам ===== */
+/* переход-диафрагма: медленно в точку, из той же точки — наружу */
+html.iris-out{background:#0E0C0A!important}
+html.iris-out body{clip-path:circle(0 at var(--ix,50%) var(--iy,50%))!important;transition:clip-path .95s cubic-bezier(.7,0,.3,1)!important}
+html.iris-in{background:#0E0C0A}
+html.iris-in body{clip-path:circle(0 at var(--ix,50%) var(--iy,50%))}
+html.iris-in.iris-go body{clip-path:circle(160vmax at var(--ix,50%) var(--iy,50%));transition:clip-path 1.15s cubic-bezier(.7,0,.3,1)}
+/* одна кнопка заявки справа внизу */
+.cta-fix{display:none}
+@media (min-width:761px){
+ html.has-ctafix .and-acts,html.has-ctafix .cta2 .btn-fill,html.has-ctafix .cta2 .rbtn{display:none!important}
+ .and-acts::before{display:none}
+ .cta-fix{display:grid;place-items:center;position:fixed;right:28px;bottom:28px;z-index:90;width:104px;height:104px;border-radius:50%;border:0;cursor:pointer;background:var(--hc,#E2B23A);color:var(--fl,#141210);box-shadow:0 0 0 3px var(--fl,#141210),0 0 0 5px var(--hc,#E2B23A),0 10px 24px rgba(0,0,0,.25);animation:ctabeat 2.6s ease-in-out infinite}
+ .cta-fix span{font:800 10px/1.35 var(--fut);letter-spacing:.16em;text-transform:uppercase;text-align:center}
+ .cta-fix:hover{animation-play-state:paused;transform:scale(1.06)}
+}
+@keyframes ctabeat{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+/* указатель этажей — только круги и «К зданию», на своём фоне */
+.floorind{background:#F3E9D6;color:#2A241C;gap:18px;padding:56px 20px 50px}
+.floorind .fi-k,.floorind .fi-next,.floorind .fi-c em{display:none!important}
+.floorind .fi-c b{background:#F3E9D6;border-color:#2A241C;outline-color:#2A241C;color:#2A241C}
+.floorind .fi-row::before{background:#2A241C;opacity:.3}
+.floorind .fi-c.on b{background:var(--hc,#E2B23A)!important;border-color:var(--hc,#E2B23A)!important;outline-color:var(--hc,#E2B23A)!important;color:#141210!important}
+.floorind .fi-bld{color:#2A241C;opacity:.75}
+/* контакты: телефон — отдельной кремовой полосой */
+.pg-cnt .phone-plq{position:relative;z-index:1;margin-top:60px!important;padding:44px 20px!important;background:none!important}
+.pg-cnt .phone-plq::before{content:"";position:absolute;inset:0;z-index:-1;background:#F3E9D6;box-shadow:0 0 0 100vmax #F3E9D6;clip-path:inset(0 -100vmax)}
+.pg-cnt .phone-plq,.pg-cnt .phone-plq *{color:#C8361F!important}
+/* О компании: отступ рамки снизу, эмблемы выше, линия во всю ширину колонки */
+.pg-about .psign{padding-bottom:110px!important;margin-bottom:0!important}
+.pg-about .psign::after{bottom:44px!important}
+.pg-about .dip-l{padding-top:34px!important}.pg-about .dip-ems{margin:0 0 30px!important}
+.pg-about .dip-k::after{left:0!important;right:0!important;width:auto!important;transform:none!important;background:rgba(163,39,31,.4)!important;opacity:1!important}
+.partners-k{margin:0 0 18px;text-align:center;font:700 11px var(--fut);letter-spacing:.42em;padding-left:.42em;text-transform:uppercase;color:var(--hc,#A3271F)}
+/* «Для кого / Как работаем / …» — без римских цифр, спокойные колонки */
+.about-cols{border-top:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important}
+.about-cols div::before{display:none!important;content:none!important}
+.about-cols div{padding:34px 28px!important}
+.about-cols b{display:block;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid currentColor;font:800 12px var(--fut);letter-spacing:.3em;text-transform:uppercase;color:#A3271F}
+.about-cols span{display:block;font:500 italic 18px/1.45 var(--it)}
+/* объекты: хлебные крошки и название — светлые на красном */
+body[class*="pg-obj"] .crumbs,body[class*="pg-obj"] .crumbs a,body[class*="pg-obj"] .crumbs span{color:#E9B23B!important;opacity:1!important}
+body[class*="pg-obj"] .psign h1,body[class*="pg-obj"] .ps-t{color:#F3E9D6!important}
+/* главная: роспись в правом нижнем углу, «дописывается», как подсказка */
+#bld h1.b-h1{position:fixed!important;left:auto!important;right:3vw!important;top:auto!important;bottom:4vh!important;transform:rotate(-4deg)!important;clip-path:inset(-20% 100% -20% -5%);transition:clip-path 2s cubic-bezier(.6,0,.3,1)}
+#bld h1.b-h1.on{clip-path:inset(-20% -5% -20% -5%)}
+@media (max-width:900px){#bld h1.b-h1{right:auto!important;left:50%!important;bottom:2.4vh!important;transform:translateX(-50%) rotate(-2deg)!important}}
+/* лавка: переключатель эмблемами и на странице эскалаторов */
+.kind-esc{display:flex!important;gap:28px;justify-content:center;margin:34px auto 0!important;background:none!important;border:0!important}
+.kind-esc a{display:flex!important;flex-direction:column;align-items:center;gap:8px;padding:0!important;background:none!important;border:0!important;opacity:.55}
+.kind-esc a.on,.kind-esc a:hover{opacity:1}
+.kind-esc .k-em{width:76px;height:76px;color:var(--hc,#E8B53A);--cut:var(--fl)}
+.kind-esc span{font:700 11px var(--fut);letter-spacing:.3em;text-transform:uppercase;color:var(--hc,#E8B53A)}

@@ -7,7 +7,7 @@ const v3=h=>`vec3(${((h>>16)&255)/255},${((h>>8)&255)/255},${(h&255)/255})`;
 const cv=host.querySelector('canvas'); const RR=document.currentScript?document.currentScript.dataset.r:'';
 const R=new THREE.WebGLRenderer({canvas:cv,antialias:true}); R.setPixelRatio(Math.min(2,devicePixelRatio)); R.setClearColor(CREAM);
 const S=new THREE.Scene(); const C=new THREE.PerspectiveCamera(30,1,.1,200);
-const ctl=new THREE.OrbitControls(C,cv); ctl.enableDamping=true; ctl.dampingFactor=.08; ctl.autoRotate=true; ctl.autoRotateSpeed=.6; ctl.enablePan=false; ctl.enableZoom=false; ctl.minPolarAngle=.05; ctl.maxPolarAngle=1.75;
+const ctl=new THREE.OrbitControls(C,cv); ctl.enablePan=true; ctl.screenSpacePanning=true; ctl.panSpeed=.8; ctl.enableDamping=true; ctl.dampingFactor=.08; ctl.autoRotate=true; ctl.autoRotateSpeed=.6; ctl.enablePan=false; ctl.enableZoom=false; ctl.minPolarAngle=.05; ctl.maxPolarAngle=1.75;
 let viewAnim=null;
 ctl.addEventListener('start',()=>{ctl.autoRotate=false; viewAnim=null; setView(null);});
 const parts={}, pts=[], hulls={}; let carNode,cwNode,carBase,cwBase;

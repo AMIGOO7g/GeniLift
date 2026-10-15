@@ -36,7 +36,7 @@
     const cx = r.left + r.width / 2, cy = r.top + r.height / 2; ir.style.clipPath = `circle(0px at ${cx}px ${cy}px)`; document.body.appendChild(ir);
     await wait(30); ir.style.transition = 'clip-path .9s cubic-bezier(.65,0,.35,1)'; ir.style.clipPath = `circle(${Math.hypot(innerWidth, innerHeight)}px at ${cx}px ${cy}px)`;
     await wait(900);
-    try { sessionStorage.setItem('gl-iris', bg); sessionStorage.setItem('gl-floor', n); } catch (e) {}
+    try { sessionStorage.setItem('gl-iris', JSON.stringify({ x: cx, y: cy })); sessionStorage.setItem('gl-floor', n); } catch (e) {}
     location.href = R + SLUG[n] + '/';
   }
   async function go(n) {
@@ -54,7 +54,7 @@
     fit(); setPos(carTop(floor)); light(floor, true); needleTo(floor, true);
     let seen = false; try { seen = !!sessionStorage.getItem('gl-intro'); sessionStorage.setItem('gl-intro', '1'); } catch (e) {}
     const it = document.getElementById('bIntro'), hn = document.querySelector('.bhint');
-    if (seen) { it && it.remove(); document.documentElement.classList.add('b-ready'); hn && hn.classList.add('on'); return; }
+    if (seen) { it && it.remove(); document.documentElement.classList.add('b-ready'); hn && hn.classList.add('on'); const h1 = B.querySelector('.b-h1'); h1 && h1.classList.add('on'); return; }
     document.documentElement.classList.add('b-intro', 'b-nologo');
     const fl = document.getElementById('bFly'), wm = document.querySelector('.hdr-logo');
     await wait(150); it.classList.add('s1'); await wait(1400); it.classList.add('s2'); fl.style.opacity = '1'; await wait(700);
@@ -63,7 +63,7 @@
       fl.style.transition = 'transform 1.1s cubic-bezier(.65,0,.35,1), color 1.1s ease';
       fl.style.transform = `translate(calc(-50% + ${(b2.left + b2.width / 2) - (a.left + a.width / 2)}px), calc(-50% + ${(b2.top + b2.height / 2) - (a.top + a.height / 2)}px)) scale(${k})`; fl.classList.add('gold'); }
     await wait(1150); document.documentElement.classList.remove('b-nologo'); fl.style.transition = 'none'; fl.style.opacity = '0'; setTimeout(() => it.remove(), 800);
-    hn && setTimeout(() => hn.classList.add('on'), 600);
+    hn && setTimeout(() => hn.classList.add('on'), 600); const h1 = B.querySelector('.b-h1'); h1 && setTimeout(() => h1.classList.add('on'), 1900);
   }
   if (document.readyState === 'complete') start(); else addEventListener('load', start);
 })();

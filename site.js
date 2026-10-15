@@ -781,23 +781,27 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
   const here = floorOfUrl(new URL(location.href));
   const isHome = document.body.classList.contains('home-bld');
   const D = document.documentElement;
-  // новая страница раскрывается из точки
-  let irisBg = ''; try { irisBg = sessionStorage.getItem('gl-iris') || ''; sessionStorage.removeItem('gl-iris'); } catch (e) {}
-  if (irisBg) { D.style.background = irisBg; D.classList.add('iris-in'); requestAnimationFrame(() => requestAnimationFrame(() => D.classList.add('iris-go'))); setTimeout(() => D.classList.remove('iris-in', 'iris-go'), 1000); }
-  // текущая страница сжимается в точку → переход
-  const irisOut = href => { const bg = getComputedStyle(document.querySelector('.hdr') || document.body).backgroundColor;
-    try { sessionStorage.setItem('gl-iris', '#141210'); } catch (e) {}
-    D.classList.add('iris-out'); setTimeout(() => { location.href = href; }, 620); };
+  // «диафрагма» как у Андерсона: страница медленно сжимается в точку и из той же точки раскрывается новая
+  let st = null; try { st = JSON.parse(sessionStorage.getItem('gl-iris') || 'null'); sessionStorage.removeItem('gl-iris'); } catch (e) {}
+  if (st) { D.style.setProperty('--ix', st.x + 'px'); D.style.setProperty('--iy', st.y + 'px'); D.classList.add('iris-in');
+    requestAnimationFrame(() => requestAnimationFrame(() => D.classList.add('iris-go'))); setTimeout(() => D.classList.remove('iris-in', 'iris-go'), 1300); }
+  const irisOut = (href, x, y) => { try { sessionStorage.setItem('gl-iris', JSON.stringify({ x, y })); } catch (e) {}
+    D.style.setProperty('--ix', x + 'px'); D.style.setProperty('--iy', y + 'px'); D.classList.add('iris-out'); setTimeout(() => { location.href = href; }, 950); };
   window.addEventListener('click', e => {
-    const a = e.target.closest && e.target.closest('a[href]'); if (!a || e.metaKey || e.ctrlKey || e.shiftKey || a.target) return;
-    const u = new URL(a.getAttribute('href'), location.href); if (u.hash && u.pathname === location.pathname) return;
-    const to = floorOfUrl(u); if (to < 0) return;
-    e.preventDefault(); e.stopImmediatePropagation();
-    if (isHome) { if (to > 0 && window.__bldGo) window.__bldGo(to); return; }
+    const a = e.target.closest && e.target.closest('a[href]'); if (!a || e.metaKey || e.ctrlKey || e.shiftKey || a.target || a.hasAttribute('download')) return;
+    const href = a.getAttribute('href'); if (/^(tel:|mailto:|#)/.test(href)) return;
+    const u = new URL(href, location.href); if (u.origin !== location.origin || !u.pathname.startsWith(root.pathname)) return;
     if (u.pathname === location.pathname) return;
-    irisOut(u.href);
+    const to = floorOfUrl(u);
+    if (isHome && to > 0 && window.__bldGo) { e.preventDefault(); e.stopImmediatePropagation(); window.__bldGo(to); return; }
+    if (isHome) return;
+    e.preventDefault(); e.stopImmediatePropagation(); irisOut(u.href, e.clientX || innerWidth / 2, e.clientY || innerHeight / 2);
   }, true);
   addEventListener('pageshow', e => { if (e.persisted) D.classList.remove('iris-out'); });
+  // одна кнопка заявки справа внизу (ПК), с надписью и мягкой пульсацией
+  if (!isHome) { const src = document.querySelector('[data-cart-open]');
+    if (src) { const b = document.createElement('button'); b.type = 'button'; b.className = 'cta-fix'; b.innerHTML = '<span>Обсудить<br>объект</span>';
+      b.addEventListener('click', () => src.click()); document.body.appendChild(b); D.classList.add('has-ctafix'); } }
   // поиск по сайту: лупа в шапке
   const openSearch = async () => {
     let box = document.getElementById('srch');
