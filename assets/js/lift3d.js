@@ -59,7 +59,7 @@ new THREE.GLTFLoader().load(RR+'assets/model/genilift_elevator.glb',g=>{
   [-.18,-.06,.06,.18].forEach(x=>ropeLines.push({x,z:.02,top:8.12,car:true}));
   [.56,.66,.76,.86].forEach(x=>ropeLines.push({x,z:.83,top:8.12,car:false}));
   ropeLines.forEach(r=>{ const geo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(r.x,r.top,r.z),new THREE.Vector3(r.x,4,r.z)]); r.line=new THREE.Line(geo,new THREE.LineBasicMaterial({color:INK})); root.add(r.line); (parts.ropes=parts.ropes||[]).push(r.line); });
-  const box3=new THREE.Box3().setFromObject(root), ctr=box3.getCenter(new THREE.Vector3());
+  const box3=__robustBox(root), ctr=box3.getCenter(new THREE.Vector3());
   window.__box=box3; C.position.set(ctr.x+1,ctr.y+.35,ctr.z+1); ctl.target.copy(ctr); fit();
   ORDER.forEach((k,i)=>{
     const objs=[]; root.traverse(o=>{ if(o.isMesh && keyOf(o)===k) objs.push(o); }); if(!objs.length) return;
@@ -83,6 +83,13 @@ function setView(v){ host.querySelectorAll('.views button').forEach(b=>b.classLi
 host.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const v=b.dataset.v; setView(v);
   const d=C.position.distanceTo(ctl.target); viewAnim={from:C.position.clone().sub(ctl.target).normalize(),to:VIEWS[v].clone().normalize(),t:0,d,v}; ctl.autoRotate=false; }));
 
+
+function __robustBox(obj){ obj.updateMatrixWorld(true); const xs=[],ys=[],zs=[],v=new THREE.Vector3();
+  obj.traverse(o=>{ if(!o.visible||o.isSprite||!o.geometry||!o.geometry.attributes||!o.geometry.attributes.position) return; const a=o.geometry.attributes.position, st=Math.max(1,Math.floor(a.count/4000));
+    for(let i=0;i<a.count;i+=st){ v.fromBufferAttribute(a,i).applyMatrix4(o.matrixWorld); xs.push(v.x); ys.push(v.y); zs.push(v.z); } });
+  if(!xs.length) return new THREE.Box3().setFromObject(obj);
+  const q=(arr,p)=>{ const s=arr.slice().sort((a,b)=>a-b); return s[Math.min(s.length-1,Math.max(0,Math.round(p*(s.length-1))))]; };
+  return new THREE.Box3(new THREE.Vector3(q(xs,.003),q(ys,.003),q(zs,.003)),new THREE.Vector3(q(xs,.997),q(ys,.997),q(zs,.997))); }
 function __exactD(box,dir,pad){ const c=box.getCenter(new THREE.Vector3()), mn=box.min, mx=box.max, pts=[]; const fz=C.far; C.far=1e5; C.updateProjectionMatrix();
   for(const x of [mn.x,mx.x]) for(const y of [mn.y,mx.y]) for(const z of [mn.z,mx.z]) pts.push(new THREE.Vector3(x,y,z));
   const sp=C.position.clone(), sq=C.quaternion.clone(); let lo=.01, hi=800;

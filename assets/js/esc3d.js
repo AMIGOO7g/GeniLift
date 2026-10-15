@@ -100,12 +100,19 @@ function pick(k){ picked=k; paint(); pts.forEach(p=>p.el.classList.toggle('on',p
   const a=card.querySelector('a'); if(INFO[k][2]){ a.style.display=''; a.href=BASE+'#'+INFO[k][2]; a.textContent='Детали в отделе →'; } else { a.style.display='none'; } card.classList.add('on'); ctl.autoRotate=false; }
 cv.addEventListener('click',()=>{ picked=null; paint(); card.classList.remove('on'); pts.forEach(p=>p.el.classList.remove('on')); });
 /* ---------- виды, вписывание ---------- */
-const box3=new THREE.Box3().setFromObject(S); const ctr=box3.getCenter(new THREE.Vector3()); ctl.target.copy(ctr);
+const box3=__robustBox(S); const ctr=box3.getCenter(new THREE.Vector3()); ctl.target.copy(ctr);
 const VIEWS={side:new THREE.Vector3(0,.15,1),front:new THREE.Vector3(-1,.25,0),top:new THREE.Vector3(.02,1,.02),free:new THREE.Vector3(.7,.45,1)};
 const MOB=innerWidth<700; C.position.copy(ctr).add((MOB?VIEWS.side:VIEWS.free).clone()); if(MOB){ ctl.autoRotate=false; setTimeout(()=>setView('side'),0); }
 function setView(v){ host.querySelectorAll('.views button').forEach(b=>b.classList.toggle('on',b.dataset.v===v)); }
 host.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const v=b.dataset.v; setView(v); viewAnim={from:C.position.clone().sub(ctl.target).normalize(),to:VIEWS[v].clone().normalize(),t:0,d:C.position.distanceTo(ctl.target),v}; ctl.autoRotate=false; }));
 
+
+function __robustBox(obj){ obj.updateMatrixWorld(true); const xs=[],ys=[],zs=[],v=new THREE.Vector3();
+  obj.traverse(o=>{ if(!o.visible||o.isSprite||!o.geometry||!o.geometry.attributes||!o.geometry.attributes.position) return; const a=o.geometry.attributes.position, st=Math.max(1,Math.floor(a.count/4000));
+    for(let i=0;i<a.count;i+=st){ v.fromBufferAttribute(a,i).applyMatrix4(o.matrixWorld); xs.push(v.x); ys.push(v.y); zs.push(v.z); } });
+  if(!xs.length) return new THREE.Box3().setFromObject(obj);
+  const q=(arr,p)=>{ const s=arr.slice().sort((a,b)=>a-b); return s[Math.min(s.length-1,Math.max(0,Math.round(p*(s.length-1))))]; };
+  return new THREE.Box3(new THREE.Vector3(q(xs,.003),q(ys,.003),q(zs,.003)),new THREE.Vector3(q(xs,.997),q(ys,.997),q(zs,.997))); }
 function __exactD(box,dir,pad){ const c=box.getCenter(new THREE.Vector3()), mn=box.min, mx=box.max, pts=[]; const fz=C.far; C.far=1e5; C.updateProjectionMatrix();
   for(const x of [mn.x,mx.x]) for(const y of [mn.y,mx.y]) for(const z of [mn.z,mx.z]) pts.push(new THREE.Vector3(x,y,z));
   const sp=C.position.clone(), sq=C.quaternion.clone(); let lo=.01, hi=800;
