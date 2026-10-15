@@ -788,8 +788,8 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
   const irisOut = href => { const bg = getComputedStyle(document.querySelector('.hdr') || document.body).backgroundColor;
     try { sessionStorage.setItem('gl-iris', '#141210'); } catch (e) {}
     D.classList.add('iris-out'); setTimeout(() => { location.href = href; }, 620); };
-  document.addEventListener('click', e => {
-    const a = e.target.closest('a[href]'); if (!a || e.metaKey || e.ctrlKey || e.shiftKey || a.target) return;
+  window.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href]'); if (!a || e.metaKey || e.ctrlKey || e.shiftKey || a.target) return;
     const u = new URL(a.getAttribute('href'), location.href); if (u.hash && u.pathname === location.pathname) return;
     const to = floorOfUrl(u); if (to < 0) return;
     e.preventDefault(); e.stopImmediatePropagation();
