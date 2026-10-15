@@ -3970,3 +3970,32 @@ body.pg-about .dip-l>.dip-sign{margin-bottom:auto!important}
 .esc-brands button[aria-pressed="true"]{background:#E8B53A;color:#141210;border-color:#E8B53A}
 .esc-grid .card[hidden]{display:none!important}
 html body.pg-hall .hall-body .desk .desk-c>form.desk-search{margin-top:24px!important}html body.pg-hall .hall-body .desk .desk-c>.desk-t{height:3.4em!important;min-height:0!important;margin-bottom:0!important}
+
+/* ===== правки v78 ===== */
+/* 3D: без кнопок «+/−», модель сразу максимально крупно */
+.l3d .zoom,.e3d .zoom,.viz .zoom{display:none!important}
+.esc-intro .l3d,.esc-intro .e3d,.where-esc .l3d,.where-esc .e3d{height:min(64vh,660px)!important;min-height:420px!important}
+/* карточка детали: баннер «Не знаете артикул?» не прилипает к подвалу */
+.page .banner{margin-bottom:var(--blk,96px)!important}
+.where-esc{margin-top:var(--blk,96px)}
+/* контакты: глубже и благороднее — кирпич и охра вместо ярких красного и жёлтого */
+body.pg-cnt{background:#C99A42!important;--brass:#8F2F20;--cream:#8F2F20;--text:#7E2A1C;--muted:#6E2418;--line:rgba(143,47,32,.35);--line-2:rgba(143,47,32,.6);--mustard:#8F2F20}
+body.pg-cnt .hdr{background:#8F2F20!important}
+body.pg-cnt .psign::before{background:#8F2F20!important;box-shadow:0 0 0 100vmax #8F2F20!important}
+body.pg-cnt .psign,body.pg-cnt .psign *{color:#E3B865!important}
+body.pg-cnt .psign::after{border-color:#E3B865!important}
+body.pg-cnt .phone-plq::before{background:#7A2719!important;box-shadow:0 0 0 100vmax #7A2719!important}
+body.pg-cnt .phone-plq,body.pg-cnt .phone-plq *{color:#E3B865!important}
+body.pg-cnt .form-plaque :is(button[type=submit],.rbtn,.abtn-fill){background:#8F2F20!important;color:#F3E4C4!important}
+/* указатель этажей: кнопки как в настоящем лифте — ободок света включается плавно */
+.floorind .fi-c b{transition:box-shadow .6s ease,border-color .6s ease,color .6s ease,background .6s ease!important;transform:none!important}
+.floorind a.fi-c:hover b{transform:none!important;border-color:#F6D58A!important;color:#FFF3D0!important;box-shadow:0 0 0 2px rgba(246,213,138,.9),0 0 18px 5px rgba(255,196,84,.45),inset 0 0 12px rgba(255,214,130,.35)!important}
+.floorind a.fi-c:hover small{color:#F6D58A!important}
+.floorind .fi-c.on b{box-shadow:0 0 0 2px #F6D58A,0 0 22px 6px rgba(255,196,84,.5),inset 0 0 10px rgba(255,240,200,.5)!important;animation:liftglow 3.2s ease-in-out infinite}
+@keyframes liftglow{0%,100%{box-shadow:0 0 0 2px #F6D58A,0 0 16px 4px rgba(255,196,84,.4),inset 0 0 8px rgba(255,240,200,.4)}50%{box-shadow:0 0 0 2px #F6D58A,0 0 26px 8px rgba(255,196,84,.6),inset 0 0 12px rgba(255,240,200,.6)}}
+/* подвал: реквизиты по центру */
+.ftr-legal{justify-content:center!important;text-align:center!important}
+.where-esc .where-in{display:block!important;max-width:1180px;margin:0 auto}
+.where-esc .escfig{display:block!important;width:100%!important;max-width:100%!important}
+.where-esc .escfig>*{width:100%!important;max-width:100%!important;flex:none!important}
+.where-esc .escfig img{width:100%!important;height:auto!important}
