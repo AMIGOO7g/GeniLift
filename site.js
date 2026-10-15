@@ -731,7 +731,7 @@ document.querySelectorAll('[data-tabs]').forEach(t => t.addEventListener('click'
 }));
 
 /* ---------- 3D и разрез в одной рамке ---------- */
-document.querySelectorAll('.viz').forEach(v => v.querySelector('.viz-sw').addEventListener('click', e => {
+document.querySelectorAll('.viz').forEach(v => v.querySelector('.viz-sw')?.addEventListener('click', e => {
   const b = e.target.closest('[data-viz]'); if (!b) return;
   v.querySelectorAll('[data-viz]').forEach(x => x.classList.toggle('on', x === b));
   v.querySelectorAll('[data-p]').forEach(p => { const on = p.dataset.p === b.dataset.viz; p.classList.toggle('on', on); if (on) p.querySelectorAll('[data-reveal]').forEach(r => r.classList.add('rv')); });

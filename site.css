@@ -3911,3 +3911,36 @@ html.iris-in{background:#0E0C0A!important}
 #irisC{position:fixed;inset:0;z-index:2147483000;background:#0E0C0A;pointer-events:none}
 html.iris-in body::after{content:"";position:fixed;inset:0;z-index:2147483001;background:#0E0C0A}
 html.iris-in body{clip-path:none!important}
+
+/* ===== правки v75 ===== */
+html{background:#141210}
+/* Холл: титул как у всех — свои цвета этажа */
+body.pg-hall{--hc:#E2B23A;--fb:#22304A;--fl:#1B2533;--ink:#F6EBD5}
+body.pg-hall .psign{color:#E2B23A}
+body.pg-hall .psign .mx-sub{color:rgba(246,235,213,.85)}
+body.pg-hall .hall-body{padding-bottom:calc(var(--blk,80px) + 40px)!important}
+.hall-title{display:none}
+/* Контакты: телефон — красная полоса с жёлтым номером, по центру */
+.pg-cnt .phone-plq{display:flex!important;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:100%!important;max-width:none!important;margin-left:0!important;margin-right:0!important;border:0!important}
+.pg-cnt .phone-plq::before{background:#C8361F!important;box-shadow:0 0 0 100vmax #C8361F!important}
+.pg-cnt .phone-plq,.pg-cnt .phone-plq *{color:#E9B23B!important}
+.pg-cnt .phone-plq .pp-k{color:rgba(243,233,214,.85)!important}
+.pg-cnt .form-plaque :is(button[type=submit],.rbtn,.abtn-fill){margin-top:56px!important}
+/* О компании: эмблемы на месте, остальное ниже; линии одной толщины */
+body.pg-about .dip-ems{margin-bottom:56px!important}
+body.pg-about .dip-k{margin-bottom:28px!important}
+body.pg-about .dip-k::after,body.pg-about .dip-sign{border:0!important}
+body.pg-about .dip-k::after{height:1px!important;background:rgba(163,39,31,.45)!important}
+body.pg-about .dip-sign{box-shadow:inset 0 1px 0 rgba(163,39,31,.45)!important}
+/* Доставка: только рисунок, без мелких подписей, компактно */
+.delfig figcaption{display:none!important}
+.dl-band{padding:40px 0!important}
+.delfig{margin:0 auto!important}
+body.pg-hall .psign::before{background:#22304A!important;box-shadow:0 0 0 100vmax #22304A!important}
+body.pg-hall .psign,body.pg-hall .psign .ps-t,body.pg-hall .psign .mx-floor{color:#E2B23A!important}
+body.pg-about .wrap .psign{padding-bottom:150px!important}
+body.pg-about .wrap .psign::after{bottom:76px!important}
+body.pg-about .dipband{margin-top:0!important}
+body.pg-about .wrap .psign::after{bottom:36px!important}
+html body.pg-about main .dipband{margin-top:0!important}html body.pg-about main .wrap .psign{margin-bottom:0!important}
+html body.pg-about .page>.wrap>.dipband{margin-top:0!important}
