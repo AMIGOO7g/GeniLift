@@ -4639,8 +4639,6 @@ html body.pg-cnt main form.ask label.file,html body.pg-cnt main form.ask .file{b
 /* цифры глав крупнее везде (прозрачность прежняя) */
 .chap-h>b{font-size:clamp(190px,22vw,300px)!important}
 /* печать — кольцо в цвет текста печати */
-svg.stamp circle{stroke:currentColor}
-.opis svg.stamp-opis g[stroke]{stroke:inherit}
 /* «Отдел · Движение» — без линий сверху и снизу */
 .dp-h{border-top:0!important;border-bottom:0!important}
 /* Сервис: эмблемы внутри титула */
@@ -4710,3 +4708,83 @@ body.pg-cnt .pp-icons{display:none!important}
 .psign .brandstrip .chips button{color:#F3E4C4!important}
 .psign .brandstrip .chips button[aria-pressed="true"],.psign .brandstrip .chips button:hover{color:#E8B53A!important}
 .psign+.catstrip,.psign~.catstrip.esc-strip{margin-top:0!important}
+
+/* ===== v95 ===== */
+svg.stamp circle,svg.stamp g[stroke]{stroke:currentColor!important}
+svg.stamp text,svg.stamp textPath{fill:currentColor!important}
+.escfig .sf-pt{width:30px!important;height:30px!important;min-width:30px!important;padding:0!important;border-radius:50%!important;aspect-ratio:1/1!important;display:grid!important;place-items:center!important;line-height:1!important}
+body.pg-about .dip .dr b{min-width:3.4em;text-align:right;margin-right:18px!important;flex:none}
+.about-cols div{text-align:center!important}.about-cols b::after{margin:14px auto 0!important}
+.cblock .em-btn .em{width:72px!important;height:72px!important}
+.prod2>.opis{display:flex!important;flex-direction:column}
+.prod2>.opis .op-t{flex:1;height:100%}
+.l3d-hint{margin-bottom:46px!important}
+.dl-tabs{width:auto!important;margin-left:0!important;margin-right:0!important;padding:56px 40px!important}
+/* «Наши гарантии» — гарантийные печати */
+.rings .ring-i .ring{width:140px!important;height:140px!important;min-width:140px;padding:0 18px!important;border:3px double currentColor!important;box-shadow:inset 0 0 0 6px transparent,inset 0 0 0 7px rgba(140,40,30,.35)!important}
+.rings .ring-i .ring b{font-size:34px!important}
+.rings .ring-i .ring i{font-size:10px!important}
+.rings .ring-i:nth-child(1) .ring{transform:rotate(-8deg)}.rings .ring-i:nth-child(2) .ring{transform:rotate(6deg)}.rings .ring-i:nth-child(3) .ring{transform:rotate(-4deg)}.rings .ring-i:nth-child(4) .ring{transform:rotate(9deg)}
+.rings .ring-i p{font-size:18px!important;margin-top:14px!important}
+/* выезжающие панели Лавки (телефон) */
+.m-filt{display:none}
+.m-sheet{position:fixed;inset:0;z-index:300;background:rgba(20,18,16,.55);display:none;align-items:flex-end}
+.m-sheet.on{display:flex}
+.ms-panel{position:relative;width:100%;max-height:78vh;overflow:auto;background:#F3E9D6;border-top:3px solid #C9A15A;padding:22px 20px 34px;box-sizing:border-box}
+.ms-t{margin:0 0 14px;text-align:center;font:800 12px var(--fut,Jost);letter-spacing:.3em;text-transform:uppercase;color:#8C3B2B}
+.ms-x{position:absolute;right:14px;top:10px;border:0;background:none;font:400 30px/1 var(--fut,Jost);color:#2A241C}
+.ms-body .chips,.ms-body ol{display:flex!important;flex-direction:column!important;gap:0!important;list-style:none;margin:0;padding:0}
+.ms-body li{border-bottom:1px solid rgba(46,37,26,.15)}
+.ms-body button{display:block;width:100%;text-align:left;padding:14px 6px!important;background:none!important;border:0!important;font:600 16px var(--fut,Jost)!important;color:#2A241C!important;letter-spacing:.04em!important;text-transform:none!important}
+.ms-body button i,.ms-body button em{font-style:normal;margin-right:10px;color:#8C3B2B}
+.ms-body .chips li::before,.ms-body .chips li::after{display:none!important}
+@media (max-width:760px){
+ body.home-bld .bhint{white-space:nowrap!important;left:12px!important;font-size:16px!important}
+ body.home-bld .b-h1{white-space:nowrap!important;right:2px!important;font-size:14px!important}
+ body.home-bld .b-h1 br{display:none}
+ body.home-bld .b-h1 span{display:inline!important}
+ body.pg-about .dip-l>.dip-k{margin-top:44px!important}
+ .prod2{gap:28px!important}
+ .prod2>.opis{margin-top:4px!important}
+ .cabm figcaption{margin-top:-36px!important}
+ .cabm-pic{padding:0 8%}
+ .m-filt{display:flex;gap:10px;justify-content:center;padding:14px 16px;background:#EADFC8}
+ .m-filt button{flex:1;padding:12px 10px;border:1.5px solid #8C3B2B;background:#F3E9D6;font:800 12px var(--fut,Jost);letter-spacing:.2em;text-transform:uppercase;color:#8C3B2B}
+ .psign .brandstrip.esc-strip .chips,.catstrip.esc-strip ol{display:none!important}
+ .psign .brandstrip.esc-strip{padding-top:0!important;border-top:0!important;margin-top:16px!important}
+ .ttl-icons .cb-acts{flex-wrap:nowrap!important;gap:10px!important;justify-content:space-between!important}
+ .ttl-icons .em-btn .em{width:40px!important;height:40px!important}
+ .ttl-icons .em-btn span{font-size:8px!important;letter-spacing:.1em!important}
+ .cblock .em-btn .em{width:50px!important;height:50px!important}
+ .dl-tabs{padding:40px 16px!important}
+ .delfig{overflow:hidden!important}
+ .delfig .dl-pic{width:230%!important;max-width:none!important;margin-left:-72%!important}
+ .rings{grid-template-columns:1fr 1fr!important;gap:30px 14px!important}
+ .rings .ring-i .ring{width:118px!important;height:118px!important;min-width:118px}
+ .rings .ring-i .ring b{font-size:28px!important}
+}
+@media (max-width:760px){
+ .sf-tip{display:none!important}
+ .tip-sheet .ms-body strong{display:block;font:800 14px var(--fut,Jost);letter-spacing:.18em;text-transform:uppercase;color:#8C3B2B;margin:0 0 8px}
+ .tip-sheet .ms-body em{display:block;font:500 italic 19px/1.45 var(--it);color:#2A241C;margin:0 0 14px}
+ .tip-sheet .ms-body a{font:800 12px var(--fut,Jost);letter-spacing:.2em;text-transform:uppercase;color:#8C3B2B}
+}
+@media (max-width:760px){
+ html body.home-bld .bhint{left:4px!important;right:auto!important;top:26%!important;bottom:auto!important;transform:rotate(180deg)!important;margin:0!important;max-height:none!important}
+ html body.home-bld .b-h1{left:calc(100% - 38px)!important;right:auto!important;top:20%!important;bottom:auto!important;transform:none!important;margin:0!important;max-height:none!important}
+}
+@media (max-width:760px){
+ html body.home-bld #bld .bhint{position:fixed!important;left:6px!important;top:50%!important;transform:translateY(-50%) rotate(180deg)!important;writing-mode:vertical-rl!important;white-space:nowrap!important;z-index:8}
+ html body.home-bld #bld h1.b-h1{position:fixed!important;left:auto!important;right:6px!important;top:50%!important;width:auto!important;transform:translateY(-50%)!important;writing-mode:vertical-rl!important;white-space:nowrap!important;text-align:center!important;font-size:14px!important;z-index:8;animation:none!important}
+ html body.home-bld #bld h1.b-h1 span{display:inline!important;margin:0 0 0 .4em!important}
+}
+@media (max-width:760px){
+ body>.m-side{position:fixed!important;top:50%!important;z-index:40;writing-mode:vertical-rl;white-space:nowrap;font:400 16px var(--hand,'Bad Script',cursive)!important;color:#4A3A28!important;opacity:0;transition:opacity 1s;pointer-events:none;margin:0!important;width:auto!important;height:auto!important;clip:auto!important;overflow:visible!important}
+ body>.m-side.on{opacity:.9}
+ body>.bhint.m-side{left:8px!important;right:auto!important;transform:translateY(-50%) rotate(180deg)!important}
+ body>h1.b-h1.m-side{right:8px!important;left:auto!important;transform:translateY(-50%)!important;font-size:14px!important}
+ body>h1.b-h1.m-side span,body>h1.b-h1.m-side br{display:inline!important}
+ body>h1.b-h1.m-side br{display:none!important}
+ body:not(.home-bld)>.m-side{display:none!important}
+}
+@media (max-width:760px){body>h1.b-h1.m-side{font-size:12px!important;top:55%!important}body>.bhint.m-side{top:55%!important}body>.bhint.m-side svg{display:none!important}}

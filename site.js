@@ -838,6 +838,32 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
     t.addEventListener('focus', () => { if (!t.value) t.value = '+7 '; }); t.addEventListener('blur', () => { if (t.value.replace(/\D/g, '').length <= 1) t.value = ''; });
     t.addEventListener('input', () => { t.value = fmt(t.value); });
     t.addEventListener('keydown', e => { if ((e.key === 'Backspace' || e.key === 'Delete') && t.selectionStart <= 3 && t.selectionEnd <= 3) e.preventDefault(); }); });
+  // Лавка на телефоне: «Марка ▾» и «Раздел ▾» — выезжающие панели (mSheet)
+  if (es && matchMedia('(max-width:760px)').matches) {
+    const brandsUl = es.querySelector('.chips'), catsNav = document.querySelector('.catstrip.esc-strip');
+    const bar = document.createElement('div'); bar.className = 'm-filt';
+    bar.innerHTML = '<button type="button" data-ms="b">Марка ▾</button><button type="button" data-ms="c">Раздел ▾</button>';
+    const sheet = document.createElement('div'); sheet.className = 'm-sheet'; sheet.innerHTML = '<div class="ms-panel"><button type="button" class="ms-x" aria-label="Закрыть">×</button><p class="ms-t"></p><div class="ms-body"></div></div>';
+    (catsNav || es).insertAdjacentElement('beforebegin', bar); document.body.appendChild(sheet);
+    const body = sheet.querySelector('.ms-body'), title = sheet.querySelector('.ms-t'); let home = null;
+    const close = () => { if (home) { home.par.insertBefore(home.el, home.next); home = null; } sheet.classList.remove('on'); };
+    bar.addEventListener('click', e => { const b = e.target.closest('[data-ms]'); if (!b) return; const el = b.dataset.ms === 'b' ? brandsUl : (catsNav && catsNav.querySelector('ol')); if (!el) return;
+      home = { el, par: el.parentNode, next: el.nextSibling }; body.innerHTML = ''; body.appendChild(el); title.textContent = b.dataset.ms === 'b' ? 'Марка' : 'Раздел'; sheet.classList.add('on'); });
+    sheet.addEventListener('click', e => { if (e.target === sheet || e.target.closest('.ms-x')) close(); });
+    sheet.addEventListener('pointerup', e => { if (e.target.closest('[data-ebrand],[data-ecat]')) setTimeout(close, 120); });
+  }
+  // разрезы на телефоне: подсказка по номеру — в нижней панели (tipSheet)
+  if (matchMedia('(max-width:760px)').matches) {
+    let ts = null;
+    window.addEventListener('click', e => { const pt = e.target.closest && e.target.closest('.sf-pt'); if (!pt || e.target.closest('.sf-tip a')) return; const tip = pt.querySelector('.sf-tip'); if (!tip) return;
+      e.preventDefault(); e.stopPropagation();
+      if (!ts) { ts = document.createElement('div'); ts.className = 'm-sheet tip-sheet'; ts.innerHTML = '<div class="ms-panel"><button type="button" class="ms-x" aria-label="Закрыть">×</button><div class="ms-body"></div></div>'; document.body.appendChild(ts);
+        ts.addEventListener('click', ev => { if (ev.target === ts || ev.target.closest('.ms-x')) ts.classList.remove('on'); }); }
+      ts.querySelector('.ms-body').innerHTML = tip.innerHTML; ts.classList.add('on'); }, true);
+  }
+  // главная на телефоне: подсказка и роспись — по бокам здания (m-hints)
+  if (matchMedia('(max-width:760px)').matches) { const bh = document.querySelector('#bld .bhint'), h1 = document.querySelector('#bld h1.b-h1');
+    [bh, h1].forEach(x => { if (x) { x.classList.add('m-side'); document.body.appendChild(x); setTimeout(() => x.classList.add('on'), 2600); } }); }
   // одна кнопка заявки справа внизу (ПК), с надписью и мягкой пульсацией
   if (!isHome) { const src = document.querySelector('[data-cart-open]');
     if (src) { const b = document.createElement('button'); b.type = 'button'; b.className = 'cta-fix'; b.innerHTML = '<span>Обсудить<br>объект</span>';
