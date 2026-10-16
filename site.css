@@ -4298,3 +4298,91 @@ body.pg-dlv .cta-phone,body.pg-dlv a[href^="tel:"]:not(.ftr-credits a){color:#7A
 .certs .cert .stamp{display:flex!important;flex-direction:column;align-items:center;justify-content:center;width:92px!important;height:92px!important;bottom:14px!important;right:14px!important;border:3px double rgba(147,64,47,.75);border-radius:50%;box-shadow:inset 0 0 0 5px transparent,inset 0 0 0 6px rgba(147,64,47,.45);color:rgba(147,64,47,.8)!important;opacity:.85}
 .certs .cert .stamp b{font:900 13px var(--fut,Jost);letter-spacing:.2em;text-transform:uppercase}
 .certs .cert .stamp i{font:700 9px var(--fut,Jost);letter-spacing:.18em;font-style:normal;text-transform:uppercase;margin-top:3px}
+
+/* ===== v87 — этап 1 ===== */
+/* единый блок связи */
+.cblock{display:flex!important;flex-direction:column;align-items:center;text-align:center;gap:26px;padding:72px 20px!important}
+.cblock h2{margin:0!important}.cblock .it{margin:8px 0 0!important}
+.cblock .cb-acts{display:flex;flex-wrap:wrap;justify-content:center;gap:40px 56px}
+.cblock .em-btn{color:#F3E4C4!important}
+.cblock .em-btn small{display:block;font:500 13px var(--fut,Jost);letter-spacing:.04em;text-transform:none;opacity:.75}
+.cblock .em-btn .em{width:84px;height:84px}
+.cblock .em-btn:hover .ph-h{animation:ring .5s ease-in-out 2}
+.cblock .em-btn:hover .tg-p{animation:fly .7s ease-out}
+@keyframes ring{25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
+@keyframes fly{40%{transform:translate(8px,-8px);opacity:.3}41%{transform:translate(-8px,8px)}100%{transform:none;opacity:1}}
+.ph-h,.tg-p{transform-box:fill-box;transform-origin:center}
+/* подвал — компактный и приглушённый */
+.ftr-c2{background:#141210!important;padding:56px 20px 26px!important;text-align:left}
+.ftr-c2 .f2-top{display:grid;grid-template-columns:minmax(220px,1fr) 3fr;gap:40px;align-items:start}
+.ftr-c2 .f2-logo{display:block;font:900 22px var(--fut,Jost);letter-spacing:.5em;color:#B89A5E;text-decoration:none;margin:0 0 16px}
+.ftr-c2 .f2-slog{margin:0;font:500 italic 18px var(--it);color:#8E8270}
+.ftr-c2 .f2-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
+.ftr-c2 h4{margin:0 0 12px;padding-bottom:8px;border-bottom:1px dashed rgba(184,154,94,.35);font:700 11px var(--fut,Jost);letter-spacing:.24em;text-transform:uppercase;color:#9C875E}
+.ftr-c2 .f2-col a{display:block;margin:7px 0;font:400 14px var(--fut,Jost);color:#A89C88;text-decoration:none;transition:color .3s}
+.ftr-c2 .f2-col a:hover{color:#E8D9B5}
+.ftr-c2 .ftr-legal{margin-top:34px;padding-top:16px;border-top:1px solid rgba(184,154,94,.15);font-size:12px;color:#6E6352!important;justify-content:center}
+.ftr-c2 .ftr-legal a,.ftr-c2 .ftr-legal span{color:#6E6352!important}
+@media (max-width:760px){.ftr-c2 .f2-top{grid-template-columns:1fr;text-align:center}.ftr-c2 .f2-cols{grid-template-columns:1fr 1fr}.ftr-c2{text-align:center}}
+/* документы: круглая печать + «Копия верна», на одной линии внизу */
+.certs .cert{padding-bottom:132px!important;position:relative}
+.certs .cert .stamp{display:none!important}
+.cert-sign{position:absolute;left:22px;right:22px;bottom:30px;display:flex;align-items:flex-end;gap:10px;font:500 italic 14px var(--it);color:#5A4A35}
+.cert-sign i{flex:1;border-bottom:1px solid rgba(46,37,26,.5);height:1px}
+.cert-seals{position:absolute;right:18px;bottom:14px;display:flex;align-items:center;gap:6px;pointer-events:none}
+.cert-seals .seal-r{width:86px;height:86px;opacity:.72;mix-blend-mode:multiply}
+.cert-seals .seal-q{display:flex;flex-direction:column;align-items:center;padding:5px 9px;border:2px solid rgba(88,62,140,.7);outline:1px solid rgba(88,62,140,.4);outline-offset:2px;color:rgba(88,62,140,.8);mix-blend-mode:multiply;opacity:.8}
+.cert-seals .seal-q b{font:800 11px var(--fut,Jost);letter-spacing:.14em;text-transform:uppercase}
+.cert-seals .seal-q i{font:600 8px var(--fut,Jost);letter-spacing:.12em;font-style:normal;text-transform:uppercase}
+/* сервис: рамка главы — как у титула (32 px от края, 3 px); цифра ровно по центру */
+.chap-h::before{inset:32px!important;border:3px solid rgba(243,233,214,.85)!important;outline:0!important}
+.chap-h{padding:86px 20px!important;display:grid!important;place-items:center}
+.chap-h b{left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;line-height:.8!important}
+.chap-h span{line-height:1.1}
+/* «вразброс»: текст на оси кружка */
+.ch-list li{min-height:54px}
+.ch-list li>span{display:flex!important;align-items:center;min-height:54px;line-height:1.3!important;margin:0!important}
+.ch-list li:nth-child(even)>span{justify-content:flex-end}
+/* разрез впечатан в фон раздела; подписи эскалатора внутри рамки */
+.viz-cut img{mix-blend-mode:multiply}
+.viz-cut{padding-bottom:78px!important}
+.viz-cut .esc-list{margin:30px auto 0!important}
+.viz-cut+.ch-list,.viz-cut~.ch-list{margin-top:64px!important}
+/* карточка детали: фото и опись рядом */
+.prod2{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:32px!important;align-items:stretch!important;max-width:1180px;margin:0 auto}
+.prod2>.tag-big,.prod2>.opis{margin:0!important;height:100%;box-sizing:border-box}
+.pacts{display:flex;justify-content:center;gap:56px;margin:44px auto 10px}
+.pnote{text-align:center;max-width:640px;margin:0 auto 20px}
+@media (max-width:860px){.prod2{grid-template-columns:1fr!important}}
+/* контакты — «Вечерний кабинет»: тёмный орех, латунь, кремовый текст, приглушённый кирпич */
+body.pg-cnt{background:#2A231E!important;--text:#E9DCC3;--muted:#B9A98E;--brass:#C9A15A;--cream:#E9DCC3;--line:rgba(201,161,90,.3);--line-2:rgba(201,161,90,.55);--mustard:#C9A15A}
+body.pg-cnt .hdr{background:#1E1915!important}
+body.pg-cnt .psign::before{background:#3A2E26!important;box-shadow:0 0 0 100vmax #3A2E26!important}
+body.pg-cnt .psign,body.pg-cnt .psign *{color:#E3C98F!important}
+body.pg-cnt .psign::after{border-color:#C9A15A!important}
+body.pg-cnt .mx-bar::after{background:#3A2E26!important;border-color:#C9A15A!important}
+body.pg-cnt .phone-plq::before{background:#1E1915!important;box-shadow:0 0 0 100vmax #1E1915!important}
+body.pg-cnt .phone-plq,body.pg-cnt .phone-plq *{color:#E3C98F!important}
+body.pg-cnt .form-plaque{background:#EFE4CF!important;color:#2A231E!important}
+body.pg-cnt .form-plaque *{color:#2A231E}
+body.pg-cnt .form-plaque :is(button[type=submit],.rbtn,.abtn-fill){background:#8C3B2B!important;color:#F3E4C4!important}
+body.pg-cnt h2.sec-gap,body.pg-cnt .sec-t,body.pg-cnt .h2{color:#E3C98F!important}
+body.pg-cnt .qa .qa-q,body.pg-cnt .qa .qa-q *{color:#E9DCC3!important}
+body.pg-cnt .qa .qa-i.on .qa-q{background:#8C3B2B!important}
+body.pg-cnt .qa .qa-a,body.pg-cnt .qa .qa-a *{color:#E9DCC3!important}
+body.pg-cnt .qa .qa-qt{color:#E3C98F!important}
+body.pg-cnt .qa-a{border-color:rgba(201,161,90,.5)!important}
+body.pg-cnt .mapfig img{mix-blend-mode:luminosity;opacity:.85}
+body.pg-cnt .floorind{background:#1E1915!important}
+/* доставка: эмблемы тёмные и с движением */
+.dl-tabs .kind-em .em-truck .pic{animation:truckGo 2.4s ease-in-out infinite}
+@keyframes truckGo{0%,100%{transform:translateX(-4px)}50%{transform:translateX(5px)}}
+.dl-tabs .kind-em button:hover .em-card .pic,.dl-tabs .kind-em .on .em-card .pic{animation:cardSwipe 1.6s ease-in-out infinite}
+@keyframes cardSwipe{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px) rotate(-4deg)}}
+.dl-tabs .kind-em button span{color:#2A241C!important}
+section.cblock{background:#2A231E!important;color:#F3E4C4!important;width:100vw!important;max-width:none!important;margin-left:calc(50% - 50vw)!important;margin-right:0!important;border:0!important;box-sizing:border-box}
+section.cblock h2,section.cblock .it{color:#F3E4C4!important}
+section.cblock .em-btn,section.cblock .em-btn span,section.cblock .em-btn small{color:#E3C98F!important}
+section.cblock::before,section.cblock::after{display:none!important}
+html body section.cblock h2,html body section.cblock h2 *{color:#F3E4C4!important}
+html body .ftr-c2 .f2-col a{color:#A89C88!important}html body .ftr-c2 .f2-col a:hover{color:#E8D9B5!important}
