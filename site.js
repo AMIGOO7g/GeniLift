@@ -808,7 +808,7 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
     const on = b.getAttribute('aria-pressed') !== 'true'; bar.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false')); b.setAttribute('aria-pressed', on ? 'true' : 'false');
     const br = on ? b.dataset.brand : ''; const grid = bar.nextElementSibling; grid.querySelectorAll('.card').forEach(c => { c.hidden = !!br && c.dataset.brand !== br; }); }));
   // эмблемы оживают на любой странице: при появлении и при наведении (колокольчик качается и т. д.)  emblem-reveal
-  const ems = document.querySelectorAll('svg.em'); const replay = el => { el.classList.remove('rv'); void el.getBoundingClientRect(); el.classList.add('rv'); };
+  const ems = document.querySelectorAll('svg.em'); const replay = el => { const g = el.classList.contains('go'); el.classList.remove('rv', 'go'); void el.getBoundingClientRect(); el.classList.add('rv'); if (g || el.classList.contains('alarm')) el.classList.add('go'); };
   if (ems.length) { const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { replay(e.target); io2.unobserve(e.target); } }), { threshold: .5 });
     ems.forEach(el => { io2.observe(el); (el.closest('a,button,.desk-c,.dn,.fi-c') || el).addEventListener('mouseenter', () => replay(el)); }); }
   // Лавка эскалаторов: марки и разделы — как в Лавке лифтов

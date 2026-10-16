@@ -126,7 +126,7 @@ function __fitExact(box){ C.clearViewOffset&&C.clearViewOffset(); C.updateProjec
   if(!ctl.__exactHook){ ctl.__exactHook=1; ctl.addEventListener('change',()=>{ if(__clamp) return; const v=C.position.clone().sub(ctl.target), need=__exactD(box,v.clone().normalize(),.9);
     ctl.minDistance=need; if(v.length()<need-1e-4){ __clamp=true; C.position.copy(ctl.target).add(v.setLength(need)); ctl.update(); __clamp=false; } }); } }
 function fit(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; __fitExact(box3); }
-let _w0=0,_h0=0; function resize(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; if(w===_w0&&Math.abs(h-_h0)<160) return; _w0=w; _h0=h; R.setSize(w,h,false); C.aspect=w/h; C.fov=w<700?42:30; C.updateProjectionMatrix(); fit(); }
+let _w0=0,_h0=0; function resize(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; if(w===_w0&&Math.abs(h-_h0)<(innerWidth<700?160:2)) return; _w0=w; _h0=h; R.setSize(w,h,false); C.aspect=w/h; C.fov=w<700?42:30; C.updateProjectionMatrix(); fit(); }
 let _rw=0; addEventListener('resize',()=>{ if(innerWidth!==_rw){ _rw=innerWidth; resize(); } });
   host.querySelectorAll('.zoom button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const k=+b.dataset.z>0?.85:1/.85; const dir=C.position.clone().sub(ctl.target); const nd=Math.min(ctl.maxDistance,Math.max(ctl.minDistance,dir.length()*k)); C.position.copy(ctl.target).add(dir.setLength(nd)); })); new ResizeObserver(resize).observe(host);
 const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; const v=new THREE.Vector3(); let last=performance.now(), sh=0;
