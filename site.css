@@ -4560,3 +4560,73 @@ body.pg-cnt .floorind{margin-top:150px!important}
 #bIntro.s2 .logo-svg{opacity:0;transform:scale(1.06);transition:opacity .7s,transform .7s}
 @keyframes lgPoint{to{clip-path:circle(75% at 50% 50%)}}
 @keyframes lgWrite{to{clip-path:inset(0 0 0 0)}}
+
+/* ===== v92 ===== */
+/* 3D: холст и рамка совпадают (лишняя пропорция от эскалатора ломала лифт) */
+.shop-3d #l3d{aspect-ratio:auto!important;width:100%!important;max-height:none!important}
+.esc-intro.shop-3d .viz{width:100%!important}
+/* подсказка по номеру в 3D — нормальная карточка */
+.l3d-card{width:min(380px,calc(100% - 40px))!important;max-width:none!important;padding:18px 22px!important;box-sizing:border-box}
+.l3d-card b{display:block;font-size:15px!important;letter-spacing:.14em}
+.l3d-card i{display:block;margin:8px 0 12px;font-size:17px!important;line-height:1.45!important;white-space:normal!important}
+@media (max-width:760px){.l3d-card{left:50%!important;right:auto!important;top:auto!important;bottom:14px!important;transform:translateX(-50%)!important}}
+/* свечение иконок — один в один как у кнопок этажей; у кнопок этажей без второго ободка */
+.floorind .fi-c b{outline:0!important}
+svg.em{border-radius:50%}
+.em-btn:hover .em,.kind-em button:hover .em,.kind a:hover .em,a.dn:hover .em{filter:none!important;box-shadow:0 0 0 2px rgba(246,213,138,.9),0 0 18px 5px rgba(255,196,84,.45),inset 0 0 12px rgba(255,214,130,.35)!important}
+.em-btn:hover .em .ring,.kind-em button:hover .em .ring,.kind a:hover .em .ring,a.dn:hover .em .ring{stroke:#F6D58A!important}
+svg.em{transition:box-shadow .6s ease!important}
+/* иконки связи: без кругов, одной строкой, светится значок */
+:is(.cblock,.pp-icons,.ftr-c2) .em .ring{display:none!important}
+:is(.cblock,.pp-icons) .cb-acts{flex-wrap:nowrap!important;gap:clamp(14px,4vw,48px)!important}
+:is(.cblock,.pp-icons,.ftr-c2) :is(.em-btn,.f2-ic):hover .em{box-shadow:none!important;filter:drop-shadow(0 0 6px rgba(246,213,138,.8)) drop-shadow(0 0 14px rgba(255,196,84,.4))!important}
+:is(.cblock,.pp-icons) .em-btn .em{width:56px!important;height:56px!important}
+@media (max-width:760px){:is(.cblock,.pp-icons) .em-btn .em{width:40px!important;height:40px!important}:is(.cblock,.pp-icons) .em-btn span{font-size:9px!important;letter-spacing:.12em!important}}
+/* мобильное меню: названия этажей видны */
+.liftmenu .lm-keys a{color:#E9DCC3!important}
+.liftmenu .lm-keys a.lm-sub{color:#C9B48A!important}
+/* шапка: над ней (под адресной строкой Safari) — цвет шапки */
+.hdr::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:200px;background:inherit;pointer-events:none}
+/* Лавка: отделы одной строкой; подпись разреза эскалатора ниже */
+.esc-depts{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))!important;gap:18px!important;max-width:1180px;margin-left:auto!important;margin-right:auto!important}
+.esc-intro:not(.shop-3d) .viz{padding-bottom:80px!important}
+/* карточка детали: отступ под иконками */
+.pnote{margin-top:30px!important}
+/* О компании: цифры крупнее */
+body.pg-about .dr b{font-size:clamp(46px,5vw,64px)!important}
+/* контакты: «Написать нам» без плашки и рамки */
+body.pg-cnt .form-plaque{background:none!important;border:0!important;outline:0!important;box-shadow:none!important}
+body.pg-cnt .form-plaque::before,body.pg-cnt .form-plaque::after{display:none!important}
+/* доставка: тёмный фон блока эмблем; «Остались вопросы» — в цвет «Вопросов о заказе» */
+.dl-tabs{background:#2A231E!important;width:100vw;margin-left:calc(50% - 50vw)!important;padding:56px max(20px,calc(50vw - 600px))!important;box-sizing:border-box}
+.dl-tabs .kind-em,.dl-tabs .kind-em button span{color:#E3C98F!important}
+.dl-tabs .kind-em .em .ring,.dl-tabs .kind-em .em .st{stroke:#E3C98F!important}
+.dl-tabs .kind-em .em .fg{fill:#E3C98F!important}
+.dl-tabs .opt,.dl-tabs .opt *{color:#E9DCC3!important;border-color:rgba(201,161,90,.5)!important}
+.dl-tabs .opt{background:transparent!important}
+body.pg-dlv section.cblock{background:var(--dlv-faq,#1E2A3A)!important}
+/* заголовки разделов — переносятся по центру */
+.sec-t,h2.sec-t{text-align:center!important}
+/* ===== мобильная версия ===== */
+@media (max-width:760px){
+ body.home-bld .note{display:none!important}
+ body.home-bld .bhint{position:absolute!important;left:0!important;right:0!important;top:86px!important;text-align:center!important;transform:none!important;width:auto!important}
+ body.home-bld .b-h1{position:absolute!important;left:0!important;right:0!important;bottom:14px!important;text-align:center!important;transform:none!important;width:auto!important}
+ .psign .ps-t{font-size:clamp(26px,8vw,52px)!important;overflow-wrap:anywhere;hyphens:auto}
+ .psign::after{top:14px!important}
+ .viz-cut .shaftfig .sf-lb,.viz-cut .shaftfig .sf-ln{display:none!important}
+ .viz-cut .vc-pic{padding:28px 18px 0!important}
+ .viz-cut .vc-low{padding:22px 18px 0!important}
+ .viz-cut .vc-low .esc-list li,.viz-cut .vc-low .leg-list li{padding-right:6px}
+ .chap-h>b{font-size:150px!important}
+ .chap-h{padding:64px 22px!important}
+ .escfig .sf-pt{position:absolute!important}
+ .escfig .sf-tip{display:none!important}
+ .nf-acts{gap:0!important;justify-content:space-around!important}
+ .nf-acts .em-btn{flex:1 1 0;max-width:50%}
+ .vt-wrap,.vtable,.varianty,.vtab{overflow-x:auto!important;-webkit-overflow-scrolling:touch;max-width:100%}
+ .esc-depts{grid-template-columns:1fr 1fr!important}
+}
+body.pg-dlv{--dlv-faq:#1F4250}
+@media (max-width:760px){html body .escfig .sf-pt{position:absolute!important;left:var(--x)!important;top:var(--y)!important;right:auto!important;bottom:auto!important;margin:0!important;transform:translate(-50%,-50%)!important}}
+html body.pg-cnt main form.ask label.file,html body.pg-cnt main form.ask .file{border:1px dashed rgba(201,161,90,.55)!important;color:#E9DCC3!important}
