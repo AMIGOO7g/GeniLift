@@ -121,9 +121,9 @@ function __exactD(box,dir,pad){ const c=box.getCenter(new THREE.Vector3()), mn=b
   C.position.copy(sp); C.quaternion.copy(sq); C.far=fz; C.updateProjectionMatrix(); C.updateMatrixWorld(true); return hi; }
 let __clamp=false;
 function __fitExact(box){ C.clearViewOffset&&C.clearViewOffset(); C.updateProjectionMatrix(); const c=box.getCenter(new THREE.Vector3()); ctl.target.copy(c);
-  const dir=C.position.clone().sub(c); if(dir.lengthSq()<1e-6) dir.set(1,.35,1); dir.normalize(); const d=__exactD(box,dir,.9);
+  const dir=C.position.clone().sub(c); if(dir.lengthSq()<1e-6) dir.set(1,.35,1); dir.normalize(); const d=__exactD(box,dir,.97);
   C.position.copy(c).addScaledVector(dir,d); ctl.minDistance=d; ctl.maxDistance=d*1.5; ctl.update();
-  if(!ctl.__exactHook){ ctl.__exactHook=1; ctl.addEventListener('change',()=>{ if(__clamp) return; const v=C.position.clone().sub(ctl.target), need=__exactD(box,v.clone().normalize(),.9);
+  if(!ctl.__exactHook){ ctl.__exactHook=1; ctl.addEventListener('change',()=>{ if(__clamp) return; const v=C.position.clone().sub(ctl.target), need=__exactD(box,v.clone().normalize(),.97);
     ctl.minDistance=need; if(v.length()<need-1e-4){ __clamp=true; C.position.copy(ctl.target).add(v.setLength(need)); ctl.update(); __clamp=false; } }); } }
 function fit(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; __fitExact(box3); }
 let _w0=0,_h0=0; function resize(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; if(w===_w0&&Math.abs(h-_h0)<(innerWidth<700?160:2)) return; _w0=w; _h0=h; R.setSize(w,h,false); C.aspect=w/h; C.fov=w<700?42:30; C.updateProjectionMatrix(); fit(); }

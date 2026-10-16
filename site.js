@@ -794,6 +794,7 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
   const irisOut = async href => { try { sessionStorage.setItem('gl-iris', '1'); } catch (e) {} const c = curtain(); hole(c, R()); await run(c, R(), 0, 1000); setTimeout(() => { location.href = href; }, 60); };
   window.__irisOut = href => irisOut(href);
   window.addEventListener('click', e => {
+    if (e.target.closest && e.target.closest('[data-search]')) return;
     const a = e.target.closest && e.target.closest('a[href]'); if (!a || e.metaKey || e.ctrlKey || e.shiftKey || a.target || a.hasAttribute('download')) return;
     const href = a.getAttribute('href'); if (/^(tel:|mailto:|#)/.test(href)) return;
     const u = new URL(href, location.href); if (u.origin !== location.origin || !u.pathname.startsWith(root.pathname)) return;

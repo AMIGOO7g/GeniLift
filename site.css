@@ -4167,7 +4167,6 @@ section.chap{margin-bottom:0!important}
 .opis .stamp-opis{right:-30px!important;bottom:-16px!important;top:auto!important;width:110px!important;height:110px!important}
 .opis{margin-bottom:24px}
 /* доставка: без «проявления», условия крупнее */
-.delfig,.delfig *{opacity:1!important;clip-path:none!important;animation:none!important;transition:none!important}
 .opt em{font-size:19px!important;line-height:1.45!important;color:inherit!important;opacity:.9}
 .opt b{font-size:16px!important}.opt .opt-v{font-size:26px!important}
 .tab-nav.kind-em{border:0!important}
@@ -4205,3 +4204,97 @@ body.pg-about .hdr .ico-find,body.pg-cnt .hdr .ico-find{color:#F3E4C4!important}
  .sline li>span,.sline li>p,.ch-list li>span{grid-column:1!important;padding-left:0!important;text-align:center!important}
  .chap-h b{font-size:48px}.kind-em button .em{width:78px;height:78px}.em-btn .em{width:78px;height:78px}
 }
+
+/* ===== v86 — только то, что в списке ===== */
+/* шапка: лупа крупнее и светлая на всех (тёмных) шапках */
+.hdr .ico-find{color:#F3E4C4!important;width:44px!important;height:44px!important}
+.hdr .ico-find svg{width:24px!important;height:24px!important;stroke:#F3E4C4!important}
+/* эмблема эскалатора: эскалатор стоит, едет человечек */
+.em-escalator .pic{animation:none!important;transform:none!important}
+.em-escalator.rv .pic>circle,.em-escalator.rv .pic>path:last-child{animation:escRide 1.8s ease-in-out!important}
+@keyframes escRide{0%{transform:translate(-10px,10px)}60%{transform:translate(2px,-2px)}100%{transform:none}}
+/* кнопки-эмблемы: без подсветки, только анимация; вспышка у фотоаппарата */
+.em-btn:hover{filter:none!important}
+.em-btn:hover .flash{animation:camFlash .6s ease-out}
+@keyframes camFlash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+.em-btn:hover .em{transform:translateY(-3px);transition:transform .4s}
+/* блок «Не нашли деталь?» в обеих Лавках */
+.nf-band{text-align:center;margin:var(--blk,80px) auto;padding:0 20px}
+.nf-t{margin:0;font:900 clamp(24px,2.6vw,34px) var(--fut,Jost);letter-spacing:.14em;text-transform:uppercase;color:#F3E9D6}
+.nf-s{margin:10px 0 28px;font:500 italic 20px var(--it);color:rgba(243,233,214,.85)}
+.nf-acts{display:flex;justify-content:center;gap:56px}
+/* Лавка лифтов: «Марка» сверху по центру и крупнее, как у эскалаторов */
+.brandstrip{flex-direction:column!important;align-items:center!important;gap:10px!important}
+.brandstrip .bs-k{font-size:14px!important;letter-spacing:.4em!important}
+/* поиск эскалаторов — как у лифтов */
+.esc-search{background:#4A161D!important;border:2px solid #C9A15A!important;width:min(640px,100%)!important;height:60px}
+.esc-search input{background:none!important;color:#F6EBD5!important;font-size:16px!important}
+.esc-search svg{stroke:rgba(243,233,214,.74)!important}
+.esc-search button{background:#E2B23A!important;width:64px;border:0}
+/* карточка детали: опись по ширине рамки с фото */
+.opis{width:100%!important;max-width:none!important;box-sizing:border-box}
+/* сервис: эмблемы по центру блока, подписи у обеих */
+.kind-srv.kind-em{margin:64px auto 64px!important}
+.kind-em button span{display:block!important;visibility:visible!important;opacity:1}
+/* главы: от края до края, одна рамка как у титула, крупная полупрозрачная цифра фоном */
+.chap-h{width:100vw!important;margin:0 0 0 calc(50% - 50vw)!important;padding:70px 20px!important;overflow:hidden}
+.chap-h::before{inset:28px max(28px,calc(50% - 660px))!important;border:4px solid rgba(243,233,214,.8)!important;outline:0!important}
+.chap-h b{position:absolute;left:50%;top:50%;transform:translate(-50%,-52%);font:500 clamp(150px,18vw,240px)/1 var(--it)!important;color:rgba(243,233,214,.13)!important;pointer-events:none}
+.chap-h span{position:relative;margin:0!important;font-size:clamp(28px,3.4vw,46px)!important}
+/* главы: без прослоек — каждый блок во всю ширину и высоту */
+.kind-pane section.chap{width:100vw!important;margin:0 0 0 calc(50% - 50vw)!important;padding:64px max(20px,calc(50vw - 620px))!important;box-sizing:border-box}
+.kind-pane section.chap::before,.kind-pane section.chap::after{display:none!important}
+.kind-pane .chap-h+section.chap{padding-top:64px!important}
+.kind-pane section.chap-c{padding:64px max(20px,calc(50vw - 620px))!important;display:flex;flex-direction:column;justify-content:center}
+.kind-pane section.chap-c .ch-note{margin:28px auto 0!important}
+/* «Что входит» — вразброс: цифры на оси, текст поочерёдно справа и слева, по высоте цифры */
+.ch-list li>span{align-self:center!important;line-height:1.4!important}
+.ch-list li:nth-child(even)>span{grid-column:1!important;grid-row:1;text-align:right!important;padding:0 18px 0 0!important}
+/* «Как проходит работа» — горизонтальная лента со стрелками */
+.sline{max-width:1100px!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:0}
+.sline li{display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important;border:0!important;padding:0 16px!important;position:relative}
+.sline li>b{margin:0 0 14px!important}
+.sline li>span,.sline li>p{padding:0!important;text-align:center!important}
+.sline li:not(:last-child)::after{content:"→"!important;display:block!important;position:absolute;right:-12px;top:14px;font:400 26px var(--fut,Jost);color:currentColor;opacity:.55}
+@media (max-width:760px){.sline{grid-template-columns:1fr;row-gap:30px}.sline li:not(:last-child)::after{content:"↓"!important;position:static;margin-top:12px}}
+/* разрез эскалатора: подпись «Рис. II» не наезжает на список */
+.viz-cut+.esc-list{margin-top:56px!important}
+/* О компании: гарантии — крупнее и читаемо, текст не упирается в круг */
+.rings .ring{width:200px!important;height:200px!important;padding:0 26px!important;box-sizing:border-box}
+.rings .ring i{font-size:11px!important;letter-spacing:.14em!important;line-height:1.35;text-align:center;white-space:normal!important}
+.rings .ring-i p{font:500 italic 21px/1.4 var(--it)!important;color:#2A241C!important;margin-top:18px!important}
+/* О компании: печати в документах — на одной высоте, с наклоном */
+.certs .cert{position:relative}
+.certs .cert .stamp{position:absolute!important;right:18px;bottom:18px;top:auto!important;left:auto!important}
+.certs .cert:nth-child(1) .stamp{transform:rotate(-12deg)!important}.certs .cert:nth-child(2) .stamp{transform:rotate(8deg)!important}
+.certs .cert:nth-child(3) .stamp{transform:rotate(-6deg)!important}.certs .cert:nth-child(4) .stamp{transform:rotate(11deg)!important}
+/* О компании: «Нам доверяют» выше, отступ до партнёров; телефон консультации виден */
+.partners-k{margin:96px 0 34px!important}
+.cta2 a.cta-phone,.cta2 a.cta-phone *{color:#F6D58A!important}
+/* подвал: GENILIFT выше, ссылки столбиком */
+.ftr-credits .cr-big{margin:0 0 18px!important}
+.ftr-credits .cr-pre{margin:0 0 56px!important}
+.ftr-credits .cr-list{grid-template-columns:1fr auto 1fr!important;row-gap:30px!important;align-items:start!important}
+.ftr-credits dd{flex-direction:column!important;align-items:flex-start!important;gap:8px!important}
+.ftr-credits dd i{display:none!important}
+.ftr-credits .cr-dot{padding-top:2px}
+@media (max-width:640px){.ftr-credits dd{align-items:center!important}}
+/* контакты: ромб пустой, вопросы по центру своего фона */
+body.pg-cnt .mx-bar::after{background:#8F2F20!important}
+body.pg-cnt .qa{margin-bottom:96px!important}
+/* доставка: эмблемы тёмные, условия крупнее и темнее, телефон тёмный */
+.dl-tabs .kind-em{color:#2A241C!important}
+.dl-tabs .kind-em .em .ring,.dl-tabs .kind-em .em .st{stroke:#2A241C!important}
+.dl-tabs .kind-em .em .fg{fill:#2A241C!important}
+.dl-tabs .kind-em button{opacity:.5!important}.dl-tabs .kind-em button.on{opacity:1!important}
+.dl-tabs .opt em{font-size:19px!important;color:#2A241C!important;opacity:1!important}
+.dl-tabs .opt b{color:#2A241C!important}
+body.pg-dlv .cta-phone,body.pg-dlv a[href^="tel:"]:not(.ftr-credits a){color:#7A2620!important}
+.delfig,.delfig *{transition-duration:0s!important;transition-delay:0s!important;animation-duration:.001s!important;animation-delay:0s!important}
+.kind-srv.kind-em button span{color:#1E4A3F!important;display:block!important}
+.rings .ring-i .ring{width:200px!important;height:200px!important;min-width:200px;padding:0 28px!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center}
+.rings .ring-i .ring b{font-size:44px!important}
+.certs .cert{padding-bottom:110px!important}
+.certs .cert .stamp{display:flex!important;flex-direction:column;align-items:center;justify-content:center;width:92px!important;height:92px!important;bottom:14px!important;right:14px!important;border:3px double rgba(147,64,47,.75);border-radius:50%;box-shadow:inset 0 0 0 5px transparent,inset 0 0 0 6px rgba(147,64,47,.45);color:rgba(147,64,47,.8)!important;opacity:.85}
+.certs .cert .stamp b{font:900 13px var(--fut,Jost);letter-spacing:.2em;text-transform:uppercase}
+.certs .cert .stamp i{font:700 9px var(--fut,Jost);letter-spacing:.18em;font-style:normal;text-transform:uppercase;margin-top:3px}
