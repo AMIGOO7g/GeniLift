@@ -4444,3 +4444,49 @@ body.pg-cnt .two li::before,body.pg-cnt .two li::after{background:#C9A15A!import
 body.pg-cnt .form-plaque :is(button[type=submit],.rbtn){background:#8C3B2B!important;box-shadow:0 0 0 3px #3A2E26,0 0 0 4px rgba(201,161,90,.6)!important}
 .ftr-c2>.wrap{display:block!important}
 .chap-h>b{transform:translateY(-9%)!important}
+
+/* ===== v89 ===== */
+/* разрезы: крупно на всю ширину рамки, текст под рисунком */
+.viz-cut .viz-p{display:block!important}
+.viz-cut .vc-pic{padding:20px 40px 0}
+.viz-cut .vc-pic .shaftfig{width:min(100%,1120px)!important;max-width:none!important;margin:0 auto!important}
+.viz-cut .vc-pic .escfig{width:min(100%,1080px)!important;margin:0 auto!important}
+.viz-cut .vc-low{margin:36px auto 0;padding:28px 40px 0;border-top:1px solid rgba(46,37,26,.18);max-width:1120px}
+.viz-cut .vc-low.vc-two{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:48px;align-items:start}
+.viz-cut .vc-leg{border:0!important;padding:0!important}
+.viz-cut .vc-low:not(.vc-two) .leg-list{columns:2;column-gap:48px}
+.viz-cut .vc-low:not(.vc-two) .leg-list li{break-inside:avoid}
+.viz-cut .vc-k{margin:0 0 14px;font:800 12px var(--fut,Jost);letter-spacing:.26em;text-transform:uppercase;opacity:.75}
+.viz-cut .vc-desc .esc-list{margin:0!important;columns:2;column-gap:34px}
+.viz-cut .vc-desc .esc-list li{break-inside:avoid;margin-bottom:12px}
+.esc-list li.dim{opacity:.35}
+.esc-list li.hi strong{color:var(--inter,#1E4A3F)}
+@media (max-width:860px){.viz-cut .vc-pic{padding:10px 0 0}.viz-cut .vc-low{padding:20px 0 0}.viz-cut .vc-low.vc-two{grid-template-columns:1fr}.viz-cut .vc-low .leg-list,.viz-cut .vc-desc .esc-list{columns:1}}
+/* главы: тихие, в мятной палитре титула; тела глав — кремовый / бледно-шалфейный */
+.chap-h,.chap-h-alt{background:#E3E9DC!important;color:#1E4A3F!important}
+.chap-h::before{border:3px solid rgba(30,74,63,.55)!important}
+.chap-h>b{color:rgba(30,74,63,.10)!important}
+body.pg-about .chap-h{background:#F1E4DA!important;color:#7A2620!important}
+body.pg-about .chap-h::before{border-color:rgba(122,38,32,.5)!important}
+body.pg-about .chap-h>b{color:rgba(122,38,32,.1)!important}
+.kind-pane section.chap:nth-of-type(odd){background:#F3E9D6!important;--capbg:#F3E9D6}
+.kind-pane section.chap:nth-of-type(even){background:#E8ECE0!important;--capbg:#E8ECE0}
+.viz .viz-cap span,.viz-cut .viz-cap span{background:var(--capbg,#F3E9D6)!important}
+/* подвал: знак → название → столбцы → слоган */
+.ftr-c2 .f2-brand{margin:0 auto 34px!important}
+.ftr-c2 .f2-slog{margin:34px 0 0!important}
+/* контакты: ряд иконок вместо номера, без красных рамок, светлый текст */
+body.pg-cnt .pp-icons{padding:44px 20px!important}
+body.pg-cnt .pp-icons .cb-acts{display:flex;flex-wrap:wrap;justify-content:center;gap:30px 46px}
+body.pg-cnt .pp-icons .em-btn,body.pg-cnt .pp-icons .em-btn span{color:#E3C98F!important}
+body.pg-cnt .pp-icons .em{width:60px;height:60px}
+body.pg-cnt .mapfig figcaption,body.pg-cnt .mapfig figcaption *{color:#E9DCC3!important}
+body.pg-cnt .mapfig,body.pg-cnt .mapfig img{background:none!important;filter:none!important;border:0!important;box-shadow:none!important}
+body.pg-cnt .mapfig .mf-zone{border-color:rgba(201,161,90,.6)!important;background:rgba(201,161,90,.08)!important}
+body.pg-cnt .mapfig .mf-pin b{color:#E3C98F!important}
+body.pg-cnt .form-plaque :is(input,textarea){color:#F3E4C4!important;-webkit-text-fill-color:#F3E4C4}
+body.pg-cnt main :is(.form-plaque,.frame,.qa-a,.qa-q,.mapfig,.phone-plq,input,textarea,label,.file){border-color:rgba(201,161,90,.45)!important;outline-color:rgba(201,161,90,.25)!important}
+body.pg-cnt main :is(.form-plaque,.frame,.qa-a,.phone-plq)::before,body.pg-cnt main :is(.form-plaque,.frame,.qa-a)::after{border-color:rgba(201,161,90,.45)!important}
+body.pg-cnt .qa-q b{border-color:rgba(201,161,90,.6)!important;color:#E3C98F!important}
+html body.pg-cnt main .form-plaque :is(input,textarea,select,.file,label.file){border:1px solid rgba(201,161,90,.45)!important;box-shadow:none!important;outline:0!important;background:rgba(0,0,0,.18)!important;color:#F3E4C4!important}
+html body.pg-cnt main .form-plaque :is(input,textarea):focus{border-color:#C9A15A!important}
