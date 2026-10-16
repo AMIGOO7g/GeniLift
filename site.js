@@ -817,6 +817,14 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
     window.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-ebrand],[data-ecat]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault();
       if (b.dataset.ebrand !== undefined) { const on = b.getAttribute('aria-pressed') !== 'true'; es.querySelectorAll('[data-ebrand]').forEach(x => x.setAttribute('aria-pressed', 'false')); b.setAttribute('aria-pressed', on ? 'true' : 'false'); setBrand(on ? b.dataset.ebrand : ''); }
       else { const t = document.getElementById(b.dataset.ecat); if (t) { t.hidden = false; scrollTo({ top: t.getBoundingClientRect().top + scrollY - 110, behavior: 'smooth' }); } } }, true); }
+  // поиск в Лавке эскалаторов
+  const eq = document.getElementById('escq');
+  if (eq) { const run = () => { const q = eq.value.trim().toLowerCase().replace(/ё/g, 'е'); let first = null;
+      document.querySelectorAll('.esc-s').forEach(sec => { let vis = 0; sec.querySelectorAll('.esc-grid .card').forEach(c => { const ok = !q || (c.dataset.q || '').replace(/ё/g, 'е').includes(q); c.hidden = !ok; if (ok) vis++; }); sec.hidden = !!q && !vis; if (vis && !first && q) first = sec; });
+      return first; };
+    eq.addEventListener('input', run); document.getElementById('escSearch').addEventListener('submit', e => { e.preventDefault(); const f = run(); if (f) scrollTo({ top: f.getBoundingClientRect().top + scrollY - 110, behavior: 'smooth' }); }); }
+  // интертитры глав проявляются при прокрутке
+  const its = document.querySelectorAll('[data-inter]'); if (its.length) { const io3 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io3.unobserve(e.target); } }), { threshold: .3 }); its.forEach(x => io3.observe(x)); }
   // одна кнопка заявки справа внизу (ПК), с надписью и мягкой пульсацией
   if (!isHome) { const src = document.querySelector('[data-cart-open]');
     if (src) { const b = document.createElement('button'); b.type = 'button'; b.className = 'cta-fix'; b.innerHTML = '<span>Обсудить<br>объект</span>';
