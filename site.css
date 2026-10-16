@@ -4210,14 +4210,12 @@ body.pg-about .hdr .ico-find,body.pg-cnt .hdr .ico-find{color:#F3E4C4!important}
 .hdr .ico-find{color:#F3E4C4!important;width:44px!important;height:44px!important}
 .hdr .ico-find svg{width:24px!important;height:24px!important;stroke:#F3E4C4!important}
 /* эмблема эскалатора: эскалатор стоит, едет человечек */
-.em-escalator .pic{animation:none!important;transform:none!important}
-.em-escalator.rv .pic>circle,.em-escalator.rv .pic>path:last-child{animation:escRide 1.8s ease-in-out!important}
+.em-escalator .pic{animation:none!important}
 @keyframes escRide{0%{transform:translate(-10px,10px)}60%{transform:translate(2px,-2px)}100%{transform:none}}
 /* кнопки-эмблемы: без подсветки, только анимация; вспышка у фотоаппарата */
 .em-btn:hover{filter:none!important}
 .em-btn:hover .flash{animation:camFlash .6s ease-out}
 @keyframes camFlash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
-.em-btn:hover .em{transform:translateY(-3px);transition:transform .4s}
 /* блок «Не нашли деталь?» в обеих Лавках */
 .nf-band{text-align:center;margin:var(--blk,80px) auto;padding:0 20px}
 .nf-t{margin:0;font:900 clamp(24px,2.6vw,34px) var(--fut,Jost);letter-spacing:.14em;text-transform:uppercase;color:#F3E9D6}
@@ -4516,7 +4514,6 @@ html body.pg-cnt main .form-plaque form.ask :is(input,textarea):focus{border-col
 
 /* ===== v91 ===== */
 /* иконки на всём сайте: без анимации внутри; при наведении — светящийся ободок, как у кнопок этажей */
-svg.em .pic,svg.em .pic *,svg.em.rv .pic,svg.em.rv .pic *{animation:none!important}
 .em-btn:hover .em,.kind-em button:hover .em,.kind a:hover .em,.f2-ic:hover .em,a.dn:hover .em{filter:drop-shadow(0 0 6px rgba(246,213,138,.75)) drop-shadow(0 0 14px rgba(255,196,84,.35))!important;transform:none!important}
 .em-btn:hover .em .ring,.kind-em button:hover .em .ring,.kind a:hover .em .ring,.f2-ic:hover .em .ring,a.dn:hover .em .ring{stroke:#F6D58A!important}
 svg.em,svg.em .ring{transition:filter .5s ease,stroke .5s ease!important}
@@ -4630,3 +4627,86 @@ body.pg-dlv section.cblock{background:var(--dlv-faq,#1E2A3A)!important}
 body.pg-dlv{--dlv-faq:#1F4250}
 @media (max-width:760px){html body .escfig .sf-pt{position:absolute!important;left:var(--x)!important;top:var(--y)!important;right:auto!important;bottom:auto!important;margin:0!important;transform:translate(-50%,-50%)!important}}
 html body.pg-cnt main form.ask label.file,html body.pg-cnt main form.ask .file{border:1px dashed rgba(201,161,90,.55)!important;color:#E9DCC3!important}
+
+/* ===== v93 ===== */
+/* анимации эмблем снова работают; у иконок связи — только свечение; человечек на эскалаторе едет целиком */
+:is(.cblock,.ttl-icons,.pp-icons,.ftr-c2) svg.em .pic,:is(.cblock,.ttl-icons,.pp-icons,.ftr-c2) svg.em .pic *{animation:none!important}
+.em-escalator .man{transform-box:view-box}
+.em-escalator.rv .man,a:hover .em-escalator .man,button:hover .em-escalator .man{animation:escRide 1.8s ease-in-out}
+.big3 .gr{animation:gr 10s linear infinite!important}
+/* без дрожания при касании */
+.em-btn,.em-btn .em,.kind-em button,.kind-em button .em{transform:none!important}
+/* цифры глав крупнее везде (прозрачность прежняя) */
+.chap-h>b{font-size:clamp(190px,22vw,300px)!important}
+/* печать — кольцо в цвет текста печати */
+svg.stamp circle{stroke:currentColor}
+.opis svg.stamp-opis g[stroke]{stroke:inherit}
+/* «Отдел · Движение» — без линий сверху и снизу */
+.dp-h{border-top:0!important;border-bottom:0!important}
+/* Сервис: эмблемы внутри титула */
+.psign .kind-srv.kind-em{margin:30px auto 0!important}
+/* Контакты: иконки связи внутри титула, крупнее, золотом; без отдельного блока */
+.ttl-icons{margin-top:30px}
+.ttl-icons .cb-acts{display:flex;flex-wrap:wrap;justify-content:center;gap:24px 44px}
+.ttl-icons .em-btn,.ttl-icons .em-btn span{color:#E3C98F!important}
+.ttl-icons .em .ring{display:none!important}
+.ttl-icons .em-btn .em{width:66px!important;height:66px!important}
+.ttl-icons .em-btn:hover .em{filter:drop-shadow(0 0 6px rgba(246,213,138,.8)) drop-shadow(0 0 14px rgba(255,196,84,.4))!important;box-shadow:none!important}
+body.pg-cnt .pp-icons{display:none!important}
+/* подвал: иконки связи крупнее */
+.ftr-c2 .f2-ic .em{width:52px!important;height:52px!important}
+.ftr-c2 .f2-icons{gap:18px!important}
+/* окно по номеру в разрезе — нормальная карточка */
+.sf-tip{width:min(320px,calc(100vw - 40px))!important;box-sizing:border-box}
+.sf-tip strong,.sf-tip em,.sf-tip a{white-space:normal!important;word-break:normal!important}
+/* мобильные кабины: скрыты на ПК */
+.cab-m{display:none}
+.cabm-pic{position:relative}
+.cabm img{display:block;width:100%;height:auto}
+.cabm.rv .cf-door i:first-child{transform:translateX(-101%)}
+.cabm.rv .cf-door i:last-child{transform:translateX(101%)}
+.cabm figcaption{text-align:center;margin:10px 0 0}
+.cabm figcaption b{display:block;font:800 13px var(--fut,Jost);letter-spacing:.22em;text-transform:uppercase}
+.cabm figcaption em{font:500 italic 17px var(--it)}
+@media (max-width:760px){
+ /* главная: подсказка и роспись вертикально по бокам здания */
+ body.home-bld .bhint{top:50%!important;left:6px!important;right:auto!important;bottom:auto!important;transform:translateY(-50%) rotate(180deg)!important;writing-mode:vertical-rl;text-align:center!important;font-size:18px!important;width:auto!important;max-height:80vh}
+ body.home-bld .b-h1{top:50%!important;right:6px!important;left:auto!important;bottom:auto!important;transform:translateY(-50%)!important;writing-mode:vertical-rl;text-align:center!important;font-size:18px!important;width:auto!important;max-height:80vh}
+ /* сервис: один список узлов, отступ от разреза */
+ html body .viz-cut .shaftfig .sf-lb,html body .viz-cut .shaftfig .sf-ln{display:none!important}
+ .viz-cut .vc-low{margin-top:30px!important}
+ .chap-h>b{font-size:180px!important}
+ /* меню — светлое */
+ .liftmenu .lm-panel{background:#F3E9D6!important;color:#2A241C!important;border-color:#C9A15A!important}
+ .liftmenu .lm-panel *{color:#2A241C!important}
+ .liftmenu .lm-keys i{color:#8C3B2B!important;border-color:rgba(46,37,26,.35)!important;background:none!important}
+ .liftmenu .lm-keys a{color:#2A241C!important;border-color:rgba(46,37,26,.15)!important}
+ .liftmenu .sos-menu{color:#8C3B2B!important}
+ .liftmenu .lm-head,.liftmenu .lm-screen{background:#EADFC8!important}
+ /* доставка: блок без сдвига */
+ .dl-tabs{width:auto!important;margin-left:-20px!important;margin-right:-20px!important;padding:44px 20px!important}
+ /* подбор: цифра слева, текст справа — одной строкой */
+ .ch-list li{grid-template-columns:54px 1fr!important;justify-items:start!important;text-align:left!important;column-gap:16px!important}
+ .ch-list li>b{grid-column:1!important;grid-row:1!important}
+ .ch-list li>span,.ch-list li:nth-child(even)>span{grid-column:2!important;grid-row:1!important;text-align:left!important;justify-content:flex-start!important;padding:0!important}
+ /* кабины друг под другом */
+ .cabfig{display:none!important}
+ .cab-m{display:flex;flex-direction:column;gap:46px;margin:0 auto 40px}
+ /* 3D: кнопки по центру; эскалатор не уезжает */
+ .viz .viz-sw,.l3d .views{left:50%!important;right:auto!important;transform:translateX(-50%)!important;justify-content:center}
+ .esc-intro .l3d,.esc-intro .e3d{aspect-ratio:auto!important;width:100%!important;height:62vh!important;min-height:380px!important}
+ /* окно по номеру — снизу на всю ширину */
+ .sf-tip{position:fixed!important;left:12px!important;right:12px!important;bottom:12px!important;top:auto!important;width:auto!important;transform:none!important;z-index:60}
+ /* номера разреза эскалатора — ровные кружки */
+ html body .escfig .sf-pt{width:30px!important;height:30px!important;min-width:30px!important;line-height:30px!important;padding:0!important;border-radius:50%!important;aspect-ratio:1}
+ /* карточка детали: рамка титула не прячется под шапкой */
+ .page>.wrap>.psign:first-child,.page>.wrap>nav.crumbs+.psign{margin-top:24px!important}
+}
+@media (max-width:760px){html body .viz.viz-cut .viz-p .vc-pic .shaftfig .sf-lb,html body .viz.viz-cut .viz-p .vc-pic .shaftfig .sf-ln{display:none!important}.liftmenu .lm-keys a[aria-current] i{color:#8C3B2B!important}}
+/* марки внутри титула Лавки */
+.psign .brandstrip.esc-strip{background:none!important;border:0!important;box-shadow:none!important;margin:34px auto 0!important;padding:22px 0 0!important;border-top:1px solid rgba(232,181,58,.35)!important;max-width:1000px}
+.psign .brandstrip.esc-strip::before,.psign .brandstrip.esc-strip::after{display:none!important}
+.psign .brandstrip .bs-k{color:#E8B53A!important}
+.psign .brandstrip .chips button{color:#F3E4C4!important}
+.psign .brandstrip .chips button[aria-pressed="true"],.psign .brandstrip .chips button:hover{color:#E8B53A!important}
+.psign+.catstrip,.psign~.catstrip.esc-strip{margin-top:0!important}
