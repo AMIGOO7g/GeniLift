@@ -826,6 +826,8 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
     eq.addEventListener('input', run); document.getElementById('escSearch').addEventListener('submit', e => { e.preventDefault(); const f = run(); if (f) scrollTo({ top: f.getBoundingClientRect().top + scrollY - 110, behavior: 'smooth' }); }); }
   // интертитры глав проявляются при прокрутке
   const its = document.querySelectorAll('[data-inter]'); if (its.length) { const io3 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io3.unobserve(e.target); } }), { threshold: .3 }); its.forEach(x => io3.observe(x)); }
+  // старые ссылки вида ?cat=раздел — прокрутка к разделу единой Лавки
+  if (es) { const cq = new URLSearchParams(location.search).get('cat'); if (cq) { const t = document.getElementById(cq); if (t) setTimeout(() => scrollTo({ top: t.getBoundingClientRect().top + scrollY - 110 }), 400); } }
   // одна кнопка заявки справа внизу (ПК), с надписью и мягкой пульсацией
   if (!isHome) { const src = document.querySelector('[data-cart-open]');
     if (src) { const b = document.createElement('button'); b.type = 'button'; b.className = 'cta-fix'; b.innerHTML = '<span>Обсудить<br>объект</span>';

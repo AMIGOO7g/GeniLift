@@ -4490,3 +4490,26 @@ body.pg-cnt main :is(.form-plaque,.frame,.qa-a,.phone-plq)::before,body.pg-cnt m
 body.pg-cnt .qa-q b{border-color:rgba(201,161,90,.6)!important;color:#E3C98F!important}
 html body.pg-cnt main .form-plaque :is(input,textarea,select,.file,label.file){border:1px solid rgba(201,161,90,.45)!important;box-shadow:none!important;outline:0!important;background:rgba(0,0,0,.18)!important;color:#F3E4C4!important}
 html body.pg-cnt main .form-plaque :is(input,textarea):focus{border-color:#C9A15A!important}
+
+/* ===== v90 ===== */
+/* сервис: глава = заголовок + тело одного цвета; главы чередуются */
+.kind-pane>div.chap-h:nth-of-type(odd),.kind-pane>div.chap-h:nth-of-type(odd)+section.chap{background:#F3E9D6!important;--capbg:#F3E9D6}
+.kind-pane>div.chap-h:nth-of-type(even),.kind-pane>div.chap-h:nth-of-type(even)+section.chap{background:#E1E9DD!important;--capbg:#E1E9DD}
+.kind-pane>div.chap-h+section.chap{padding-top:24px!important}
+/* узлы и «Что входит» — вертикальная черта между ними */
+.viz-cut .vc-low.vc-two .vc-leg{border-left:1px solid rgba(46,37,26,.22)!important;padding-left:40px!important}
+/* подвал: знак ровно над словом и крупнее */
+.ftr-c2 .f2-brand{align-items:center!important}
+.ftr-c2 .f2-brand svg{display:block;width:52px!important;margin:0 auto}
+.ftr-c2 .f2-brand span{padding-left:0!important;margin-right:-.5em}
+/* контакты: поля без красного, светлый курсор и подсказки */
+html body.pg-cnt .form-plaque{--ink:#C9A15A;--brass:#C9A15A}
+html body.pg-cnt main .form-plaque :is(input,textarea){caret-color:#F3E4C4!important;border-color:rgba(201,161,90,.45)!important;border-style:solid!important}
+html body.pg-cnt main .form-plaque :is(input,textarea)::placeholder{color:rgba(233,220,195,.5)!important;opacity:1}
+html body.pg-cnt main .form-plaque :is(input,textarea):focus::placeholder{color:transparent!important}
+html body.pg-cnt .mapfig,html body.pg-cnt .mapfig::before,html body.pg-cnt .mapfig::after{border:0!important;outline:0!important;box-shadow:none!important;background:none!important}
+html body.pg-cnt .qa{margin-bottom:150px!important}
+/* единая Лавка: счётчик под марками */
+.shop-count{text-align:center;margin:6px 0 2px;font:600 12px var(--fut,Jost);letter-spacing:.2em;text-transform:uppercase;opacity:.7}
+html body.pg-cnt main .form-plaque form.ask :is(input,textarea,.file,label.file){border:1px solid rgba(201,161,90,.45)!important;outline-color:rgba(201,161,90,.4)!important;caret-color:#F3E4C4!important;color:#F3E4C4!important;background:rgba(0,0,0,.18)!important}
+html body.pg-cnt main .form-plaque form.ask :is(input,textarea):focus{border-color:#C9A15A!important;outline:0!important}
