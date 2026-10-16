@@ -4513,3 +4513,50 @@ html body.pg-cnt .qa{margin-bottom:150px!important}
 .shop-count{text-align:center;margin:6px 0 2px;font:600 12px var(--fut,Jost);letter-spacing:.2em;text-transform:uppercase;opacity:.7}
 html body.pg-cnt main .form-plaque form.ask :is(input,textarea,.file,label.file){border:1px solid rgba(201,161,90,.45)!important;outline-color:rgba(201,161,90,.4)!important;caret-color:#F3E4C4!important;color:#F3E4C4!important;background:rgba(0,0,0,.18)!important}
 html body.pg-cnt main .form-plaque form.ask :is(input,textarea):focus{border-color:#C9A15A!important;outline:0!important}
+
+/* ===== v91 ===== */
+/* иконки на всём сайте: без анимации внутри; при наведении — светящийся ободок, как у кнопок этажей */
+svg.em .pic,svg.em .pic *,svg.em.rv .pic,svg.em.rv .pic *{animation:none!important}
+.em-btn:hover .em,.kind-em button:hover .em,.kind a:hover .em,.f2-ic:hover .em,a.dn:hover .em{filter:drop-shadow(0 0 6px rgba(246,213,138,.75)) drop-shadow(0 0 14px rgba(255,196,84,.35))!important;transform:none!important}
+.em-btn:hover .em .ring,.kind-em button:hover .em .ring,.kind a:hover .em .ring,.f2-ic:hover .em .ring,a.dn:hover .em .ring{stroke:#F6D58A!important}
+svg.em,svg.em .ring{transition:filter .5s ease,stroke .5s ease!important}
+.em-btn:hover .flash{animation:none!important}
+/* Лавка: подсветка текущего раздела и наведение */
+.esc-strip.catstrip button{transition:color .3s,background .3s}
+.esc-strip.catstrip button:hover span{color:#E8B53A}
+.esc-strip.catstrip button.cur{background:#5E1C24!important}
+.esc-strip.catstrip button.cur span,.esc-strip.catstrip button.cur i,.esc-strip.catstrip button.cur em{color:#E8B53A!important}
+.esc-strip.brandstrip+.catstrip{margin-top:0!important}
+.nf-acts{margin-top:40px!important}
+/* 3D лифта крупнее — выше рамка */
+.shop-3d #l3d{height:min(94vh,1080px)!important;min-height:760px!important}
+.viz.dark .viz-cap span{background:var(--capbg-dark,#3E4127)!important}
+/* карточка детали: подпись и отступ от титула */
+.card-k{margin:72px 0 26px;text-align:center}
+.card-k span{display:inline-block;padding:0 22px;font:800 12px var(--fut,Jost);letter-spacing:.3em;text-transform:uppercase;color:#E8B53A;position:relative}
+.card-k span::before,.card-k span::after{content:"";position:absolute;top:50%;width:90px;height:1px;background:rgba(232,181,58,.5)}
+.card-k span::before{right:100%}.card-k span::after{left:100%}
+.where{margin-top:56px!important}
+/* сервис: тёплый светло-оливковый вместо голубого; заголовки глав без рамок */
+.kind-pane>div.chap-h:nth-of-type(even),.kind-pane>div.chap-h:nth-of-type(even)+section.chap{background:#E4E8D3!important;--capbg:#E4E8D3}
+.chap-h::before{display:none!important}
+/* подвал: три столбца строкой под логотипом, «Связаться» отдельной строкой */
+.ftr-c2 .f2-cols{grid-template-columns:repeat(3,minmax(0,220px))!important;justify-content:center;max-width:none!important;text-align:center}
+.ftr-c2 .f2-col{text-align:center!important}
+.ftr-c2 .f2-contact{margin:34px auto 0;text-align:center}
+.ftr-c2 .f2-contact h4{display:inline-block;padding:0 12px 8px}
+.ftr-c2 .f2-contact .f2-ph{display:block;margin:4px 0 10px;font:600 15px var(--fut,Jost);color:#C9B48A!important;text-decoration:none}
+.ftr-c2 .f2-contact .f2-icons{justify-content:center}
+@media (max-width:760px){.ftr-c2 .f2-cols{grid-template-columns:1fr!important}}
+/* контакты: отступ «Частых вопросов» */
+body.pg-cnt .qa{margin-bottom:0!important}
+body.pg-cnt .floorind{margin-top:150px!important}
+/* заставка: знак из точки, надпись «пишется» */
+#bIntro .logo-svg{width:min(26vw,150px);height:auto;opacity:1}
+#bIntro .lg-yel{fill:#E2B23A;clip-path:circle(0% at 50% 50%)}
+#bIntro .lg-txt{fill:#2A241C;clip-path:inset(0 100% 0 0)}
+#bIntro.s1 .lg-yel{animation:lgPoint .9s .1s cubic-bezier(.6,0,.3,1) forwards}
+#bIntro.s1 .lg-txt{animation:lgWrite 1s .85s ease-out forwards}
+#bIntro.s2 .logo-svg{opacity:0;transform:scale(1.06);transition:opacity .7s,transform .7s}
+@keyframes lgPoint{to{clip-path:circle(75% at 50% 50%)}}
+@keyframes lgWrite{to{clip-path:inset(0 0 0 0)}}

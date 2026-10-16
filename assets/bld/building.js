@@ -53,7 +53,7 @@
     if (seen) { it && it.remove(); document.documentElement.classList.add('b-ready'); hn && hn.classList.add('on'); const h1 = B.querySelector('.b-h1'); h1 && h1.classList.add('on'); return; }
     document.documentElement.classList.add('b-intro', 'b-nologo');
     const fl = document.getElementById('bFly'), wm = document.querySelector('.hdr-logo');
-    await wait(150); it.classList.add('s1'); await wait(1400); it.classList.add('s2'); fl.style.opacity = '1'; await wait(700);
+    await wait(150); it.classList.add('s1'); await wait(2100); it.classList.add('s2'); fl.style.opacity = '1'; await wait(700);
     it.classList.add('out'); document.documentElement.classList.remove('b-intro'); document.documentElement.classList.add('b-ready');
     if (wm) { const a = fl.getBoundingClientRect(), b2 = wm.getBoundingClientRect(), k = b2.height / a.height;
       fl.style.transition = 'transform 1.1s cubic-bezier(.65,0,.35,1), color 1.1s ease';

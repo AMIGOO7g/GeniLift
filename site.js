@@ -828,6 +828,16 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
   const its = document.querySelectorAll('[data-inter]'); if (its.length) { const io3 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io3.unobserve(e.target); } }), { threshold: .3 }); its.forEach(x => io3.observe(x)); }
   // старые ссылки вида ?cat=раздел — прокрутка к разделу единой Лавки
   if (es) { const cq = new URLSearchParams(location.search).get('cat'); if (cq) { const t = document.getElementById(cq); if (t) setTimeout(() => scrollTo({ top: t.getBoundingClientRect().top + scrollY - 110 }), 400); } }
+  // Лавка: подсветка текущего раздела в строке разделов (catSpy)
+  if (es) { const btns = [...document.querySelectorAll('[data-ecat]')]; const map = new Map(btns.map(b => [b.dataset.ecat, b]));
+    const io4 = new IntersectionObserver(en => en.forEach(e => { if (e.isIntersecting) { btns.forEach(b => b.classList.remove('cur')); const b = map.get(e.target.id); b && b.classList.add('cur'); } }), { rootMargin: '-45% 0px -50% 0px' });
+    document.querySelectorAll('.esc-s[id]').forEach(s => io4.observe(s)); }
+  // Контакты: телефон с неизменяемым «+7»
+  if (document.body.classList.contains('pg-cnt')) document.querySelectorAll('input[type=tel]').forEach(t => {
+    const fmt = v => { const d = v.replace(/\D/g, '').replace(/^7?/, '').slice(0, 10); let o = '+7'; if (d.length) o += ' (' + d.slice(0, 3); if (d.length >= 3) o += ')'; if (d.length > 3) o += ' ' + d.slice(3, 6); if (d.length > 6) o += '-' + d.slice(6, 8); if (d.length > 8) o += '-' + d.slice(8, 10); return o; };
+    t.addEventListener('focus', () => { if (!t.value) t.value = '+7 '; }); t.addEventListener('blur', () => { if (t.value.replace(/\D/g, '').length <= 1) t.value = ''; });
+    t.addEventListener('input', () => { t.value = fmt(t.value); });
+    t.addEventListener('keydown', e => { if ((e.key === 'Backspace' || e.key === 'Delete') && t.selectionStart <= 3 && t.selectionEnd <= 3) e.preventDefault(); }); });
   // одна кнопка заявки справа внизу (ПК), с надписью и мягкой пульсацией
   if (!isHome) { const src = document.querySelector('[data-cart-open]');
     if (src) { const b = document.createElement('button'); b.type = 'button'; b.className = 'cta-fix'; b.innerHTML = '<span>Обсудить<br>объект</span>';
