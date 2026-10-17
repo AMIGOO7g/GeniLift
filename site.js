@@ -910,3 +910,8 @@ document.querySelectorAll('.esc-s').forEach(s=>{const g=s.querySelector('.esc-gr
  window.addEventListener('pointerup',e=>{ if(e.target.closest&&e.target.closest('[data-ebrand]')) setTimeout(sync,120); },true); window.addEventListener('keyup',()=>setTimeout(sync,120));
  const reveal=()=>{ const id=location.hash.slice(1); if(!id) return; const t=document.getElementById(decodeURIComponent(id)); const c=t&&(t.classList.contains('card')?t:t.closest('.card')); if(c&&c.classList.contains('more-h')){ c.classList.remove('more-h'); c.scrollIntoView({block:'center'}); } };
  reveal(); addEventListener('hashchange',reveal); sync(); })();
+
+/* Лавка (телефон): «Раздел» в титуле — как «Марка», со стрелкой */
+(function(){ if(!matchMedia('(max-width:760px)').matches) return; const box=document.querySelector('.psign .m-cats'); if(!box||box.classList.contains('m-acc')) return;
+ const k=box.querySelector('.bs-k'); if(k) k.remove(); box.classList.add('m-acc'); const t=document.createElement('button'); t.type='button'; t.className='acc-t'; t.innerHTML='<span>Раздел</span><i aria-hidden="true">▾</i>';
+ box.insertBefore(t,box.firstChild); t.addEventListener('click',e=>{e.stopPropagation(); box.classList.toggle('open');}); })();
