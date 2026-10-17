@@ -897,3 +897,16 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
   if(!c||c==='rgba(0, 0, 0, 0)'||c==='transparent'){ const x=h.querySelector('*'); c=x?getComputedStyle(x).backgroundColor:'#151311'; }
   document.documentElement.style.setProperty('--hdrc',c); let m=document.querySelector('meta[name="theme-color"]');
   if(!m){ m=document.createElement('meta'); m.name='theme-color'; document.head.appendChild(m); } m.content=c; })();
+
+/* Лавка: «Показать ещё» */
+(function(){const N=matchMedia('(max-width:760px)').matches?6:8;
+document.querySelectorAll('.esc-s').forEach(s=>{const g=s.querySelector('.esc-grid');if(!g)return;const cards=[...g.querySelectorAll('.card')];if(cards.length<=N)return;
+ cards.slice(N).forEach(c=>c.classList.add('more-h'));const b=document.createElement('button');b.type='button';b.className='more-b';
+ const upd=()=>{const left=g.querySelectorAll('.card.more-h').length;b.textContent=left?('Показать ещё '+Math.min(left,20)+' из '+left):'';b.style.display=left?'':'none';};
+ b.onclick=()=>{[...g.querySelectorAll('.card.more-h')].slice(0,20).forEach(c=>c.classList.remove('more-h'));upd();};upd();g.after(b);});})();
+
+(function(){ if(!document.body.classList.contains('pg-shop')) return;
+ const sync=()=>{ const on=!!document.querySelector('[data-ebrand][aria-pressed="true"]'); document.body.classList.toggle('flt',on); };
+ window.addEventListener('pointerup',e=>{ if(e.target.closest&&e.target.closest('[data-ebrand]')) setTimeout(sync,120); },true); window.addEventListener('keyup',()=>setTimeout(sync,120));
+ const reveal=()=>{ const id=location.hash.slice(1); if(!id) return; const t=document.getElementById(decodeURIComponent(id)); const c=t&&(t.classList.contains('card')?t:t.closest('.card')); if(c&&c.classList.contains('more-h')){ c.classList.remove('more-h'); c.scrollIntoView({block:'center'}); } };
+ reveal(); addEventListener('hashchange',reveal); sync(); })();
