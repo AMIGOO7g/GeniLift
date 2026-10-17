@@ -15,6 +15,11 @@
   const barH = () => { const b = document.querySelector('.mbar'); return b && getComputedStyle(b).display !== 'none' ? b.getBoundingClientRect().height : 0; };
   function fit() {
     const mob = innerWidth <= 760, top = hh() + (mob ? 18 : 34), bot = barH() + (mob ? 64 : 40), aw = innerWidth - 16, ah = innerHeight - top - bot;
+    if (mob) {                                       // телефон: здание по ширине экрана, страница прокручивается
+      const fx0 = 1086 * .235, fx1 = 1086 * .775, s = (innerWidth - 56) / (fx1 - fx0), t = hh() + 14;   // крупно: шахта + этажи
+      Object.assign(B.style, { width: 1086 * s + 'px', height: 1448 * s + 'px', left: (innerWidth / 2 - (fx0 + fx1) / 2 * s) + 'px', top: (t - BOX.y0 * s) + 'px' });
+      Object.assign(stage.style, { position: 'absolute', top: '0px', left: '0px', right: '0px', height: (t + (BOX.y1 - BOX.y0) * s + 90) + 'px' }); B.style.transform = 'none'; return;
+    }
     const s = Math.min(aw / (BOX.x1 - BOX.x0), ah / (BOX.y1 - BOX.y0));
     Object.assign(B.style, { width: 1086 * s + 'px', height: 1448 * s + 'px', left: (innerWidth / 2 - (BOX.x0 + BOX.x1) / 2 * s) + 'px', top: (top + (ah - (BOX.y1 - BOX.y0) * s) / 2 - BOX.y0 * s) + 'px' });
     stage.style.top = '0px'; B.style.transform = 'none';
@@ -24,7 +29,7 @@
   const needleTo = (n, inst) => { if (inst) ndl.style.transition = 'none'; ndl.style.transform = `rotate(${ANG[n]}deg)`; if (inst) { void ndl.offsetWidth; ndl.style.transition = ''; } };
   const light = (n, on) => B.querySelectorAll(`[data-f="${n}"]`).forEach(e => e.classList.toggle('on', on));
   function move(n) { return new Promise(res => { const from = pos, to = carTop(n), D = (sessionStorage.getItem('gl-rides') ? Math.min(1300, 500 + Math.abs(n - floor) * 220) : Math.min(2400, 800 + Math.abs(n - floor) * 420)), t0 = performance.now();
-    const st = now => { const k = Math.min(1, (now - t0) / D), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; setPos(from + (to - from) * e); if (k < 1) requestAnimationFrame(st); else res(); }; requestAnimationFrame(st); }); }
+    const st = now => { const k = Math.min(1, (now - t0) / D), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; setPos(from + (to - from) * e); if (innerWidth <= 760) { const r = car.getBoundingClientRect(); scrollTo(0, scrollY + (r.top + r.height / 2 - innerHeight / 2)); } if (k < 1) requestAnimationFrame(st); else res(); }; requestAnimationFrame(st); }); }
   function fitRoom() {}
   function fillRoom(n) { const pq = B.querySelector(`.pq[data-f="${n}"]`), cs = getComputedStyle(pq);
     rc.querySelector('.tint').style.setProperty('--bg', cs.getPropertyValue('--bg')); rc.querySelector('.sign').style.setProperty('--hc', cs.getPropertyValue('--hc'));
@@ -48,6 +53,7 @@
   addEventListener('pageshow', e => { if (e.persisted) { busy = false; stage.classList.remove('left'); roomv.classList.remove('in', 'show'); } });
   async function start() {
     fit(); setPos(carTop(floor)); light(floor, true); needleTo(floor, true);
+    if (innerWidth <= 760) { const r = car.getBoundingClientRect(); scrollTo(0, Math.max(0, scrollY + r.top + r.height / 2 - innerHeight / 2)); }
     let seen = false; try { seen = !!sessionStorage.getItem('gl-intro'); sessionStorage.setItem('gl-intro', '1'); } catch (e) {}
     const it = document.getElementById('bIntro'), hn = document.querySelector('.bhint');
     if (seen) { it && it.remove(); document.documentElement.classList.add('b-ready'); hn && hn.classList.add('on'); const h1 = B.querySelector('.b-h1'); h1 && h1.classList.add('on'); return; }

@@ -4750,7 +4750,6 @@ body.pg-about .dip .dr b{min-width:3.4em;text-align:right;margin-right:18px!impo
  .cabm-pic{padding:0 8%}
  .m-filt{display:flex;gap:10px;justify-content:center;padding:14px 16px;background:#EADFC8}
  .m-filt button{flex:1;padding:12px 10px;border:1.5px solid #8C3B2B;background:#F3E9D6;font:800 12px var(--fut,Jost);letter-spacing:.2em;text-transform:uppercase;color:#8C3B2B}
- .psign .brandstrip.esc-strip .chips,.catstrip.esc-strip ol{display:none!important}
  .psign .brandstrip.esc-strip{padding-top:0!important;border-top:0!important;margin-top:16px!important}
  .ttl-icons .cb-acts{flex-wrap:nowrap!important;gap:10px!important;justify-content:space-between!important}
  .ttl-icons .em-btn .em{width:40px!important;height:40px!important}
@@ -4788,3 +4787,253 @@ body.pg-about .dip .dr b{min-width:3.4em;text-align:right;margin-right:18px!impo
  body:not(.home-bld)>.m-side{display:none!important}
 }
 @media (max-width:760px){body>h1.b-h1.m-side{font-size:12px!important;top:55%!important}body>.bhint.m-side{top:55%!important}body>.bhint.m-side svg{display:none!important}}
+
+/* ===== v96 ===== */
+/* печать: без чужой рамки от старого штампа */
+svg.stamp{border:0!important;box-shadow:none!important;background:none!important;outline:0!important;border-radius:0!important}
+/* иконки связи везде одинаковые: один ровный круг, значки одного визуального размера */
+:is(.cblock,.ttl-icons,.pp-icons,.ftr-c2) .em .ring{display:inline!important;stroke-width:5!important}
+:is(.cblock,.ttl-icons) .em-btn .em{width:72px!important;height:72px!important}
+.ftr-c2 .f2-ic .em{width:46px!important;height:46px!important}
+:is(.cblock,.ttl-icons,.ftr-c2) :is(.em-btn,.f2-ic):hover .em{filter:none!important;box-shadow:0 0 0 2px rgba(246,213,138,.9),0 0 18px 5px rgba(255,196,84,.45),inset 0 0 12px rgba(255,214,130,.35)!important}
+/* марки в титуле — строго по центру */
+.psign .brandstrip ul.chips{padding:0!important;margin:10px auto 0!important;justify-content:center!important}
+/* 3D: кнопки поверх холста, нижняя граница видна */
+.l3d .views,.viz .viz-sw{z-index:6!important;position:relative}
+/* опись: на телефоне фон по высоте содержимого */
+@media (max-width:760px){.prod2>.opis{height:auto!important}.prod2>.opis .op-t{height:auto!important}.opis .stamp-opis{right:-6px!important;bottom:6px!important}.opis .op-sign{padding-bottom:20px}}
+/* о компании: на телефоне описание и табло — две карточки с промежутком */
+@media (max-width:760px){
+ body.pg-about .dip{display:flex!important;flex-direction:column!important;gap:28px!important;background:none!important;border:0!important;box-shadow:none!important;outline:0!important;padding:0!important}
+ body.pg-about .dip::before,body.pg-about .dip::after{display:none!important}
+ body.pg-about .dip>.dip-l,body.pg-about .dip>.dip-r{background:#F1E8D8!important;border:3px solid #A3271F!important;outline:1px solid rgba(163,39,31,.35);outline-offset:4px;padding:30px 20px!important;margin:6px!important}
+ body.pg-about .partners{flex-direction:column!important;align-items:center!important;gap:10px!important}
+ body.pg-about .partners li+li::before{display:none!important}
+}
+/* главная (телефон): подсказки одной строкой, крупнее, с отступом */
+@media (max-width:760px){
+ body>.bhint.m-side br{display:none!important}
+ body>.bhint.m-side,body>.bhint.m-side *{white-space:nowrap!important;font-size:19px!important}
+ body>.bhint.m-side{left:10px!important}
+ body>h1.b-h1.m-side{right:16px!important;font-size:15px!important;top:56%!important}
+}
+/* Лавка (телефон): «Марка» и «Раздел» в титуле, раскрываются плавно */
+.m-arr{display:none}
+@media (max-width:760px){
+ .m-filt{display:none!important}
+ .psign .esc-strip{margin-top:26px!important}
+ .psign .esc-strip .bs-k{cursor:pointer}
+ .m-arr{display:block;margin:4px auto 0;width:34px;height:24px;border:0;background:none;cursor:pointer}
+ .m-arr svg{width:22px;height:22px;fill:none;stroke:#E8B53A;stroke-width:2.4;transition:transform .5s ease}
+ .esc-strip.m-open .m-arr svg{transform:rotate(180deg)}
+ .psign .esc-strip ul.chips,.psign .esc-strip.m-cats ol{display:flex!important;flex-wrap:wrap;justify-content:center;max-height:0;overflow:hidden;opacity:0;transition:max-height .6s ease,opacity .5s ease;margin:0!important;padding:0!important;list-style:none}
+ .psign .esc-strip.m-open ul.chips,.psign .esc-strip.m-open.m-cats ol{max-height:900px;opacity:1;margin-top:10px!important}
+ .psign .m-cats ol li button{background:none!important;border:0!important;color:#F3E4C4!important;font:600 13px var(--fut,Jost)!important;padding:6px 10px!important}
+ .psign .m-cats ol li button i,.psign .m-cats ol li button em{display:none}
+}
+/* сервис (телефон): узлы — заголовок, линия, отступ; «Что входит» — горизонтальная линия */
+@media (max-width:760px){
+ .viz-cut .vc-low{border-top:1px solid rgba(46,37,26,.25)!important;margin-top:34px!important;padding-top:24px!important}
+ .viz-cut .vc-low.vc-two .vc-leg{border-left:0!important;padding-left:0!important;border-top:1px solid rgba(46,37,26,.22)!important;padding-top:24px!important;margin-top:24px}
+}
+/* подбор (телефон): название над кабиной, размер на размерной линии */
+@media (max-width:760px){
+ .cabm{display:flex;flex-direction:column}
+ .cabm figcaption{display:contents}
+ .cabm figcaption b{order:-1;margin:0 0 12px;text-align:center}
+ .cabm figcaption em{display:block;text-align:center;margin-top:-58px;position:relative;z-index:2;background:var(--capbg,#F3E9D6);width:max-content;margin-left:auto;margin-right:auto;padding:0 8px}
+ .cabm-pic{padding:0 2%!important}
+}
+/* доставка: плашка по ширине, тексты читаются; телефон — раскадровка */
+body.pg-dlv .tabs{width:100%!important;max-width:1180px;margin:0 auto!important;box-sizing:border-box;background:#2A231E!important;padding:50px 36px!important}
+body.pg-dlv .tabs .opt,body.pg-dlv .tabs .opt *{color:#E9DCC3!important;opacity:1!important}
+body.pg-dlv .tabs .opt-v{color:#F3E4C4!important}
+.dl-board{display:none}
+@media (max-width:760px){
+ body.pg-dlv .tabs{padding:36px 16px!important}
+ .dl-band{display:none!important}
+ .dl-board{display:flex;flex-direction:column;gap:30px;padding:30px 18px}
+ .dl-board figure{margin:0;text-align:center}
+ .dl-board img,.dlb-wh{display:block;width:100%;height:auto}
+ .dlb-wh{aspect-ratio:1.9/1;background:url(assets/ill/delivery-base.webp) 0% 50%/360% auto no-repeat}
+ .dl-board figcaption b{display:block;margin-top:10px;font:800 13px var(--fut,Jost);letter-spacing:.2em;text-transform:uppercase;color:#2A241C}
+ .dl-board figcaption em{font:500 italic 17px var(--it);color:#4A3E2C}
+}
+
+/* ===== v96 этап 1 ===== */
+svg.stamp{border:0!important;box-shadow:none!important;outline:0!important;background:none!important}
+.viz-cut .sf-list{display:none!important}
+/* иконки связи — везде одинаковые круги с одним ободком */
+:is(.cblock,.ttl-icons,.ftr-c2) .em .ring{display:inline!important;stroke:currentColor}
+.cblock .em-btn .em{width:76px!important;height:76px!important}
+.ttl-icons .em-btn .em{width:64px!important;height:64px!important}
+.ftr-c2 .f2-ic .em{width:46px!important;height:46px!important}
+:is(.cblock,.ttl-icons,.ftr-c2) :is(.em-btn,.f2-ic):hover .em{filter:none!important;box-shadow:0 0 0 2px rgba(246,213,138,.9),0 0 18px 5px rgba(255,196,84,.45),inset 0 0 12px rgba(255,214,130,.35)!important}
+/* марки в титуле — строго по центру */
+.psign .brandstrip.esc-strip{display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important;width:100%;margin-left:auto!important;margin-right:auto!important}
+.psign .brandstrip.esc-strip .chips{justify-content:center!important;width:100%;padding:0!important;margin:0!important}
+@media (max-width:760px){
+ body>.bhint.m-side{font-size:19px!important;left:12px!important}
+ body>h1.b-h1.m-side{font-size:15px!important;right:20px!important}
+ .viz-cut .vc-low{margin-top:40px!important;padding-top:26px!important;border-top:1px solid rgba(46,37,26,.25)!important}
+ .viz-cut .vc-low.vc-two .vc-leg{border-left:0!important;padding-left:0!important;border-top:1px solid rgba(46,37,26,.22)!important;padding-top:26px!important;margin-top:10px}
+ .cblock .em-btn .em{width:58px!important;height:58px!important}
+ .cblock .cb-acts{flex-wrap:wrap!important;gap:22px 26px!important}
+ .ttl-icons .em-btn .em{width:46px!important;height:46px!important}
+ .prod2>.opis{height:auto!important}.prod2>.opis .op-t{height:auto!important}
+ /* Лавка: «Марка» и «Раздел» — стрелка под словом, плавное раскрытие */
+ .m-filt{display:none!important}
+ .psign .esc-strip{margin-top:26px!important;padding-top:0!important;border-top:0!important;display:flex!important;flex-direction:column!important;align-items:center!important}
+ .psign .esc-strip .bs-k{cursor:pointer;margin:0!important;font-size:12px!important;letter-spacing:.4em!important}
+ .psign .esc-strip .m-arr{display:block!important;width:26px;height:18px;margin:4px auto 0;border:0;background:none;position:relative;cursor:pointer}
+ .psign .esc-strip .m-arr::after{content:"";position:absolute;left:8px;top:2px;width:9px;height:9px;border-right:2px solid #E8B53A;border-bottom:2px solid #E8B53A;transform:rotate(45deg);transition:transform .45s ease}
+ .psign .esc-strip.m-open .m-arr::after{transform:rotate(-135deg);top:7px}
+ .psign .esc-strip>.chips,.psign .esc-strip>ol{display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:6px 14px!important;max-height:0;overflow:hidden;opacity:0;padding:0!important;margin:0!important;transition:max-height .6s ease,opacity .5s ease,padding .4s}
+ .psign .esc-strip.m-open>.chips,.psign .esc-strip.m-open>ol{max-height:700px;opacity:1;padding:12px 0 4px!important}
+ .psign .m-cats{margin-top:20px!important}
+ .psign .m-cats button{background:none!important;border:0!important;padding:6px 4px!important}
+ .psign .m-cats button span{color:#F3E4C4!important;font-size:11px!important}
+ .psign .m-cats button i,.psign .m-cats button em{display:none!important}
+}
+
+@media (max-width:760px){html body .psign .esc-strip>.chips,html body .psign .esc-strip>ol{display:flex!important}}
+.psign .esc-strip .m-arr::before{display:none!important;content:none!important}.psign .esc-strip .m-arr{font-size:0!important;color:transparent!important}
+
+/* ===== v96 ===== */
+/* иконки связи — одинаковые круги с одним ободком везде */
+:is(.cblock,.ttl-icons,.ftr-c2) .em .ring{display:inline!important;stroke-width:5}
+:is(.cblock,.ttl-icons) .em-btn .em{width:68px!important;height:68px!important}
+.ftr-c2 .f2-ic .em{width:46px!important;height:46px!important}
+:is(.cblock,.ttl-icons,.ftr-c2) :is(.em-btn,.f2-ic):hover .em{filter:none!important;box-shadow:0 0 0 2px rgba(246,213,138,.9),0 0 18px 5px rgba(255,196,84,.45),inset 0 0 12px rgba(255,214,130,.35)!important}
+/* Лавка ПК: марки ровно по центру */
+.psign .brandstrip .chips{width:100%!important;box-sizing:border-box;justify-content:center!important;margin:0!important;padding:0!important}
+/* доставка ПК: текст под цифрами виден */
+.dl-tabs .opt em,.dl-tabs .opt b{color:#E9DCC3!important;opacity:1!important}
+.dl-tabs .opt .opt-v{color:#F3E4C4!important}
+.dl-m{display:none}
+/* О компании: табло цифр и описание — две отдельные карточки */
+body.pg-about .dip{gap:30px!important;background:none!important;border:0!important;box-shadow:none!important;outline:0!important}
+body.pg-about .dip::before,body.pg-about .dip::after{display:none!important}
+body.pg-about .dip>div{background:#F1E8D8!important;border:3px solid #8C2A22!important;outline:1px solid rgba(140,42,34,.4);outline-offset:-10px;padding:34px 28px!important}
+@media (max-width:760px){
+ /* главная */
+ body>.bhint.m-side{font-size:19px!important;left:14px!important}
+ body>.bhint.m-side br{display:none!important}
+ body>h1.b-h1.m-side{font-size:15px!important;right:18px!important}
+ /* доверие — столбиком */
+ .partners{flex-direction:column!important;align-items:center!important;gap:12px!important}
+ .partners li+li::before{display:block!important;margin:0 auto 10px!important;text-align:center}
+ /* связь крупнее */
+ :is(.cblock,.ttl-icons) .em-btn .em{width:54px!important;height:54px!important}
+ .cblock .cb-acts{flex-wrap:wrap!important;gap:22px 26px!important}
+ /* Лавка: марка и раздел раскрываются по стрелке */
+ .m-filt{display:none!important}
+ .m-acc{display:block!important;text-align:center}
+ .m-acc .acc-t{display:flex;flex-direction:column;align-items:center;gap:2px;margin:16px auto 0;background:none;border:0;color:#E8B53A;font:800 12px var(--fut,Jost);letter-spacing:.32em;text-transform:uppercase}
+ .catstrip.m-acc .acc-t{color:#8C3B2B;margin:12px auto}
+ .m-acc .acc-t i{font-style:normal;font-size:14px;transition:transform .45s}
+ .m-acc.open .acc-t i{transform:rotate(180deg)}
+ .psign .brandstrip.m-acc .chips,.catstrip.m-acc ol{display:flex!important;flex-wrap:wrap;justify-content:center;max-height:0;overflow:hidden;opacity:0;transition:max-height .6s ease,opacity .5s ease}
+ .psign .brandstrip.m-acc.open .chips,.catstrip.m-acc.open ol{max-height:900px;opacity:1}
+ .psign .brandstrip.m-acc{margin-top:26px!important}
+ /* опись: фон на всю высоту содержимого */
+ .prod2>.opis{height:auto!important}
+ .prod2>.opis .op-t{height:auto!important}
+ /* 3D: кнопки не перекрываются холстом */
+ .l3d canvas{top:110px!important;height:calc(100% - 166px)!important}
+ /* сервис: «Что входит» — линия сверху, не сбоку */
+ .viz-cut .vc-low.vc-two .vc-leg{border-left:0!important;padding-left:0!important;border-top:1px solid rgba(46,37,26,.22)!important;padding-top:24px!important;margin-top:10px}
+ .viz-cut .vc-low{border-top:1px solid rgba(46,37,26,.22)!important;padding-top:24px!important;margin-top:34px!important}
+ /* подбор: название над кабиной, размер на размерной линии */
+ .cabm{display:flex;flex-direction:column}
+ .cabm figcaption{order:-1;margin:0 0 10px!important}
+ .cabm figcaption em{display:none}
+ .cabm-pic{padding:0!important}
+ .cabm-pic::after{content:attr(data-dim);position:absolute;left:0;right:0;bottom:3%;text-align:center;font:500 italic 16px var(--it);color:#2A241C}
+ /* доставка: грузовик крупно */
+ .delfig .dl-pic{display:none!important}
+ .dl-m{display:block!important;width:100%;height:auto}
+}
+
+/* ===== v97: подвал и меню — тише, современнее; симметрия сохранена ===== */
+.ftr-c2{padding:64px 20px 30px!important}
+.ftr-c2 .f2-brand svg{width:40px!important}
+.ftr-c2 .f2-brand span{font:600 15px var(--fut,Jost)!important;letter-spacing:.42em!important;color:#E3D7C2!important}
+.ftr-c2 h4{border:0!important;padding:0!important;margin:0 0 16px!important;font:600 12px var(--fut,Jost)!important;letter-spacing:.26em!important;color:#E3D7C2!important}
+.ftr-c2 .f2-col a{font:400 16px/1.5 var(--fut,Jost)!important;letter-spacing:.01em!important;color:#A39A8C!important;margin:9px 0!important;text-transform:none!important}
+.ftr-c2 .f2-col a:hover,.ftr-c2 .f2-contact a:hover{color:#EDE3D1!important}
+.ftr-c2 .f2-contact{margin:44px auto 0!important}
+.ftr-c2 .f2-contact .f2-ph{font:400 16px var(--fut,Jost)!important;color:#A39A8C!important;margin:0 0 4px!important;display:inline-flex!important;align-items:center;gap:12px}
+.ftr-c2 .f2-contact .f2-ph::before{content:"";width:18px;height:18px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z'/%3E%3C/svg%3E") center/contain no-repeat}
+.ftr-c2 .f2-icons{display:flex!important;flex-direction:column!important;align-items:center!important;gap:8px!important;margin-top:6px!important}
+.ftr-c2 .f2-ic{display:inline-flex!important;align-items:center;gap:12px;text-decoration:none;color:#A39A8C!important;font:400 16px var(--fut,Jost)}
+.ftr-c2 .f2-ic::after{content:attr(aria-label)}
+.ftr-c2 .f2-ic .em{width:22px!important;height:22px!important;color:currentColor!important}
+.ftr-c2 .f2-ic .em .ring{display:none!important}
+.ftr-c2 .f2-ic:hover{color:#EDE3D1!important}
+.ftr-c2 .f2-ic:hover .em{box-shadow:none!important;filter:none!important}
+.ftr-c2 .f2-slog{margin:40px 0 0!important;font:500 italic 17px var(--it)!important;color:#8E8270!important}
+.ftr-c2 .ftr-legal,.ftr-c2 .ftr-legal *{font:400 13px/1.6 var(--fut,Jost)!important;color:#6B6255!important;letter-spacing:.01em!important;text-transform:none!important}
+@media (max-width:760px){.ftr-c2 .f2-cols{gap:34px!important}}
+/* меню на телефоне — тёмное, центрированное, спокойного размера */
+html body .liftmenu .lm-panel{background:#151311!important;border:0!important}
+html body .liftmenu .lm-panel *{color:#E9DCC3!important}
+html body .liftmenu .lm-head,html body .liftmenu .lm-screen{background:none!important;border-color:rgba(233,220,195,.12)!important}
+html body .liftmenu .lm-screen b{font:600 13px var(--fut,Jost)!important;color:#C9A15A!important;display:none}
+html body .liftmenu .lm-screen span{font:600 12px var(--fut,Jost)!important;letter-spacing:.26em!important;text-transform:uppercase;color:#E3D7C2!important}
+html body .liftmenu .lm-keys a{display:flex!important;justify-content:center!important;align-items:baseline!important;gap:10px;padding:16px 0!important;min-height:0!important;font:600 15px var(--fut,Jost)!important;letter-spacing:.16em!important;text-transform:uppercase;color:#EDE3D1!important;border-bottom:1px solid rgba(233,220,195,.08)!important;background:none!important}
+html body .liftmenu .lm-keys a i{font:500 11px var(--fut,Jost)!important;letter-spacing:.08em!important;color:#8E8270!important;border:0!important;background:none!important;width:auto!important;height:auto!important;display:inline!important}
+html body .liftmenu .lm-keys a[aria-current] {color:#E8B53A!important}
+html body .liftmenu .lm-keys a.lm-sub{font:500 13px var(--fut,Jost)!important;letter-spacing:.14em!important;color:#A39A8C!important}
+html body .liftmenu .sos-menu{font:500 13px var(--fut,Jost)!important;letter-spacing:.06em!important;color:#E39A8C!important;justify-content:center}
+html body .liftmenu .lm-phone{font:500 17px var(--fut,Jost)!important;color:#EDE3D1!important}
+html body .liftmenu .lm-foot .btn{font:600 12px var(--fut,Jost)!important;letter-spacing:.2em!important;background:none!important;border:1px solid #C9A15A!important;color:#E8B53A!important;padding:12px 22px!important}
+html body .liftmenu .lm-keys{display:block!important;text-align:center!important}
+html body .liftmenu .lm-keys a{flex-direction:row!important;align-items:baseline!important;justify-content:center!important;width:100%!important;text-align:center!important}
+html body .liftmenu .lm-keys a i{display:inline!important;margin:0!important;order:0}
+html body .liftmenu .lm-keys a::after{display:none!important}
+.ftr-c2 .f2-contact h4{display:block!important;margin:0 auto 16px!important}
+.ftr-c2 .f2-contact .f2-ph::before{width:18px!important;height:18px!important}
+.ftr-c2 .f2-ic .em{width:22px!important;height:22px!important}
+.ftr-c2 .f2-ic .em .pic{transform-origin:100px 100px}
+.ftr-c2 .f2-ic svg.em g[transform]{transform:translate(100px,100px) scale(1.6) translate(-100px,-84px)}
+html body .liftmenu .lm-keys a i{margin-right:12px!important}
+.ftr-c2 .f2-ic .em-tg,.ftr-c2 .f2-ic .em-wa{width:28px!important;height:28px!important;margin:-3px}
+
+/* ===== v98 ===== */
+.safe-top{position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top,0px);z-index:1000;pointer-events:none}
+@media (max-width:760px){
+ .hdr{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+ body.home-bld{position:static!important;overflow:auto!important;height:auto!important;touch-action:auto!important;overscroll-behavior:auto!important}
+ #bStage{position:absolute!important}
+}
+/* пункт 4 (общий): спокойнее мелкие заглавные, без лишних обводок, крупнее курсив на телефоне */
+:is(.abtn,.em-btn span,.kind-em button span,.kind a span,.tag-btn,.dc-more,.l3d .views button,.viz-sw button,.nf-acts span){letter-spacing:.14em!important}
+.card.tag{outline:0!important}
+.esc-s{outline:0!important}
+.chap-h span{letter-spacing:.1em!important}
+@media (max-width:760px){
+ :is(.dp-t,.nf-s,.cblock .it,.mx-sub,.op-s,.esc-list em,.sline p,.big3 em){font-size:18px!important;line-height:1.5!important}
+}
+/* ===== v98 ===== */
+/* плашка над шапкой */
+html{background:var(--hdrc,#151311)}
+.hdr::before{content:""!important;position:absolute!important;left:0;right:0;bottom:100%;height:400px;background:var(--hdrc,#151311)!important;pointer-events:none}
+body::before{content:"";position:fixed;left:0;right:0;top:-400px;height:400px;background:var(--hdrc,#151311);z-index:9999;pointer-events:none}
+@media (max-width:760px){body.home-bld{overflow-x:hidden}}
+/* «успокоение» интерфейса: типографика */
+.btn,button.btn,a.btn{font-size:12px!important;letter-spacing:.16em!important}
+.sec-t{letter-spacing:.06em!important;font-size:clamp(24px,3vw,40px)!important}
+.psign .ps-t{letter-spacing:.04em!important}
+.crumbs,.crumbs *{letter-spacing:.14em!important;font-size:11px!important}
+.hdr nav a{letter-spacing:.16em!important;font-size:12px!important}
+.em-btn span,.kind-em button span,.kind a span{font-size:11px!important;letter-spacing:.2em!important}
+@media (max-width:760px){
+ .sec-t{font-size:clamp(22px,6.4vw,30px)!important;letter-spacing:.05em!important}
+ .psign .ps-t{font-size:clamp(26px,8vw,40px)!important}
+ .mx-sub,.ps-sub{font-size:16px!important;line-height:1.55!important}
+ .esc-list em,.leg-list em,.dp-h p,.cb-sub,.chap p,.about-cols p,.opt em{font-size:18px!important;line-height:1.5!important}
+}
+@media (max-width:760px){body.home-bld #bStage{overflow:hidden!important;width:100vw!important;max-width:100vw!important}html:has(body.home-bld){overflow-x:hidden}}
+html,body{overflow-x:clip}
+@media (max-width:760px){.st-copy{display:none!important}}

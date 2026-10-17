@@ -789,9 +789,9 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
   const run = (c, from, to, D2) => new Promise(res => { const t0 = performance.now(); const st = now => { const k = Math.min(1, (now - t0) / D2); hole(c, from + (to - from) * ease(k)); if (k < 1) requestAnimationFrame(st); else res(); }; requestAnimationFrame(st); });
   let came = false; try { came = !!sessionStorage.getItem('gl-iris'); sessionStorage.removeItem('gl-iris'); } catch (e) {}
   if (came) { const c = curtain(); hole(c, 0); D.classList.remove('iris-in');
-    const open = async () => { await run(c, 0, R(), 1100); c.remove(); };
-    if (document.readyState === 'complete') setTimeout(open, 80); else addEventListener('load', () => setTimeout(open, 80)); }
-  const irisOut = async href => { try { sessionStorage.setItem('gl-iris', '1'); } catch (e) {} const c = curtain(); hole(c, R()); await run(c, R(), 0, 1000); setTimeout(() => { location.href = href; }, 60); };
+    const open = async () => { await run(c, 0, R(), 480); c.remove(); };
+    if (document.readyState === 'complete') setTimeout(open, 40); else addEventListener('load', () => setTimeout(open, 40)); }
+  const irisOut = async href => { try { sessionStorage.setItem('gl-iris', '1'); } catch (e) {} const c = curtain(); hole(c, R()); await run(c, R(), 0, 420); setTimeout(() => { location.href = href; }, 60); };
   window.__irisOut = href => irisOut(href);
   window.addEventListener('click', e => {
     if (e.target.closest && e.target.closest('[data-search]')) return;
@@ -838,19 +838,13 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
     t.addEventListener('focus', () => { if (!t.value) t.value = '+7 '; }); t.addEventListener('blur', () => { if (t.value.replace(/\D/g, '').length <= 1) t.value = ''; });
     t.addEventListener('input', () => { t.value = fmt(t.value); });
     t.addEventListener('keydown', e => { if ((e.key === 'Backspace' || e.key === 'Delete') && t.selectionStart <= 3 && t.selectionEnd <= 3) e.preventDefault(); }); });
-  // Лавка на телефоне: «Марка ▾» и «Раздел ▾» — выезжающие панели (mSheet)
+  // Лавка на телефоне: «Марка» и «Раздел» в титуле, раскрываются стрелкой (mDrop)
   if (es && matchMedia('(max-width:760px)').matches) {
-    const brandsUl = es.querySelector('.chips'), catsNav = document.querySelector('.catstrip.esc-strip');
-    const bar = document.createElement('div'); bar.className = 'm-filt';
-    bar.innerHTML = '<button type="button" data-ms="b">Марка ▾</button><button type="button" data-ms="c">Раздел ▾</button>';
-    const sheet = document.createElement('div'); sheet.className = 'm-sheet'; sheet.innerHTML = '<div class="ms-panel"><button type="button" class="ms-x" aria-label="Закрыть">×</button><p class="ms-t"></p><div class="ms-body"></div></div>';
-    (catsNav || es).insertAdjacentElement('beforebegin', bar); document.body.appendChild(sheet);
-    const body = sheet.querySelector('.ms-body'), title = sheet.querySelector('.ms-t'); let home = null;
-    const close = () => { if (home) { home.par.insertBefore(home.el, home.next); home = null; } sheet.classList.remove('on'); };
-    bar.addEventListener('click', e => { const b = e.target.closest('[data-ms]'); if (!b) return; const el = b.dataset.ms === 'b' ? brandsUl : (catsNav && catsNav.querySelector('ol')); if (!el) return;
-      home = { el, par: el.parentNode, next: el.nextSibling }; body.innerHTML = ''; body.appendChild(el); title.textContent = b.dataset.ms === 'b' ? 'Марка' : 'Раздел'; sheet.classList.add('on'); });
-    sheet.addEventListener('click', e => { if (e.target === sheet || e.target.closest('.ms-x')) close(); });
-    sheet.addEventListener('pointerup', e => { if (e.target.closest('[data-ebrand],[data-ecat]')) setTimeout(close, 120); });
+    const cats = document.querySelector('.catstrip.esc-strip');
+    if (cats) { const box = document.createElement('div'); box.className = 'brandstrip esc-strip m-cats'; box.innerHTML = '<span class="bs-k">Раздел</span>'; box.appendChild(cats.querySelector('ol')); es.insertAdjacentElement('afterend', box); cats.remove(); }
+    document.querySelectorAll('.psign .esc-strip').forEach(st => { const k = st.querySelector('.bs-k'); const arr = document.createElement('button'); arr.type = 'button'; arr.className = 'm-arr'; arr.setAttribute('aria-label', 'Показать список'); arr.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>'; k.insertAdjacentElement('afterend', arr);
+      const tog = () => st.classList.toggle('m-open'); arr.addEventListener('click', tog); k.addEventListener('click', tog); });
+    window.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.psign [data-ebrand], .psign [data-ecat]'); if (b) setTimeout(() => b.closest('.esc-strip').classList.remove('m-open'), 150); });
   }
   // разрезы на телефоне: подсказка по номеру — в нижней панели (tipSheet)
   if (matchMedia('(max-width:760px)').matches) {
@@ -863,7 +857,13 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
   }
   // главная на телефоне: подсказка и роспись — по бокам здания (m-hints)
   if (matchMedia('(max-width:760px)').matches) { const bh = document.querySelector('#bld .bhint'), h1 = document.querySelector('#bld h1.b-h1');
-    [bh, h1].forEach(x => { if (x) { x.classList.add('m-side'); document.body.appendChild(x); setTimeout(() => x.classList.add('on'), 2600); } }); }
+    [bh, h1].forEach(x => { if (x) { x.classList.add('m-side'); x.querySelectorAll('br').forEach(b => b.replaceWith(' ')); document.body.appendChild(x); setTimeout(() => x.classList.add('on'), 2600); } }); }
+  // Лавка на телефоне: «Марка» и «Раздел» раскрываются плавно по стрелке (mAcc)
+  if (es && matchMedia('(max-width:760px)').matches) {
+    const mk = (box, label) => { if (!box) return; box.classList.add('m-acc'); const t = document.createElement('button'); t.type = 'button'; t.className = 'acc-t'; t.innerHTML = '<span>' + label + '</span><i aria-hidden="true">▾</i>';
+      box.insertBefore(t, box.firstChild); t.addEventListener('click', ev => { ev.stopPropagation(); box.classList.toggle('open'); }); };
+    const k = es.querySelector('.bs-k'); if (k) k.remove(); mk(es, 'Марка'); mk(document.querySelector('.catstrip.esc-strip'), 'Раздел');
+  }
   // одна кнопка заявки справа внизу (ПК), с надписью и мягкой пульсацией
   if (!isHome) { const src = document.querySelector('[data-cart-open]');
     if (src) { const b = document.createElement('button'); b.type = 'button'; b.className = 'cta-fix'; b.innerHTML = '<span>Обсудить<br>объект</span>';
@@ -883,3 +883,17 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
     box.classList.add('on'); setTimeout(() => box.querySelector('input').focus(), 50); };
   document.querySelectorAll('[data-search]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); e.stopImmediatePropagation(); openSearch(); }, true));
 })();
+
+/* v98: полоса под адресной строкой iPhone — в цвет шапки, страница под ней не видна */
+(() => { const h = document.querySelector('.hdr'); if (!h) return;
+  const st = document.createElement('div'); st.className = 'safe-top'; document.body.appendChild(st);
+  const paint = () => { let c = getComputedStyle(h).backgroundColor; const m = c.match(/rgba?\(([^)]+)\)/); if (m) { const p = m[1].split(',').map(x => x.trim()); c = `rgb(${p[0]},${p[1]},${p[2]})`; }
+    st.style.background = c; let t = document.querySelector('meta[name="theme-color"]'); if (!t) { t = document.createElement('meta'); t.name = 'theme-color'; document.head.appendChild(t); } t.content = c; };
+  paint(); addEventListener('load', paint);
+})();
+
+/* плашка над шапкой (iPhone): цвет шапки над ней и в адресной строке */
+(function(){ const h=document.querySelector('.hdr'); if(!h) return; let c=getComputedStyle(h).backgroundColor;
+  if(!c||c==='rgba(0, 0, 0, 0)'||c==='transparent'){ const x=h.querySelector('*'); c=x?getComputedStyle(x).backgroundColor:'#151311'; }
+  document.documentElement.style.setProperty('--hdrc',c); let m=document.querySelector('meta[name="theme-color"]');
+  if(!m){ m=document.createElement('meta'); m.name='theme-color'; document.head.appendChild(m); } m.content=c; })();
