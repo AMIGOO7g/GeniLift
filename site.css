@@ -5198,3 +5198,10 @@ body.pg-shop .dept:nth-of-type(4n+3){background:#3D3929;box-shadow:0 0 0 100vmax
 .where .sf-pt.hot{opacity:1!important;background:#E8B53A!important;color:#2A241C!important;border-color:#F6D58A!important;filter:none!important}
 body.pg-dlv :has(>.delfig2){padding-bottom:0!important;margin-bottom:0!important}
 body.pg-dlv .delfig2{margin-bottom:0!important}
+/* ===== v104 ===== */
+@media (max-width:760px){html body .psign .m-cats.m-acc :is(ol,ul,.chips) :is(a,button,span,li){font:500 16px var(--fut,Jost)!important;letter-spacing:.02em!important;text-transform:none!important}}
+body.pg-dlv :has(>.delfig2){background:#F3E5CD!important}
+.delfig2{background:#F3E5CD!important}
+.delfig2 .dw{-webkit-mask-image:linear-gradient(to right,transparent 0,#000 8%,#000 92%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 10%,#000 90%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent 0,#000 8%,#000 92%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 10%,#000 90%,transparent 100%);mask-composite:intersect}
+@media (max-width:760px){.delfig2 .dm{display:none!important}.delfig2 .dw{display:block!important;height:210px;object-fit:cover;object-position:80% 70%;-webkit-mask-image:none;mask-image:none}}
+.ftr-c2 .f2-ic .em-tg,.ftr-c2 .f2-ic .em-wa{width:34px!important;height:34px!important;margin:-6px!important;transform:none!important}
