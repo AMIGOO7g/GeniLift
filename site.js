@@ -968,9 +968,3 @@ document.querySelectorAll('.esc-s').forEach(s=>{const g=s.querySelector('.esc-gr
 (function(){ const t=document.querySelector('.dl-tabs'); if(!t) return; const btns=[...t.querySelectorAll('button')].filter(b=>/Доставка|Оплата/i.test(b.textContent)); if(btns.length<2) return;
  const fix=()=>{ t.style.minHeight=''; const cur=btns.find(b=>b.getAttribute('aria-selected')==='true'||b.classList.contains('on'))||btns[0]; let mx=0; btns.forEach(b=>{ b.click(); mx=Math.max(mx,t.offsetHeight); }); cur.click(); t.style.minHeight=mx+'px'; };
  if(document.readyState==='complete') fix(); else addEventListener('load',fix); let rt; addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(fix,300);}); })();
-
-/* Меню (телефон): блокировка прокрутки под меню; аварийный вызов — рядом с телефоном */
-(function(){ const lm=document.getElementById('liftmenu'); if(!lm) return;
- new MutationObserver(()=>{ const on=lm.classList.contains('open'); document.documentElement.classList.toggle('lm-lock',on); }).observe(lm,{attributes:true,attributeFilter:['class']});
- const sos=lm.querySelector('.sos-menu'), ph=lm.querySelector('.lm-phone'); if(sos&&ph&&matchMedia('(max-width:760px)').matches){ ph.parentElement.insertBefore(sos,ph.nextSibling); }
- lm.addEventListener('click',e=>{ if(e.target===lm) { const x=lm.querySelector('[data-menu-close]'); x&&x.click(); } }); })();

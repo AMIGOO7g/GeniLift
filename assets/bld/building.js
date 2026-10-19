@@ -29,7 +29,7 @@
   const needleTo = (n, inst) => { if (inst) ndl.style.transition = 'none'; ndl.style.transform = `rotate(${ANG[n]}deg)`; if (inst) { void ndl.offsetWidth; ndl.style.transition = ''; } };
   const light = (n, on) => B.querySelectorAll(`[data-f="${n}"]`).forEach(e => e.classList.toggle('on', on));
   function move(n) { return new Promise(res => { const from = pos, to = carTop(n), D = (sessionStorage.getItem('gl-rides') ? Math.min(1300, 500 + Math.abs(n - floor) * 220) : Math.min(2400, 800 + Math.abs(n - floor) * 420)), t0 = performance.now();
-    const st = now => { const k = Math.min(1, (now - t0) / D), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; setPos(from + (to - from) * e); if (innerWidth <= 760) { const r = car.getBoundingClientRect(); { const ty = scrollY + (r.top + r.height / 2 - innerHeight / 2); const f = Math.min(.35, .03 + k * 1.6); scrollTo({ top: scrollY + (ty - scrollY) * f, behavior: 'instant' }); } } if (k < 1) requestAnimationFrame(st); else res(); }; requestAnimationFrame(st); }); }
+    const st = now => { const k = Math.min(1, (now - t0) / D), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; setPos(from + (to - from) * e); if (innerWidth <= 760) { const r = car.getBoundingClientRect(); { const ty = scrollY + (r.top + r.height / 2 - innerHeight / 2); scrollTo({ top: scrollY + (ty - scrollY) * 0.35, behavior: 'instant' }); } } if (k < 1) requestAnimationFrame(st); else res(); }; requestAnimationFrame(st); }); }
   function fitRoom() {}
   function fillRoom(n) { const pq = B.querySelector(`.pq[data-f="${n}"]`), cs = getComputedStyle(pq);
     rc.querySelector('.tint').style.setProperty('--bg', cs.getPropertyValue('--bg')); rc.querySelector('.sign').style.setProperty('--hc', cs.getPropertyValue('--hc'));
