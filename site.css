@@ -5155,3 +5155,46 @@ body.pg-hall .card,body.pg-dlv .card{border-width:1px!important}
 @media (max-width:760px){.tap-hint{right:auto!important;bottom:auto!important}}
 @media (min-width:1100px){body.pg-shop .esc-grid{grid-template-columns:repeat(auto-fill,minmax(200px,210px))!important;gap:20px!important}}
 @media (max-width:760px){html body #bld .tap-hint{z-index:30}}
+/* ===== v103 ===== */
+.srch-sug{max-width:720px;margin:0 auto;background:#F3E9D6;border:1px solid #C9A15A;border-top:0;max-height:60vh;overflow:auto}
+.srch-sug:empty{display:none}
+.srch-sug a{display:flex;justify-content:space-between;gap:14px;padding:12px 18px;border-bottom:1px solid rgba(46,37,26,.1);color:#2A241C;text-decoration:none;font:500 15px var(--fut,Jost)}
+.srch-sug a:hover{background:#EADFC8}
+.srch-sug em{font:600 10px var(--fut,Jost);letter-spacing:.18em;text-transform:uppercase;color:#8C3B2B;white-space:nowrap;align-self:center}
+.srch-sug p{margin:0;padding:14px 18px;font:500 italic 16px var(--it);color:#5A4E40}
+.where .sf-pt.dim{opacity:.22!important;filter:grayscale(1)}
+.where .sf-pt.hot{transform:translate(-50%,-50%) scale(1.25)!important;box-shadow:0 0 0 3px rgba(232,181,58,.45),0 0 18px rgba(255,196,84,.5)!important;z-index:5}
+.where-cap{display:flex;gap:16px;align-items:flex-start;justify-content:center;max-width:620px;margin:22px auto 0;padding:0 16px;text-align:left}
+.where-cap b{flex:none;width:40px;height:40px;border:1.5px solid currentColor;border-radius:50%;display:grid;place-items:center;font:800 14px var(--fut,Jost)}
+.where-cap strong{display:block;font:800 13px var(--fut,Jost);letter-spacing:.18em;text-transform:uppercase;margin:2px 0 6px}
+.where-cap em{font:500 italic 18px/1.45 var(--it)}
+/* доставка: новая картинка, без полосы, плашка без прыжков, блок связи отдельно */
+.delfig2{margin:0!important;padding:0!important;background:none!important}
+.delfig2 img{display:block;width:100%;height:auto}
+.delfig2 .dm{display:none}
+@media (max-width:760px){.delfig2 .dw{display:none}.delfig2 .dm{display:block}}
+body.pg-dlv .delfig2+*,body.pg-dlv .dl-tabs{margin-top:0!important}
+body.pg-dlv section.cblock{background:#2A231E!important;border-top:1px solid rgba(201,161,90,.45)!important}
+/* Лавка: неполный ряд по центру */
+@media (min-width:761px){body.pg-shop .esc-grid{display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:20px!important}body.pg-shop .esc-grid>.card{width:210px!important;flex:none!important}}
+/* «Отдел» — один цвет везде */
+body.pg-shop .dp-h .dp-k{color:#F3E9D6!important}
+/* отделы — оттенки оливкового */
+body.pg-shop .dept{position:relative;padding:20px 0 50px}
+body.pg-shop .dept:nth-of-type(odd){background:#3A3D2A;box-shadow:0 0 0 100vmax #3A3D2A;clip-path:inset(0 -100vmax)}
+body.pg-shop .dept:nth-of-type(even){background:#353628;box-shadow:0 0 0 100vmax #353628;clip-path:inset(0 -100vmax)}
+body.pg-shop .dept:nth-of-type(4n+3){background:#3D3929;box-shadow:0 0 0 100vmax #3D3929}
+/* телефон: списки марок и разделов — ровными колонками */
+@media (max-width:760px){
+ html body .psign .m-acc.open :is(.chips,ol,ul){display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px 18px!important;justify-items:start!important;text-align:left!important;padding:14px 6px 4px!important}
+ html body .psign .m-acc :is(.chips,ol,ul) li::before,html body .psign .m-acc :is(.chips,ol,ul) li::after{display:none!important}
+ html body .psign .m-acc :is(.chips,ol,ul) :is(button,a){font:500 16px var(--fut,Jost)!important;letter-spacing:.02em!important;text-transform:none!important;font-style:normal!important;text-align:left!important;padding:4px 0!important;color:#F3E4C4!important}
+}
+.delfig2{height:auto!important;min-height:0!important;aspect-ratio:auto!important;overflow:visible!important}
+@media (max-width:760px){body.pg-dlv :has(>.delfig2){display:block!important;height:auto!important;width:auto!important}body.pg-dlv .delfig2{width:100%!important}body.pg-dlv .dl-board{display:none!important}}
+.srch-ov.on{flex-direction:column!important;align-items:center!important;justify-content:flex-start!important}
+.srch-ov .srch-sug{width:min(720px,calc(100% - 32px));position:relative;z-index:2}
+.delfig2 img{clip-path:none!important;opacity:1!important;transform:none!important}
+.where .sf-pt.hot{opacity:1!important;background:#E8B53A!important;color:#2A241C!important;border-color:#F6D58A!important;filter:none!important}
+body.pg-dlv :has(>.delfig2){padding-bottom:0!important;margin-bottom:0!important}
+body.pg-dlv .delfig2{margin-bottom:0!important}

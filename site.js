@@ -938,3 +938,33 @@ document.querySelectorAll('.esc-s').forEach(s=>{const g=s.querySelector('.esc-gr
  const t=document.createElement('span'); t.className='tap-hint'; t.innerHTML='<i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10h.5V8.5a1.5 1.5 0 0 1 3 0V10h.5V9.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-.7a6 6 0 0 1-4.6-2.2L4.4 15.6a1.4 1.4 0 0 1 2-2L9 15.5z"/></svg>';
  setTimeout(()=>{ t.style.left=(fc.offsetLeft+fc.offsetWidth*.62)+'px'; t.style.top=(fc.offsetTop+fc.offsetHeight*.55)+'px'; B.appendChild(t); requestAnimationFrame(()=>t.classList.add('on')); },4200);
  B.addEventListener('click',()=>{ try{sessionStorage.setItem('gl-tapped','1')}catch(e){} t.remove(); },{once:true}); })();
+
+/* Поиск: подсказки при вводе */
+(function(){ const ov=document.querySelector('.srch-ov'); if(!ov) return; const inp=ov.querySelector('input'), form=ov.querySelector('form'); const logo=document.querySelector('.hdr-logo'); const base=logo?logo.getAttribute('href'):'./';
+ const box=document.createElement('div'); box.className='srch-sug'; form.after(box); let data=null;
+ const SRV=[['Монтаж лифтов','servis/montazh/'],['Обслуживание лифтов и эскалаторов','servis/obsluzhivanie/'],['Пусконаладка','servis/puskonaladka/'],['Подбор лифта','servis/podbor/'],['Доставка и оплата','dostavka/'],['Контакты','kontakty/']];
+ const BR=['Hitachi','KONE','OTIS','LG Sigma','Mitsubishi','ThyssenKrupp','Hyundai','Schindler','Gustav Wolf','Draka','Fujitec','Toshiba','SJEC','Canny','Yungtay'];
+ const load=()=>data?Promise.resolve(data):fetch(base+'assets/search.json').then(r=>r.json()).then(d=>data=d).catch(()=>data={p:[],s:[]});
+ const esc=t=>t.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+ inp.addEventListener('input',()=>{ const q=inp.value.trim().toLowerCase(); if(q.length<2){box.innerHTML='';return;} load().then(d=>{ const out=[];
+  d.s.filter(x=>x.t.toLowerCase().includes(q)).slice(0,3).forEach(x=>out.push([x.t,x.k,x.u]));
+  BR.filter(b=>b.toLowerCase().includes(q)).slice(0,2).forEach(b=>out.push([b,'Марка','zapchasti/?q='+encodeURIComponent(b)]));
+  SRV.filter(x=>x[0].toLowerCase().includes(q)).slice(0,2).forEach(x=>out.push([x[0],'Услуга',x[1]]));
+  d.p.filter(x=>x.t.toLowerCase().includes(q)).slice(0,8-out.length).forEach(x=>out.push([x.t,'Деталь',x.u]));
+  box.innerHTML=out.slice(0,8).map(o=>'<a href="'+base+o[2]+'"><span>'+esc(o[0])+'</span><em>'+o[1]+'</em></a>').join('')||'<p>Ничего не нашли — нажмите «Найти» или пришлите фото шильдика</p>'; }); });
+})();
+/* «Где в лифте / в эскалаторе эта деталь»: горит только свой узел, под разрезом — подпись */
+(function(){ const w=document.querySelector('.where'); if(!w) return; const fig=w.querySelector('.escfig,.shaftfig'); if(!fig) return; let hot=null;
+ if(w.classList.contains('where-esc')){ const crumbs=[...document.querySelectorAll('.crumbs a, .crumbs span, .crumbs li')].map(e=>e.textContent.toLowerCase()).join(' ');
+  const MAP=[['ролик','ступени'],['фрикцион','поручень'],['цепи поручня','поручень'],['входные узлы','поручень'],['натяжн','натяжн'],['ступенчат','ступенчатая цепь'],['ступени','ступени'],['гребён','гребён'],['фриз','гребён']];
+  const m=MAP.find(x=>crumbs.includes(x[0])); const pts=[...fig.querySelectorAll('.sf-pt')];
+  if(m){ hot=pts.find(p=>(p.querySelector('strong')||{}).textContent&&p.querySelector('strong').textContent.toLowerCase().includes(m[1])); }
+  if(hot){ pts.forEach(p=>{ if(p!==hot) p.classList.add('dim'); }); hot.classList.add('hot'); const l=w.querySelector('.esc-list'); if(l) l.style.display='none'; } }
+ else { hot=[...fig.querySelectorAll('.sf-pt')].find(p=>!p.classList.contains('off')); }
+ if(hot){ const t=hot.querySelector('.sf-tip'); const cap=document.createElement('p'); cap.className='where-cap';
+  cap.innerHTML='<b>'+hot.childNodes[0].textContent.trim().padStart(2,'0')+'</b><span><strong>'+(t.querySelector('strong')||{}).textContent+'</strong><em>'+((t.querySelector('em')||{}).textContent||'')+'</em></span>'; fig.after(cap); } })();
+
+/* Доставка/Оплата: высота плашки не меняется при переключении */
+(function(){ const t=document.querySelector('.dl-tabs'); if(!t) return; const btns=[...t.querySelectorAll('button')].filter(b=>/Доставка|Оплата/i.test(b.textContent)); if(btns.length<2) return;
+ const fix=()=>{ t.style.minHeight=''; const cur=btns.find(b=>b.getAttribute('aria-selected')==='true'||b.classList.contains('on'))||btns[0]; let mx=0; btns.forEach(b=>{ b.click(); mx=Math.max(mx,t.offsetHeight); }); cur.click(); t.style.minHeight=mx+'px'; };
+ if(document.readyState==='complete') fix(); else addEventListener('load',fix); let rt; addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(fix,300);}); })();
