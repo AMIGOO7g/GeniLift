@@ -126,9 +126,10 @@ function __fitExact(box){ C.clearViewOffset&&C.clearViewOffset(); C.updateProjec
   if(!ctl.__exactHook){ ctl.__exactHook=1; ctl.addEventListener('change',()=>{ if(__clamp) return; const v=C.position.clone().sub(ctl.target), need=__exactD(box,v.clone().normalize(),.97);
     ctl.minDistance=need; if(v.length()<need-1e-4){ __clamp=true; C.position.copy(ctl.target).add(v.setLength(need)); ctl.update(); __clamp=false; } }); } }
 function fit(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; __fitExact(box3); }
-let _w0=0,_h0=0; function resize(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; if(w===_w0&&Math.abs(h-_h0)<(innerWidth<700?160:2)) return; _w0=w; _h0=h; R.setSize(w,h,false); C.aspect=w/h; C.fov=w<700?42:30; C.updateProjectionMatrix(); fit(); }
+let _w0=0,_h0=0; function resize(){ const w=cv.clientWidth,h=cv.clientHeight; if(!w||!h) return; if(w===_w0&&Math.abs(h-_h0)<(innerWidth<700?160:2)) return; _w0=w; _h0=h; R.setSize(w,h,false); C.aspect=w/h; C.fov=w<700?42:30; C.zoom=w<700?1:2.3; C.updateProjectionMatrix(); fit(); }
 let _rw=0; addEventListener('resize',()=>{ if(innerWidth!==_rw){ _rw=innerWidth; resize(); } });
   host.querySelectorAll('.zoom button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const k=+b.dataset.z>0?.85:1/.85; const dir=C.position.clone().sub(ctl.target); const nd=Math.min(ctl.maxDistance,Math.max(ctl.minDistance,dir.length()*k)); C.position.copy(ctl.target).add(dir.setLength(nd)); })); new ResizeObserver(resize).observe(host);
+(()=>{let d0=0,z0=1;const dist=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);cv.addEventListener('touchstart',e=>{if(e.touches.length===2){d0=dist(e.touches);z0=C.zoom;}},{passive:true});cv.addEventListener('touchmove',e=>{if(e.touches.length===2&&d0){e.preventDefault();e.stopPropagation();C.zoom=Math.min(4,Math.max(.8,z0*dist(e.touches)/d0));C.updateProjectionMatrix();}},{passive:false,capture:true});cv.addEventListener('touchend',e=>{if(e.touches.length<2)d0=0;},{passive:true});})();
 const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; const v=new THREE.Vector3(); let last=performance.now(), sh=0;
 function loop2(){ requestAnimationFrame(loop2); if(!host.offsetParent) return;
   const now=performance.now(), dt=Math.min(.05,(now-last)/1000); last=now; if(!picked) sh+=dt*.35;
