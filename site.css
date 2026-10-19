@@ -5123,3 +5123,35 @@ html body .psign .m-cats.m-acc.open :is(.chips,ol,ul){max-height:900px;opacity:1
 html body .cabm figcaption{display:block!important;text-align:center}
 @media (max-width:760px){html body .psign .m-cats .acc-t i{display:block!important;color:#E8B53A}}
 html body .psign .brandstrip .chips{flex-wrap:wrap!important;max-width:100%!important;white-space:normal!important;overflow:visible!important}
+/* ===== v102 ===== */
+/* шапка с самого верха: зона адресной строки iPhone = цвет шапки */
+.hdr{padding-top:env(safe-area-inset-top,0px)!important;box-sizing:content-box}
+body:not(.home-bld) main.page{margin-top:env(safe-area-inset-top,0px)}
+/* главная (телефон) */
+@media (max-width:760px){
+ body>.m-side{display:none!important}
+ .m-sig{position:absolute;left:0;right:0;margin:0;padding:6px 24px 26px;text-align:center;font:400 16px/1.4 var(--hand,'Bad Script',cursive);color:#4A3A28;z-index:5}
+ .tap-hint{position:absolute;right:16%;bottom:18%;width:46px;height:46px;z-index:9;pointer-events:none;opacity:0;transition:opacity .6s}
+ .tap-hint.on{opacity:1}
+ .tap-hint i{position:absolute;inset:0;border:2px solid #E8B53A;border-radius:50%;animation:tapP 1.6s ease-out infinite}
+ .tap-hint svg{position:absolute;left:11px;top:13px;width:28px;height:28px;fill:#F3E4C4;stroke:#2A241C;stroke-width:1;animation:tapF 1.6s ease-in-out infinite}
+}
+@keyframes tapP{0%{transform:scale(.6);opacity:1}80%,100%{transform:scale(1.6);opacity:0}}
+@keyframes tapF{0%,100%{transform:translateY(0)}40%{transform:translateY(-4px)}55%{transform:translateY(1px)}}
+/* Лавка ПК: витрина шире, 6 в ряд на больших экранах; титул прежней ширины */
+@media (min-width:1100px){
+ body.pg-shop .page>.wrap{max-width:1440px!important}
+ body.pg-shop .page>.wrap>.psign,body.pg-shop .nf-band,body.pg-shop .esc-intro{max-width:1260px;margin-left:auto!important;margin-right:auto!important}
+ body.pg-shop .esc-grid{grid-template-columns:repeat(auto-fill,minmax(205px,1fr))!important}
+}
+body.pg-shop .card.q-hit{border-color:#E8B53A!important;box-shadow:0 0 0 1px rgba(232,181,58,.6),0 0 22px rgba(255,196,84,.25)!important}
+/* причёсывание: Доставка и Контакты — тоньше рамки, ровные отступы */
+.dl-tabs .opt{border-width:1px!important}
+body.pg-dlv section,body.pg-cnt section{scroll-margin-top:100px}
+body.pg-cnt .cnt-map,body.pg-cnt .map-wrap{border-width:1px!important;outline:0!important}
+body.pg-hall .card,body.pg-dlv .card{border-width:1px!important}
+@media (max-width:760px){.m-sig{color:#CBBFA8!important}}
+@media (min-width:1100px){body.pg-shop .esc-grid{grid-template-columns:repeat(auto-fill,minmax(205px,228px))!important;justify-content:center!important}}
+@media (max-width:760px){.tap-hint{right:auto!important;bottom:auto!important}}
+@media (min-width:1100px){body.pg-shop .esc-grid{grid-template-columns:repeat(auto-fill,minmax(200px,210px))!important;gap:20px!important}}
+@media (max-width:760px){html body #bld .tap-hint{z-index:30}}

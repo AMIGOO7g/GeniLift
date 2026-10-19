@@ -61,10 +61,10 @@
     const fl = document.getElementById('bFly'), wm = document.querySelector('.hdr-logo');
     await wait(150); it.classList.add('s1'); await wait(2100); it.classList.add('s2'); fl.style.opacity = '1'; await wait(700);
     it.classList.add('out'); document.documentElement.classList.remove('b-intro'); document.documentElement.classList.add('b-ready');
-    if (wm) { const a = fl.getBoundingClientRect(), b2 = wm.getBoundingClientRect(), k = b2.height / a.height;
+    if (wm) { const fb = fl.querySelector('b') || fl, wb = wm.querySelector('b,strong,.lg-t,span') || wm; const a = fb.getBoundingClientRect(), b2 = wb.getBoundingClientRect(), k = b2.width / a.width;
       fl.style.transition = 'transform 1.1s cubic-bezier(.65,0,.35,1), color 1.1s ease';
       fl.style.transform = `translate(calc(-50% + ${(b2.left + b2.width / 2) - (a.left + a.width / 2)}px), calc(-50% + ${(b2.top + b2.height / 2) - (a.top + a.height / 2)}px)) scale(${k})`; fl.classList.add('gold'); }
-    await wait(1150); document.documentElement.classList.remove('b-nologo'); fl.style.transition = 'none'; fl.style.opacity = '0'; setTimeout(() => it.remove(), 800);
+    await wait(1000); document.documentElement.classList.remove('b-nologo'); fl.style.transition = 'opacity .25s ease'; fl.style.opacity = '0'; await wait(260); setTimeout(() => it.remove(), 800);
     const h1 = B.querySelector('.b-h1'); setTimeout(() => { hn && hn.classList.add('on'); h1 && h1.classList.add('on'); }, 600);
   }
   if (document.readyState === 'complete') start(); else addEventListener('load', start);

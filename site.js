@@ -767,7 +767,11 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
   document.addEventListener('click', e => { const a = e.target.closest('a[href*="#q"]'); if (!a) return; e.preventDefault(); e.stopImmediatePropagation(); ov.classList.add('on'); setTimeout(() => ov.querySelector('input').focus(), 50); }, true);
   ov.querySelector('.srch-x').addEventListener('click', close);
   addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
-  ov.querySelector('form').addEventListener('submit', e => { e.preventDefault(); const q = ov.querySelector('input').value.trim(); if (!q) return; location.href = base + 'zapchasti/?q=' + encodeURIComponent(q); });
+  ov.querySelector('form').addEventListener('submit', e => { e.preventDefault(); const q = ov.querySelector('input').value.trim(); if (!q) return; const l = q.toLowerCase();
+    const SRV = [['монтаж','servis/montazh/'],['обслуж','servis/obsluzhivanie/'],['ремонт','servis/obsluzhivanie/'],['пусконалад','servis/puskonaladka/'],['наладк','servis/puskonaladka/'],['подбор лифт','servis/podbor/'],['доставк','dostavka/'],['оплат','dostavka/'],['контакт','kontakty/']];
+    const hit = SRV.find(x => l.includes(x[0])); if (hit) { location.href = base + hit[1]; return; }
+    const ESC = ['эскалат','поруч','ступен','гребён','гребен','фриз','травол'];
+    location.href = base + (ESC.some(w => l.includes(w)) ? 'zapchasti/eskalatory/' : 'zapchasti/') + '?q=' + encodeURIComponent(q); });
 })();
 
 /* ---------- Переходы между этажами — через здание на главной ---------- */
@@ -899,10 +903,10 @@ document.querySelectorAll('.ch-t,.mc-t,.sec-t,.cta2 h2,.h2,.dp-h h2,.mx-t').forE
   if(!m){ m=document.createElement('meta'); m.name='theme-color'; document.head.appendChild(m); } m.content=c; })();
 
 /* Лавка: «Показать ещё» */
-(function(){const N=matchMedia('(max-width:760px)').matches?6:8;
+(function(){const N=matchMedia('(max-width:760px)').matches?6:(matchMedia('(min-width:1500px)').matches?12:8);
 document.querySelectorAll('.esc-s').forEach(s=>{const g=s.querySelector('.esc-grid');if(!g)return;const cards=[...g.querySelectorAll('.card')];if(cards.length<=N)return;
  cards.slice(N).forEach(c=>c.classList.add('more-h'));const b=document.createElement('button');b.type='button';b.className='more-b';
- const upd=()=>{const left=g.querySelectorAll('.card.more-h').length;b.textContent=left?('Показать ещё '+Math.min(left,20)+' из '+left):'';b.style.display=left?'':'none';};
+ const upd=()=>{const left=g.querySelectorAll('.card.more-h').length;b.textContent=left?(left<=20?('Показать остальные '+left):('Показать ещё 20 из '+left)):'';b.style.display=left?'':'none';};
  b.onclick=()=>{[...g.querySelectorAll('.card.more-h')].slice(0,20).forEach(c=>c.classList.remove('more-h'));upd();};upd();g.after(b);});})();
 
 (function(){ if(!document.body.classList.contains('pg-shop')) return;
@@ -915,3 +919,22 @@ document.querySelectorAll('.esc-s').forEach(s=>{const g=s.querySelector('.esc-gr
 (function(){ if(!matchMedia('(max-width:760px)').matches) return; const box=document.querySelector('.psign .m-cats'); if(!box||box.classList.contains('m-acc')) return;
  const k=box.querySelector('.bs-k'); if(k) k.remove(); box.classList.add('m-acc'); const t=document.createElement('button'); t.type='button'; t.className='acc-t'; t.innerHTML='<span>Раздел</span><i aria-hidden="true">▾</i>';
  box.insertBefore(t,box.firstChild); t.addEventListener('click',e=>{e.stopPropagation(); box.classList.toggle('open');}); })();
+
+/* Лавка: ?q= — сразу к результату: раздел, марка или деталь */
+(function(){ if(!document.body.classList.contains('pg-shop')) return; const q=(new URLSearchParams(location.search).get('q')||'').trim(); if(!q) return; const l=q.toLowerCase(), stem=l.length>5?l.slice(0,-2):l;
+ const go=el=>{ setTimeout(()=>{ const y=el.getBoundingClientRect().top+scrollY-110; scrollTo({top:y,behavior:'smooth'}); },700); };
+ const secs=[...document.querySelectorAll('.esc-s')]; const sec=secs.find(s=>{const h=s.querySelector('h2,h3,h4'); return h&&h.textContent.toLowerCase().includes(stem);}); if(sec){ go(sec); return; }
+ const br=[...document.querySelectorAll('.psign [data-ebrand]')].find(b=>b.textContent.trim().toLowerCase()===l||b.dataset.ebrand===l.replace(/\s+/g,'-')); if(br){ br.click(); setTimeout(()=>document.body.classList.add('flt'),80); go(document.querySelector('.esc-depts')||br); return; }
+ const cards=[...document.querySelectorAll('.esc-grid .card')].filter(c=>c.textContent.toLowerCase().includes(l));
+ if(cards.length===1){ const a=cards[0].querySelector('a[href]'); if(a){ location.href=a.href; return; } }
+ if(cards.length){ cards.forEach(c=>c.classList.remove('more-h')); cards.forEach(c=>c.classList.add('q-hit')); go(cards[0]); } })();
+/* Главная (телефон): «пальчик» на «Скобяной лавке» и роспись под зданием */
+(function(){ if(!document.body.classList.contains('home-bld')||!matchMedia('(max-width:760px)').matches) return;
+ document.querySelectorAll('body>.m-side').forEach(x=>x.style.display='none');
+ const st=document.getElementById('bStage'), B=document.getElementById('bld'); if(!st||!B) return;
+ const h1=document.querySelector('h1.b-h1'); const sig=document.createElement('p'); sig.className='m-sig'; sig.textContent=h1?h1.textContent.replace(/\s+/g,' ').trim():'GeniLift — запчасти, монтаж и обслуживание лифтов и эскалаторов · Москва и область'; document.body.appendChild(sig);
+ const place=()=>{ sig.style.top=(st.offsetTop+st.offsetHeight+10)+'px'; }; place(); addEventListener('resize',place); setTimeout(place,1500); setTimeout(place,5000);
+ if(sessionStorage.getItem('gl-tapped')) return; const fc=B.querySelector('.fc[data-f="3"]'); if(!fc) return;
+ const t=document.createElement('span'); t.className='tap-hint'; t.innerHTML='<i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10h.5V8.5a1.5 1.5 0 0 1 3 0V10h.5V9.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-.7a6 6 0 0 1-4.6-2.2L4.4 15.6a1.4 1.4 0 0 1 2-2L9 15.5z"/></svg>';
+ setTimeout(()=>{ t.style.left=(fc.offsetLeft+fc.offsetWidth*.62)+'px'; t.style.top=(fc.offsetTop+fc.offsetHeight*.55)+'px'; B.appendChild(t); requestAnimationFrame(()=>t.classList.add('on')); },4200);
+ B.addEventListener('click',()=>{ try{sessionStorage.setItem('gl-tapped','1')}catch(e){} t.remove(); },{once:true}); })();
