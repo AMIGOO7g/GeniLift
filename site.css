@@ -5205,3 +5205,36 @@ body.pg-dlv :has(>.delfig2){background:#F3E5CD!important}
 .delfig2 .dw{-webkit-mask-image:linear-gradient(to right,transparent 0,#000 8%,#000 92%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 10%,#000 90%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent 0,#000 8%,#000 92%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 10%,#000 90%,transparent 100%);mask-composite:intersect}
 @media (max-width:760px){.delfig2 .dm{display:none!important}.delfig2 .dw{display:block!important;height:210px;object-fit:cover;object-position:80% 70%;-webkit-mask-image:none;mask-image:none}}
 .ftr-c2 .f2-ic .em-tg,.ftr-c2 .f2-ic .em-wa{width:34px!important;height:34px!important;margin:-6px!important;transform:none!important}
+/* ===== v105: единая типографическая шкала ===== */
+html body .psign .ps-t{font-size:clamp(40px,6.2vw,88px)!important;line-height:1!important}
+html body main h2:not(.h3){font-size:44px!important;line-height:1.12!important;letter-spacing:.06em!important}
+html body main h2.sec-t,html body main .nf-t{margin-bottom:30px!important}
+html body main p{line-height:1.6}
+html body main :is(p.it,.dp-t,.cb-sub,.nf-band p,.chap p,.where-cap em){font-size:19px!important;line-height:1.55!important}
+html body main :is(.mx-sub,.ps-sub){font-size:17px!important;line-height:1.6!important}
+@media (max-width:760px){
+ html body .psign .ps-t{font-size:32px!important}
+ html body main h2:not(.h3){font-size:26px!important;letter-spacing:.05em!important}
+ html body main :is(p.it,.dp-t,.cb-sub,.nf-band p,.chap p,.where-cap em){font-size:18px!important}
+ html body main :is(.mx-sub,.ps-sub){font-size:16px!important}
+}
+html body main :is(.del-faq,.related,.wrap) h2:is(.h2,:not([class])){font-size:44px!important}
+@media (max-width:760px){html body main :is(.del-faq,.related,.wrap) h2:is(.h2,:not([class])){font-size:26px!important}}
+/* ===== v106 ===== */
+/* где деталь: без дубля подписи */
+.where .shaftfig .sf-lb,.where .shaftfig .sf-ln,.where .sf-list{display:none!important}
+/* доставка: картинка по центру, фон = бумага картинки */
+body.pg-dlv :has(>.delfig2),.delfig2{background:#F1E2C7!important}
+.delfig2 .dw{max-width:1100px;margin:0 auto!important;height:auto!important;object-fit:contain!important}
+@media (max-width:760px){.delfig2 .dw{width:100%!important;max-width:none;height:auto!important;object-fit:contain!important;-webkit-mask-image:none!important;mask-image:none!important}}
+/* телефон: марка и раздел — один шрифт, по центру */
+@media (max-width:760px){
+ html body .psign .m-acc.open :is(.chips,ol,ul){justify-items:center!important;text-align:center!important}
+ html body .psign .m-acc :is(.chips,ol,ul) :is(a,button,span,li){font:500 17px var(--fut,Jost)!important;letter-spacing:.02em!important;text-align:center!important;text-transform:none!important}
+}
+
+
+
+
+
+@media (max-width:760px){html body:has(.title-prod){background-image:linear-gradient(#5E1C24,#5E1C24),linear-gradient(#121110,#121110)!important;background-size:100% 300px,100% 160px!important;background-position:top,bottom!important;background-repeat:no-repeat!important}html body main:has(.title-prod){background:linear-gradient(#5E1C24,#5E1C24) top/100% 200px no-repeat}}
